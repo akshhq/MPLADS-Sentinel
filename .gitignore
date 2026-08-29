@@ -21,6 +21,7 @@ node_modules/
 *.7z
 *.iso
 frontend.zip
+backend.zip
 
 # --------------------------------------------------------------------
 # Environment & Secrets (Never commit secrets)
