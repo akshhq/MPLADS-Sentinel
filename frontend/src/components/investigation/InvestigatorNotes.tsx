@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { User, Send, FileCheck, MessageSquare } from "lucide-react";
+import { User, Send, MessageSquare } from "lucide-react";
 import { InvestigatorNote } from "@/types/investigation";
 import { formatDateTime } from "@/lib/formatters";
 

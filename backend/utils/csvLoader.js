@@ -2,14 +2,34 @@ const fs = require("fs");
 const path = require("path");
 const csv = require("csv-parser");
 
-const DATASETS_DIR = path.join(__dirname, "../../Data/Datasets");
+function getDatasetsDirectory() {
+  const candidatePaths = [
+    path.join(__dirname, "../../frontend/Data/Datasets"),
+    path.join(__dirname, "../frontend/Data/Datasets"),
+    path.join(__dirname, "../Data/Datasets"),
+    path.join(__dirname, "../../Data/Datasets"),
+    path.join(process.cwd(), "frontend/Data/Datasets"),
+    path.join(process.cwd(), "Data/Datasets"),
+    path.join(process.cwd(), "../frontend/Data/Datasets"),
+  ];
+
+  for (const candidate of candidatePaths) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  return path.join(__dirname, "../../frontend/Data/Datasets");
+}
+
+const DATASETS_DIR = getDatasetsDirectory();
 
 /**
  * Loads a CSV file from Data/Datasets and returns parsed rows
  */
 function loadCSVFile(filename, limit = 1000) {
-  return new Promise((resolve, reject) => {
-    const filePath = path.join(DATASETS_DIR, filename);
+  return new Promise((resolve) => {
+    const dir = getDatasetsDirectory();
+    const filePath = path.join(dir, filename);
     if (!fs.existsSync(filePath)) {
       console.warn(`[CSVLoader] File not found: ${filePath}`);
       return resolve([]);
@@ -37,11 +57,12 @@ function loadCSVFile(filename, limit = 1000) {
  * Lists all available dataset files with row counts
  */
 function getAvailableDatasetsMeta() {
-  if (!fs.existsSync(DATASETS_DIR)) return [];
+  const dir = getDatasetsDirectory();
+  if (!fs.existsSync(dir)) return [];
 
-  const files = fs.readdirSync(DATASETS_DIR).filter((f) => f.endsWith(".csv"));
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".csv"));
   return files.map((filename, idx) => {
-    const filePath = path.join(DATASETS_DIR, filename);
+    const filePath = path.join(dir, filename);
     const stats = fs.statSync(filePath);
     const name = filename.replace(".csv", "");
     const house = filename.includes("Rajya Sabha") ? "Rajya Sabha" : "Lok Sabha";

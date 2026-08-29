@@ -28,8 +28,8 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({ projects, total }) =
   };
 
   const sortedProjects = [...projects].sort((a, b) => {
-    let aVal: any = a[sortField as keyof Project];
-    let bVal: any = b[sortField as keyof Project];
+    let aVal: string | number = "";
+    let bVal: string | number = "";
 
     if (sortField === "risk") {
       aVal = a.risk.score;
@@ -37,6 +37,12 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({ projects, total }) =
     } else if (sortField === "sanctioned") {
       aVal = a.financials.sanctionedAmount;
       bVal = b.financials.sanctionedAmount;
+    } else {
+      const field = sortField as keyof Project;
+      const rawA = a[field];
+      const rawB = b[field];
+      aVal = typeof rawA === "string" || typeof rawA === "number" ? rawA : "";
+      bVal = typeof rawB === "string" || typeof rawB === "number" ? rawB : "";
     }
 
     if (aVal < bVal) return sortAsc ? -1 : 1;

@@ -10,7 +10,6 @@ import {
   SearchCode,
   Sparkles,
   FileCheck,
-  BarChart3,
   Database,
   ArrowRight,
   X,

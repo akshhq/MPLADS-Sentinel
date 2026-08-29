@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ShieldCheck, ExternalLink, Heart } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { APP_NAME, APP_HINDI_NAME, SIH_PROBLEM_ID, MINISTRY_NAME } from "@/lib/constants";
 
 export const PublicFooter: React.FC = () => {

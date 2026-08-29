@@ -25,7 +25,7 @@ export const AskSentinelDrawer: React.FC<AskSentinelDrawerProps> = ({
     {
       id: "INIT",
       sender: "sentinel",
-      timestamp: new Date().toISOString(),
+      timestamp: "2026-08-29T12:00:00.000Z",
       content: contextProjectId
         ? `I am Sentinel AI Copilot, grounded in the real project records and MPLADS guidelines for ${contextProjectId}. How can I assist your verification?`
         : "I am Sentinel AI Copilot. Ask me to verify financial velocity, compare site photos, check duplicate proposals, or cite official MPLADS guidelines.",
@@ -33,8 +33,6 @@ export const AskSentinelDrawer: React.FC<AskSentinelDrawerProps> = ({
     },
   ]);
   const [loading, setLoading] = useState(false);
-
-  if (!isOpen) return null;
 
   const handleSend = async (textToSend?: string) => {
     const q = textToSend || query;
@@ -80,6 +78,8 @@ export const AskSentinelDrawer: React.FC<AskSentinelDrawerProps> = ({
         "Show projects where spending >80% and progress <50%",
         "What duplicate scopes exist in New Delhi district?",
       ];
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-150">

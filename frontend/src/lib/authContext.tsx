@@ -305,72 +305,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Initialize auth state
-  useEffect(() => {
-    let isMounted = true;
-
-    async function initializeAuth() {
-      // 1. Check if live Supabase client exists
-      if (isSupabaseConfigured && supabase) {
-        try {
-          const { data: sessionData } = await supabase.auth.getSession();
-          if (sessionData?.session) {
-            if (isMounted) {
-              setSession(sessionData.session);
-              setUser(sessionData.session.user);
-              setToken(sessionData.session.access_token);
-              fetchUserProfile(sessionData.session.user);
-            }
-          } else {
-            loadStoredDemoPersona();
-          }
-
-          const { data: authListener } = supabase.auth.onAuthStateChange(
-            async (_event, newSession) => {
-              if (!isMounted) return;
-              setSession(newSession);
-              setUser(newSession?.user || null);
-              setToken(newSession?.access_token || null);
-              if (newSession?.user) {
-                fetchUserProfile(newSession.user);
-              }
-            }
-          );
-
-          return () => {
-            authListener.subscription.unsubscribe();
-          };
-        } catch (err) {
-          console.warn("[Auth Init Error]", err);
-          loadStoredDemoPersona();
-        } finally {
-          if (isMounted) setLoading(false);
-        }
-      } else {
-        loadStoredDemoPersona();
-        if (isMounted) setLoading(false);
-      }
-    }
-
-    function loadStoredDemoPersona() {
-      if (typeof window !== "undefined") {
-        const savedRole = localStorage.getItem("mplads_demo_role") as SentinelRole | null;
-        if (savedRole && DEMO_PERSONAS[savedRole]) {
-          setProfile(DEMO_PERSONAS[savedRole]);
-        } else {
-          setProfile(DEMO_PERSONAS.mospi_officer);
-        }
-      }
-    }
-
-    initializeAuth();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  async function fetchUserProfile(authUser: User) {
+  const fetchUserProfile = async (authUser: User) => {
     if (!supabase) return;
     try {
       const { data, error } = await supabase
@@ -427,7 +362,72 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (err) {
       console.warn("[Profile Fetch Warning]", err);
     }
-  }
+  };
+
+  const loadStoredDemoPersona = () => {
+    if (typeof window !== "undefined") {
+      const savedRole = localStorage.getItem("mplads_demo_role") as SentinelRole | null;
+      if (savedRole && DEMO_PERSONAS[savedRole]) {
+        setProfile(DEMO_PERSONAS[savedRole]);
+      } else {
+        setProfile(DEMO_PERSONAS.mospi_officer);
+      }
+    }
+  };
+
+  // Initialize auth state
+  useEffect(() => {
+    let isMounted = true;
+
+    async function initializeAuth() {
+      // 1. Check if live Supabase client exists
+      if (isSupabaseConfigured && supabase) {
+        try {
+          const { data: sessionData } = await supabase.auth.getSession();
+          if (sessionData?.session) {
+            if (isMounted) {
+              setSession(sessionData.session);
+              setUser(sessionData.session.user);
+              setToken(sessionData.session.access_token);
+              fetchUserProfile(sessionData.session.user);
+            }
+          } else {
+            loadStoredDemoPersona();
+          }
+
+          const { data: authListener } = supabase.auth.onAuthStateChange(
+            async (_event, newSession) => {
+              if (!isMounted) return;
+              setSession(newSession);
+              setUser(newSession?.user || null);
+              setToken(newSession?.access_token || null);
+              if (newSession?.user) {
+                fetchUserProfile(newSession.user);
+              }
+            }
+          );
+
+          return () => {
+            authListener.subscription.unsubscribe();
+          };
+        } catch (err) {
+          console.warn("[Auth Init Error]", err);
+          loadStoredDemoPersona();
+        } finally {
+          if (isMounted) setLoading(false);
+        }
+      } else {
+        loadStoredDemoPersona();
+        if (isMounted) setLoading(false);
+      }
+    }
+
+    initializeAuth();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const hasPermission = (permission: SentinelPermission): boolean => {
     if (!profile) return false;

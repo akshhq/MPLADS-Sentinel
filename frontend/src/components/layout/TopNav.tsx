@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Search, Bell, Sparkles, Menu, ShieldCheck, ChevronDown, User, LogOut, RefreshCw, Key } from "lucide-react";
+import { Search, Bell, Sparkles, Menu, ChevronDown, LogOut, Key } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { CommandPalette } from "./CommandPalette";
 import { NotificationDrawer } from "./NotificationDrawer";
@@ -23,7 +23,7 @@ export const TopNav: React.FC<TopNavProps> = ({
   contextProjectId,
   contextCaseId,
 }) => {
-  const { profile, switchPersona, signOut, user } = useAuth();
+  const { profile, switchPersona, signOut } = useAuth();
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
@@ -113,14 +113,14 @@ export const TopNav: React.FC<TopNavProps> = ({
               className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800 text-left hover:opacity-80 transition-opacity"
             >
               <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
-                {profile?.avatar_initials || profile?.full_name?.substring(0, 2).toUpperCase() || "RV"}
+                {profile?.avatar_initials || profile?.full_name?.substring(0, 2).toUpperCase() || "AS"}
               </div>
               <div className="hidden xl:block text-left text-xs">
                 <p className="font-semibold text-slate-800 dark:text-slate-200 leading-tight">
-                  {profile?.full_name || "Rajesh Verma"}
+                  {profile?.full_name || "Dr. Ananya Sharma"}
                 </p>
                 <p className="text-[10px] text-slate-400 font-medium">
-                  {profile?.designation || "Sr. Auditor (Central)"}
+                  {profile?.designation || "Senior Audit Officer"}
                 </p>
               </div>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden xl:block" />

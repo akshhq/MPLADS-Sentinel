@@ -16,8 +16,8 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 import { supabase } from "../supabaseClient";
 
 // In-memory fallback state
-let investigationsStore = [...MOCK_INVESTIGATIONS];
-let projectsStore = [...MOCK_PROJECTS];
+const investigationsStore = [...MOCK_INVESTIGATIONS];
+const projectsStore = [...MOCK_PROJECTS];
 
 async function getAuthHeaders(): Promise<Record<string, string>> {
   const headers: Record<string, string> = {};

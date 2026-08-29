@@ -13,9 +13,7 @@ import {
   Sparkles,
   Database,
   ShieldCheck,
-  FlaskConical,
   ExternalLink,
-  ChevronRight,
   ScanLine,
 } from "lucide-react";
 import { APP_NAME, APP_HINDI_NAME, SIH_PROBLEM_ID } from "@/lib/constants";
