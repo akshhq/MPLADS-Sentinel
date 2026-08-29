@@ -1,90 +1,111 @@
 # ====================================================================
-# MPLADS Sentinel - Frontend .gitignore (Next.js 16 / React 19 / TypeScript / Tailwind)
+# MPLADS Sentinel - Backend .gitignore (Node.js / Express / Supabase)
 # ====================================================================
 
 # --------------------------------------------------------------------
 # Dependencies
 # --------------------------------------------------------------------
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+node_modules/
+jspm_packages/
+.pnp
+.pnp.js
 
 # --------------------------------------------------------------------
 # Environment Variables & Secrets (CRITICAL)
 # --------------------------------------------------------------------
 .env
-.env*.local
+.env.*
 .env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
-.env.staging.local
+.env.staging
 
 # Allow committing environment templates/examples
 !.env.example
-!.env.local.example
 !.env.template
 !.env.*.example
 
-# --------------------------------------------------------------------
-# Next.js Build & Production Outputs
-# --------------------------------------------------------------------
-/.next/
-/out/
-/build
-/dist
-/.open-next/
+# SSL & Security Credentials / Keys
+*.pem
+*.key
+*.crt
+*.cert
+*.pfx
+*.p12
+serviceAccountKey.json
+credentials.json
+jwt_secret*.key
+id_rsa*
 
 # --------------------------------------------------------------------
-# TypeScript & Build Caches
+# Runtime Uploads, Temporary & Storage Files
 # --------------------------------------------------------------------
-*.tsbuildinfo
-next-env.d.ts
-.turbo/
-.swc/
+uploads/*
+!uploads/.gitkeep
+temp/
+tmp/
+*.tmp
+*.temp
+storage/
+downloads/
+cache/
+.cache/
+
+# --------------------------------------------------------------------
+# Logs & Process Managers
+# --------------------------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Process IDs & PM2
+pids/
+*.pid
+*.seed
+*.pid.lock
+.pm2/
+pm2.log
 
 # --------------------------------------------------------------------
 # Testing & Code Coverage
 # --------------------------------------------------------------------
-/coverage
-/.nyc_output
-/playwright-report
-/test-results
-/cypress/videos
-/cypress/screenshots
+coverage/
+.nyc_output/
+*.lcov
+.clinic/
 
 # --------------------------------------------------------------------
-# Linters & Formatters Cache
+# Database Dumps & Local Engines
 # --------------------------------------------------------------------
-.eslintcache
-.stylelintcache
-.prettiercache
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.dump
+*.sql.gz
+*.sql.tar.gz
+dump.rdb
+postgres-data/
+supabase/.temp/
+supabase/.branches/
 
 # --------------------------------------------------------------------
-# Debug & Runtime Logs
+# Build & Distribution Artifacts
 # --------------------------------------------------------------------
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-lerna-debug.log*
-*.log
+dist/
+build/
+bin/
 
 # --------------------------------------------------------------------
-# Cloud Deployment & Hosting
-# --------------------------------------------------------------------
-.vercel
-.serverless/
-.netlify/
-
-# --------------------------------------------------------------------
-# OS & Editor Files
+# IDE, Editors & OS Files
 # --------------------------------------------------------------------
 .DS_Store
 .DS_Store?
@@ -107,4 +128,3 @@ Desktop.ini
 *.swp
 *.swo
 *~
-*.pem
