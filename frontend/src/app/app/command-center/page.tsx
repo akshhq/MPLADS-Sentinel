@@ -16,6 +16,12 @@ import {
   FileText,
   Clock,
   ExternalLink,
+  MapPin,
+  Landmark,
+  UserCheck,
+  HardHat,
+  SearchCode,
+  ClipboardCheck,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { MetricCard } from "@/components/common/MetricCard";
@@ -24,11 +30,13 @@ import { RiskDonutChart } from "@/components/dashboard/RiskDonutChart";
 import { PriorityQueueTable } from "@/components/dashboard/PriorityQueueTable";
 import { LiveInsightCard } from "@/components/dashboard/LiveInsightCard";
 import { api } from "@/lib/api";
+import { useAuth } from "@/lib/authContext";
 import { Project } from "@/types/project";
 import { NationalAnalytics } from "@/types/analytics";
 import { formatLakhCrore } from "@/lib/formatters";
 
 export default function CommandCenterPage() {
+  const { profile } = useAuth();
   const [analytics, setAnalytics] = useState<NationalAnalytics | null>(null);
   const [priorityProjects, setPriorityProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,9 +62,60 @@ export default function CommandCenterPage() {
     loadDashboardData();
   }, []);
 
+  const getRoleIcon = () => {
+    switch (profile?.role) {
+      case "state_nodal_authority":
+        return Landmark;
+      case "mp":
+        return Landmark;
+      case "implementing_agency":
+        return HardHat;
+      case "investigator":
+        return SearchCode;
+      case "field_verification_officer":
+        return ClipboardCheck;
+      default:
+        return ShieldCheck;
+    }
+  };
+
+  const RoleIcon = getRoleIcon();
+
   return (
     <AppShell breadcrumbs={[{ label: "Command Center" }]}>
       <div className="space-y-6">
+        {/* Role Jurisdiction Greeting Banner */}
+        {profile && (
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
+                <RoleIcon className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+                    {profile.full_name}
+                  </h2>
+                  <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                    {profile.designation}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Authorized Scope: <strong>{profile.jurisdiction || profile.department}</strong></span>
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live Telemetry Active
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Page Header with Filters */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -65,14 +124,14 @@ export default function CommandCenterPage() {
                 MoSPI National Risk Intelligence
               </span>
               <span className="text-xs text-slate-400">
-                Live Ingestion Active
+                Continuous AI Surveillance
               </span>
             </div>
             <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-1">
               National Monitoring Command Center
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Evidence-linked screening across 18,432 MPLADS projects, financial ledgers, and site photographs
+              Multi-source screening across 18,432 MPLADS projects, financial ledgers, and ground evidence
             </p>
           </div>
 
@@ -100,7 +159,7 @@ export default function CommandCenterPage() {
 
             <Link
               href="/app/risk/documents/compare"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow-sm transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow-xs transition-all"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Layout Similarity Studio</span>
@@ -153,14 +212,14 @@ export default function CommandCenterPage() {
             {analytics ? (
               <RiskTrendChart data={analytics.monthlyTrends} />
             ) : (
-              <div className="h-80 rounded-2xl bg-slate-100 dark:bg-slate-800 animate-shimmer" />
+              <div className="h-80 rounded-2xl bg-white border border-slate-200 animate-shimmer" />
             )}
           </div>
           <div className="lg:col-span-4">
             {analytics ? (
               <RiskDonutChart distribution={analytics.riskDistribution} />
             ) : (
-              <div className="h-80 rounded-2xl bg-slate-100 dark:bg-slate-800 animate-shimmer" />
+              <div className="h-80 rounded-2xl bg-white border border-slate-200 animate-shimmer" />
             )}
           </div>
         </div>
@@ -195,7 +254,7 @@ export default function CommandCenterPage() {
                 <Link
                   key={mod.label}
                   href={mod.href}
-                  className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-700 shadow-xs transition-all group"
+                  className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-700 shadow-xs hover:shadow-sm transition-all group"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className={`p-2 rounded-lg ${mod.color}`}>
@@ -205,10 +264,10 @@ export default function CommandCenterPage() {
                       {mod.count}
                     </span>
                   </div>
-                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                  <p className="text-xs font-bold text-slate-900 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                     {mod.label}
                   </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5 truncate">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">
                     {mod.desc}
                   </p>
                 </Link>

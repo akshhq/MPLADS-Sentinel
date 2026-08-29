@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT NOT NULL,
   full_name TEXT NOT NULL,
-  role TEXT NOT NULL DEFAULT 'citizen_auditor' 
-    CHECK (role IN ('mospi_officer', 'investigator', 'district_magistrate', 'implementing_agency', 'citizen_auditor')),
+  role TEXT NOT NULL DEFAULT 'mospi_officer' 
+    CHECK (role IN ('mospi_officer', 'state_nodal_authority', 'mp', 'implementing_agency', 'investigator', 'field_verification_officer', 'system_admin')),
   department TEXT,
   designation TEXT,
   phone TEXT,
@@ -43,9 +43,9 @@ BEGIN
     NEW.id,
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'citizen_auditor'),
-    COALESCE(NEW.raw_user_meta_data->>'department', 'Public Citizenry'),
-    COALESCE(NEW.raw_user_meta_data->>'designation', 'Independent Auditor'),
+    COALESCE(NEW.raw_user_meta_data->>'role', 'mospi_officer'),
+    COALESCE(NEW.raw_user_meta_data->>'department', 'MoSPI Surveillance Cell'),
+    COALESCE(NEW.raw_user_meta_data->>'designation', 'Audit Officer'),
     COALESCE(NEW.raw_user_meta_data->>'avatar_url', '')
   )
   ON CONFLICT (id) DO UPDATE SET

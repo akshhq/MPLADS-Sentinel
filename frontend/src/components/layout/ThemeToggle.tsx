@@ -10,13 +10,14 @@ export const ThemeToggle: React.FC<{ className?: string }> = ({ className = "" }
   useEffect(() => {
     setMounted(true);
     const saved = localStorage.getItem("mplads_theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if (saved === "dark" || (!saved && prefersDark)) {
+    // Default to clean crisp light/white theme unless dark is explicitly saved
+    if (saved === "dark") {
       setIsDark(true);
       document.documentElement.classList.add("dark");
     } else {
       setIsDark(false);
       document.documentElement.classList.remove("dark");
+      localStorage.setItem("mplads_theme", "light");
     }
   }, []);
 
@@ -37,8 +38,9 @@ export const ThemeToggle: React.FC<{ className?: string }> = ({ className = "" }
   return (
     <button
       onClick={toggleTheme}
-      aria-label="Toggle dark mode"
-      className={`p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${className}`}
+      aria-label="Toggle theme"
+      className={`p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors bg-white dark:bg-slate-900 shadow-xs ${className}`}
+      title={isDark ? "Switch to White / Light Mode" : "Switch to Dark Mode"}
     >
       {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
     </button>
