@@ -42,7 +42,7 @@ export const PriorityQueueTable: React.FC<PriorityQueueTableProps> = ({ projects
       {/* Responsive Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <thead className="bg-slate-50/80 dark:bg-slate-850/60 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-100 dark:border-slate-800 uppercase tracking-wider text-[10px]">
+          <thead className="bg-slate-50/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-100 dark:border-slate-800 uppercase tracking-wider text-[10px]">
             <tr>
               <th className="px-4 py-3">Project ID</th>
               <th className="px-4 py-3">Work Title & Location</th>
@@ -57,7 +57,7 @@ export const PriorityQueueTable: React.FC<PriorityQueueTableProps> = ({ projects
             {projects.map((project) => (
               <tr
                 key={project.id}
-                className="hover:bg-slate-50/80 dark:hover:bg-slate-850/50 transition-colors group cursor-pointer"
+                className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer"
               >
                 {/* Project ID */}
                 <td className="px-4 py-3.5 font-mono font-bold text-slate-900 dark:text-slate-100 whitespace-nowrap">

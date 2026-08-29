@@ -87,7 +87,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
   ];
 
   return (
-    <aside className="w-64 h-screen flex flex-col bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-850 select-none">
+    <aside className="w-64 h-screen flex flex-col bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 select-none">
       {/* Brand Header */}
       <div className="h-16 px-5 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
         <Link
@@ -132,7 +132,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
               className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 isActive
                   ? "bg-slate-900 text-white dark:bg-blue-600 dark:text-white shadow-sm"
-                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-850 hover:text-slate-900 dark:hover:text-slate-200"
+                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200"
               }`}
             >
               <div className="flex items-center gap-2.5">
@@ -158,7 +158,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
         <Link
           href="/"
           target="_blank"
-          className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-850 transition-colors"
+          className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         >
           <span>Public Explainer Portal</span>
           <ExternalLink className="w-3 h-3 text-slate-400" />

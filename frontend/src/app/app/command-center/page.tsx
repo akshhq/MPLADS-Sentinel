@@ -8,17 +8,13 @@ import {
   Building2,
   BadgeIndianRupee,
   Calendar,
-  Filter,
-  ArrowRight,
   Sparkles,
   Camera,
   CopyCheck,
   FileText,
   Clock,
-  ExternalLink,
   MapPin,
   Landmark,
-  UserCheck,
   HardHat,
   SearchCode,
   ClipboardCheck,
@@ -33,7 +29,6 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/lib/authContext";
 import { Project } from "@/types/project";
 import { NationalAnalytics } from "@/types/analytics";
-import { formatLakhCrore } from "@/lib/formatters";
 
 export default function CommandCenterPage() {
   const { profile } = useAuth();
@@ -50,8 +45,10 @@ export default function CommandCenterPage() {
           api.getProjects({ limit: 6 }),
         ]);
         setAnalytics(anData);
-        // Sort priority projects by risk score descending
-        const sorted = [...projData.projects].sort((a, b) => b.risk.score - a.risk.score);
+        const list = projData?.projects || [];
+        const sorted = [...list].sort(
+          (a, b) => (b.risk?.score ?? 0) - (a.risk?.score ?? 0)
+        );
         setPriorityProjects(sorted);
       } catch (err) {
         console.error("Failed to load command center data:", err);
@@ -88,7 +85,7 @@ export default function CommandCenterPage() {
         {profile && (
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
                 <RoleIcon className="w-5 h-5" />
               </div>
               <div>
@@ -96,7 +93,7 @@ export default function CommandCenterPage() {
                   <h2 className="text-sm font-bold text-slate-900 dark:text-white">
                     {profile.full_name}
                   </h2>
-                  <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                  <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                     {profile.designation}
                   </span>
                 </div>
@@ -120,7 +117,7 @@ export default function CommandCenterPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/80 px-2 py-0.5 rounded-md border border-blue-200 dark:border-blue-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">
                 MoSPI National Risk Intelligence
               </span>
               <span className="text-xs text-slate-400">
@@ -145,6 +142,7 @@ export default function CommandCenterPage() {
             <select
               value={selectedRegion}
               onChange={(e) => setSelectedRegion(e.target.value)}
+              aria-label="Select State / UT Region"
               className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 shadow-xs focus:outline-none"
             >
               <option value="all">All States & UTs (National)</option>
@@ -159,7 +157,7 @@ export default function CommandCenterPage() {
 
             <Link
               href="/app/risk/documents/compare"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow-xs transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-700 shadow-xs transition-all"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Layout Similarity Studio</span>
@@ -203,7 +201,7 @@ export default function CommandCenterPage() {
           />
         </div>
 
-        {/* Live Anomaly Insight Banner */}
+        {/* Live Anomaly Insight Card */}
         <LiveInsightCard />
 
         {/* Main Charts Row */}
@@ -212,14 +210,14 @@ export default function CommandCenterPage() {
             {analytics ? (
               <RiskTrendChart data={analytics.monthlyTrends} />
             ) : (
-              <div className="h-80 rounded-2xl bg-white border border-slate-200 animate-shimmer" />
+              <div className="h-80 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 animate-shimmer" />
             )}
           </div>
           <div className="lg:col-span-4">
             {analytics ? (
               <RiskDonutChart distribution={analytics.riskDistribution} />
             ) : (
-              <div className="h-80 rounded-2xl bg-white border border-slate-200 animate-shimmer" />
+              <div className="h-80 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 animate-shimmer" />
             )}
           </div>
         </div>
@@ -235,7 +233,7 @@ export default function CommandCenterPage() {
             </h3>
             <Link
               href="/app/risk"
-              className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:underline"
             >
               Explore Full Risk Suite →
             </Link>
@@ -254,7 +252,7 @@ export default function CommandCenterPage() {
                 <Link
                   key={mod.label}
                   href={mod.href}
-                  className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-700 shadow-xs hover:shadow-sm transition-all group"
+                  className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 shadow-xs hover:shadow-sm transition-all group"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className={`p-2 rounded-lg ${mod.color}`}>
@@ -264,7 +262,7 @@ export default function CommandCenterPage() {
                       {mod.count}
                     </span>
                   </div>
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                  <p className="text-xs font-bold text-slate-900 dark:text-slate-200 group-hover:text-slate-950 dark:group-hover:text-white">
                     {mod.label}
                   </p>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">

@@ -12,7 +12,7 @@ import {
 } from "recharts";
 
 interface RiskTrendChartProps {
-  data: {
+  data?: {
     month: string;
     screenedWorks: number;
     flaggedAnomalies: number;
@@ -20,11 +20,29 @@ interface RiskTrendChartProps {
   }[];
 }
 
+const DEFAULT_TREND_DATA = [
+  { month: "Sep 2025", screenedWorks: 12400, flaggedAnomalies: 48, avgRiskScore: 24.2 },
+  { month: "Oct 2025", screenedWorks: 14100, flaggedAnomalies: 62, avgRiskScore: 26.5 },
+  { month: "Nov 2025", screenedWorks: 15300, flaggedAnomalies: 79, avgRiskScore: 28.1 },
+  { month: "Dec 2025", screenedWorks: 16200, flaggedAnomalies: 95, avgRiskScore: 30.4 },
+  { month: "Jan 2026", screenedWorks: 17100, flaggedAnomalies: 114, avgRiskScore: 31.8 },
+  { month: "Feb 2026", screenedWorks: 17800, flaggedAnomalies: 138, avgRiskScore: 33.2 },
+  { month: "Mar 2026", screenedWorks: 18200, flaggedAnomalies: 152, avgRiskScore: 34.0 },
+  { month: "Apr 2026", screenedWorks: 18432, flaggedAnomalies: 161, avgRiskScore: 34.8 },
+];
+
 export const RiskTrendChart: React.FC<RiskTrendChartProps> = ({ data }) => {
   const [timeRange, setTimeRange] = useState<"7D" | "30D" | "3M" | "1Y">("1Y");
 
-  // Filter or slice based on time range
-  const displayData = timeRange === "7D" ? data.slice(-3) : timeRange === "30D" ? data.slice(-4) : timeRange === "3M" ? data.slice(-6) : data;
+  const safeData = data && Array.isArray(data) && data.length > 0 ? data : DEFAULT_TREND_DATA;
+  const displayData =
+    timeRange === "7D"
+      ? safeData.slice(-3)
+      : timeRange === "30D"
+      ? safeData.slice(-4)
+      : timeRange === "3M"
+      ? safeData.slice(-6)
+      : safeData;
 
   return (
     <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between h-full">

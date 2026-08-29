@@ -367,8 +367,39 @@ export const api = {
 
   // --- Analytics ---
   async getNationalAnalytics(): Promise<NationalAnalytics> {
-    const backendNational = await fetchFromBackend<NationalAnalytics>("/analytics/national");
-    if (backendNational) return backendNational;
+    const backendNational = await fetchFromBackend<Record<string, unknown>>("/analytics/national");
+    if (backendNational) {
+      const riskCounts = (backendNational.riskCounts || backendNational.risk_counts || {}) as Record<string, number>;
+      const riskDist = backendNational.riskDistribution;
+      const isDistObj = riskDist && typeof riskDist === "object" && !Array.isArray(riskDist) && "low" in (riskDist as object);
+
+      const normalizedDist = isDistObj
+        ? (riskDist as { low: number; medium: number; high: number; critical: number })
+        : {
+            low: riskCounts.low ?? MOCK_NATIONAL_ANALYTICS.riskDistribution.low,
+            medium: riskCounts.medium ?? MOCK_NATIONAL_ANALYTICS.riskDistribution.medium,
+            high: riskCounts.high ?? MOCK_NATIONAL_ANALYTICS.riskDistribution.high,
+            critical: riskCounts.critical ?? MOCK_NATIONAL_ANALYTICS.riskDistribution.critical,
+          };
+
+      return {
+        totalWorksMonitored: Number(backendNational.totalWorksMonitored || backendNational.total_works_monitored || MOCK_NATIONAL_ANALYTICS.totalWorksMonitored),
+        totalSanctionedCr: Number(backendNational.totalSanctionedCr || backendNational.total_sanctioned_cr || MOCK_NATIONAL_ANALYTICS.totalSanctionedCr),
+        totalExpenditureCr: Number(backendNational.totalExpenditureCr || backendNational.total_disbursed_cr || backendNational.total_expenditure_cr || MOCK_NATIONAL_ANALYTICS.totalExpenditureCr),
+        highRiskCount: Number(backendNational.highRiskCount || riskCounts.high || MOCK_NATIONAL_ANALYTICS.highRiskCount),
+        criticalRiskCount: Number(backendNational.criticalRiskCount || riskCounts.critical || MOCK_NATIONAL_ANALYTICS.criticalRiskCount),
+        flaggedValueCr: Number(backendNational.flaggedValueCr || backendNational.totalFlaggedRiskValueCr || backendNational.total_flagged_risk_value_cr || MOCK_NATIONAL_ANALYTICS.flaggedValueCr),
+        riskDistribution: normalizedDist,
+        monthlyTrends:
+          Array.isArray(backendNational.monthlyTrends) && backendNational.monthlyTrends.length > 0
+            ? (backendNational.monthlyTrends as NationalAnalytics["monthlyTrends"])
+            : MOCK_NATIONAL_ANALYTICS.monthlyTrends,
+        categoryBreakdown:
+          Array.isArray(backendNational.categoryBreakdown) && backendNational.categoryBreakdown.length > 0
+            ? (backendNational.categoryBreakdown as NationalAnalytics["categoryBreakdown"])
+            : MOCK_NATIONAL_ANALYTICS.categoryBreakdown,
+      };
+    }
     return MOCK_NATIONAL_ANALYTICS;
   },
 

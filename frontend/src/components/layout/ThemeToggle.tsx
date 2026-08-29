@@ -1,35 +1,36 @@
 "use client";
 
-import React, { useSyncExternalStore } from "react";
+import React, { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 
-function subscribe(callback: () => void) {
-  window.addEventListener("storage", callback);
-  return () => window.removeEventListener("storage", callback);
-}
-
-function getSnapshot() {
-  if (typeof window === "undefined") return false;
-  return document.documentElement.classList.contains("dark");
-}
-
-function getServerSnapshot() {
-  return false;
-}
-
 export const ThemeToggle: React.FC<{ className?: string }> = ({ className = "" }) => {
-  const isDark = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const isCurrentlyDark = document.documentElement.classList.contains("dark");
+    setIsDark(isCurrentlyDark);
+    setMounted(true);
+  }, []);
 
   const toggleTheme = () => {
-    if (isDark) {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("mplads_theme", "light");
-    } else {
+    const isNowDark = !document.documentElement.classList.contains("dark");
+    if (isNowDark) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("mplads_theme", "dark");
+      setIsDark(true);
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("mplads_theme", "light");
+      setIsDark(false);
     }
-    window.dispatchEvent(new Event("storage"));
   };
+
+  if (!mounted) {
+    return (
+      <div className={`w-8 h-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 ${className}`} />
+    );
+  }
 
   return (
     <button
