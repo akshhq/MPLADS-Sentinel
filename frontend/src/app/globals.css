@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222 47% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.75rem;
+
+    /* Semantic Risk Variables */
+    --risk-low: 158 64% 45%;
+    --risk-low-bg: 152 76% 97%;
+    --risk-medium: 38 92% 50%;
+    --risk-medium-bg: 48 100% 96%;
+    --risk-high: 25 95% 53%;
+    --risk-high-bg: 33 100% 96%;
+    --risk-critical: 347 77% 50%;
+    --risk-critical-bg: 355 100% 97%;
+  }
+
+  .dark {
+    --background: 222 47% 7%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 10%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 10%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
+    /* Dark Semantic Risk Variables */
+    --risk-low: 158 64% 52%;
+    --risk-low-bg: 160 84% 10%;
+    --risk-medium: 38 92% 56%;
+    --risk-medium-bg: 35 90% 12%;
+    --risk-high: 25 95% 58%;
+    --risk-high-bg: 20 90% 12%;
+    --risk-critical: 347 77% 58%;
+    --risk-critical-bg: 350 85% 12%;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.6);
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(30, 41, 59, 0.8);
+}
+
+/* Subtle Shimmer for Skeletons */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(226, 232, 240, 0.2) 25%, rgba(226, 232, 240, 0.5) 50%, rgba(226, 232, 240, 0.2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+.dark .animate-shimmer {
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0.2) 25%, rgba(30, 41, 59, 0.5) 50%, rgba(30, 41, 59, 0.2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Print Styles for Investigation Brief */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
