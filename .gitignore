@@ -1,5 +1,5 @@
 # ====================================================================
-# MPLADS Sentinel - Monorepo / Root .gitignore
+# MPLADS Sentinel - Monorepo / Application .gitignore
 # ====================================================================
 
 # --------------------------------------------------------------------
@@ -11,7 +11,7 @@ node_modules/
 .pnp.*
 
 # --------------------------------------------------------------------
-# Compressed Archives & Large Bundles (e.g. zip backups)
+# Compressed Archives & Large Media / Audio Bundles
 # --------------------------------------------------------------------
 *.zip
 *.tar
@@ -20,6 +20,11 @@ node_modules/
 *.rar
 *.7z
 *.iso
+*.wav
+*.ogg
+*.mp3
+*.mp4
+*.mkv
 frontend.zip
 backend.zip
 
@@ -56,6 +61,10 @@ dist/
 # --------------------------------------------------------------------
 # Uploads, Temporary & Cache Files
 # --------------------------------------------------------------------
+"New folder"/
+"New folder"/**
+New_folder/
+New_folder/**
 uploads/*
 !uploads/.gitkeep
 backend/uploads/*
@@ -69,6 +78,18 @@ tmp/
 .cache/
 */.cache/
 .turbo/
+
+# --------------------------------------------------------------------
+# Python Virtual Environments & Caches (AI Engine)
+# --------------------------------------------------------------------
+.venv/
+*/.venv/
+venv/
+*/venv/
+__pycache__/
+*/__pycache__/
+*.py[cod]
+*.pyc
 
 # --------------------------------------------------------------------
 # Logs & Process Dumps
