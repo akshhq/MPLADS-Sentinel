@@ -1,4 +1,6 @@
 const supabaseService = require("../services/supabaseService");
+const aiEngineService = require("../services/aiEngineService");
+
 let GoogleGenAI;
 try {
   GoogleGenAI = require("@google/genai").GoogleGenAI;
@@ -35,9 +37,41 @@ exports.queryCopilot = async (req, res) => {
       activeProject = await supabaseService.getProjectById("MPL-004821");
     }
 
-    const ai = getGeminiClient();
+    // 1. Try Cloud AI Engine (FastAPI on Render)
+    if (process.env.AI_ENGINE_URL) {
+      try {
+        const aiResponse = await aiEngineService.queryCopilot({
+          query: query,
+          user_role: "mospi_officer",
+          target_work_id: activeProject?.id,
+          target_district: activeProject?.district,
+          target_state: activeProject?.state,
+        });
 
-    // 1. If Gemini API Key is available, use Google GenAI
+        if (aiResponse && aiResponse.answer) {
+          return res.json({
+            success: true,
+            data: {
+              id: `COPILOT-MSG-${Date.now()}`,
+              sender: "sentinel",
+              timestamp: new Date().toISOString(),
+              content: aiResponse.answer,
+              structuredResponse: {
+                summary: aiResponse.answer,
+                guidelinesCited: aiResponse.citations?.map((c) => ({ section: c, clause: "Scheme Standard" })),
+                recommendedVerificationSteps: aiResponse.suggested_follow_ups,
+              },
+              contextProjectId: activeProject?.id,
+            },
+          });
+        }
+      } catch (aiEngineErr) {
+        console.warn("[Copilot] Cloud AI Engine fallback:", aiEngineErr.message);
+      }
+    }
+
+    // 2. If Gemini API Key is available locally, use Google GenAI
+    const ai = getGeminiClient();
     if (ai) {
       try {
         const prompt = `User Context: Active Project ${activeProject?.id || "MPL-004821"} ("${activeProject?.title || "Community Hall"}"), District: ${activeProject?.district || "New Delhi"}, State: ${activeProject?.state || "Delhi"}.
@@ -85,7 +119,7 @@ Rules:
       }
     }
 
-    // 2. Deterministic Rule-Based Fallback
+    // 3. Deterministic Grounded Fallback
     let responseSummary = "";
     let riskSignals = [];
     let evidenceSources = [];
