@@ -9,6 +9,7 @@
     "seed": "node scripts/seed_supabase.js"
   },
   "dependencies": {
+    "@google/genai": "^2.19.0",
     "@supabase/storage-js": "^2.7.0",
     "@supabase/supabase-js": "^2.49.1",
     "cors": "^2.8.5",

@@ -1,4 +1,21 @@
 const supabaseService = require("../services/supabaseService");
+let GoogleGenAI;
+try {
+  GoogleGenAI = require("@google/genai").GoogleGenAI;
+} catch (e) {
+  // Graceful fallback if module not loaded
+}
+
+const getGeminiClient = () => {
+  if (process.env.GEMINI_API_KEY && GoogleGenAI) {
+    try {
+      return new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    } catch (err) {
+      console.warn("[Copilot] Gemini client init warning:", err.message);
+    }
+  }
+  return null;
+};
 
 // POST /api/copilot/query
 exports.queryCopilot = async (req, res) => {
@@ -18,6 +35,57 @@ exports.queryCopilot = async (req, res) => {
       activeProject = await supabaseService.getProjectById("MPL-004821");
     }
 
+    const ai = getGeminiClient();
+
+    // 1. If Gemini API Key is available, use Google GenAI
+    if (ai) {
+      try {
+        const prompt = `User Context: Active Project ${activeProject?.id || "MPL-004821"} ("${activeProject?.title || "Community Hall"}"), District: ${activeProject?.district || "New Delhi"}, State: ${activeProject?.state || "Delhi"}.
+Sanctioned Amount: ₹${activeProject?.financials?.sanctionedAmount || "35,00,000"}, Disbursed: ₹${activeProject?.financials?.paidDisbursedAmount || "30,80,000"} (Progress: Financial ${activeProject?.financialProgress || 88}%, Physical ${activeProject?.physicalProgress || 52}%).
+
+User Question: "${query}"`;
+
+        const response = await ai.models.generateContent({
+          model: "gemini-2.0-flash",
+          contents: prompt,
+          config: {
+            systemInstruction: `You are MPLADS Sentinel AI Copilot, the official audit intelligence assistant for MoSPI.
+Rules:
+1. Always cite exact statutory clauses: MPLADS Guidelines 2023 (§3.4 milestone releases, §2.6 sanction turnaround, Annexure-II prohibited works) and GFR 2017 (Rule 130, 157, 238).
+2. For progress gaps, reference the Physical-Financial Divergence gap.
+3. Recommend actionable verification steps (e.g. Field inspection order, MB book audit, GFR 157 inquiry).
+4. Keep answers crisp and structured with bullet points.`,
+            temperature: 0.2,
+          },
+        });
+
+        return res.json({
+          success: true,
+          data: {
+            id: `COPILOT-MSG-${Date.now()}`,
+            sender: "sentinel",
+            timestamp: new Date().toISOString(),
+            content: response.text,
+            structuredResponse: {
+              summary: response.text,
+              guidelinesCited: [
+                { section: "MPLADS Guidelines 2023", clause: "Section 3.4 & Annexure-II" },
+                { section: "GFR 2017", clause: "Rule 130 / 157 / 238" },
+              ],
+              recommendedVerificationSteps: [
+                "Issue Geotagged Site Verification Order.",
+                "Reconcile PFMS treasury releases against certified contractor measurement books.",
+              ],
+            },
+            contextProjectId: activeProject?.id,
+          },
+        });
+      } catch (geminiError) {
+        console.warn("[Copilot] Gemini query fallback:", geminiError.message);
+      }
+    }
+
+    // 2. Deterministic Rule-Based Fallback
     let responseSummary = "";
     let riskSignals = [];
     let evidenceSources = [];
@@ -25,7 +93,7 @@ exports.queryCopilot = async (req, res) => {
     let recommendedSteps = [];
 
     if (q.includes("why") && (q.includes("risk") || q.includes("flagged") || q.includes("mpl-004821"))) {
-      responseSummary = `Project ${activeProject?.id} ("${activeProject?.title}") is prioritized as Critical Risk (87/100) due to 5 correlated multi-source anomalies: severe financial/physical progress divergence, perceptual image reuse, RCC structural milestone delay, high spatial duplicate overlap with MPL-004822, and final bill amount exceeding sanctioned ceiling.`;
+      responseSummary = `Project ${activeProject?.id} ("${activeProject?.title}") is prioritized as Critical Risk (87/100) due to 5 correlated multi-source anomalies: severe financial/physical progress divergence (36% gap), perceptual image reuse, RCC structural milestone delay, high spatial duplicate overlap with MPL-004822, and final bill amount exceeding sanctioned ceiling.`;
       riskSignals = [
         {
           signal: "Financial / Physical Progress Divergence (36% Gap)",
@@ -81,23 +149,6 @@ exports.queryCopilot = async (req, res) => {
       recommendedSteps = [
         "Open Digital Project Twin for MPL-004821 and MPL-005104.",
         "Generate formal audit inquiry into advance fund retention by implementing agencies.",
-      ];
-    } else if (q.includes("duplicate") || q.includes("overlap") || q.includes("village khera")) {
-      responseSummary = "Sentinel NLP & Geospatial engine flagged potential scope overlap between MPL-004821 ('Community Hall at Village Khera') and MPL-004822 ('Community Centre at Village Khera Ext'). SBERT semantic similarity is 92.4% with geographic proximity under 450 meters.";
-      riskSignals = [
-        {
-          signal: "Spatial & Scope Duplication Cluster",
-          severity: "high",
-          description: "Both projects sanctioned in the same financial year under identical implementing agency (DSIIDC).",
-        },
-      ];
-      evidenceSources = [
-        { id: "MPL-004821", type: "project", title: "Village Khera Community Hall" },
-        { id: "MPL-004822", type: "project", title: "Village Khera Ext Community Centre" },
-      ];
-      recommendedSteps = [
-        "Compare Cadastral Revenue plot numbers.",
-        "Verify if two distinct community structures are legitimately required in the same ward.",
       ];
     } else {
       responseSummary = `Based on grounded analysis of ${activeProject?.id || "the monitored works"}, Sentinel evaluated all financial transactions, milestone submissions, document OCR extractions, and perceptual computer vision features. What specific verification aspect or guideline check would you like me to analyze?`;
