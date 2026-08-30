@@ -1,6 +1,4 @@
-const path = require("path");
-const fs = require("fs");
-const { loadCSVFile, getAvailableDatasetsMeta, DATASETS_DIR } = require("../utils/csvLoader");
+const { loadCSVFile, getAvailableDatasetsMeta } = require("../utils/csvLoader");
 
 // GET /api/datasets
 exports.getDatasets = async (req, res) => {
