@@ -543,10 +543,19 @@ export const api = {
         let responseSummary = "";
         let riskSignals = [];
         let evidenceSources = [];
-        let guidelinesCited = [];
-        let recommendedSteps = [];
-
-        if (q.includes("why") && (q.includes("risk") || q.includes("flagged") || q.includes("mpl-004821"))) {
+        if (q === "hello" || q === "hi" || q === "hey" || q === "namaste" || q.includes("hello") || q.includes("good morning")) {
+            responseSummary = `Greetings! I am MPLADS Sentinel AI Copilot, your official surveillance, risk intelligence, and statutory compliance assistant for the Ministry of Statistics and Programme Implementation (MoSPI).\n\nI can assist you with investigating project risk scores, identifying physical-financial divergence gaps, checking duplicate proposals across Lok Sabha & Rajya Sabha, and citing official MPLADS 2023 & GFR 2017 statutory guidelines. How can I assist your audit investigation today?`;
+            guidelinesCited = [
+                { section: "MPLADS Guidelines 2023", clause: "Official Scheme Manual", text: "Standard operating framework for MoSPI and District Authorities." },
+            ];
+            recommendedSteps = [
+                `Ask: "Why is ${activeProject?.id || "MPL-004821"} high risk?"`,
+                "Ask: 'Show projects where spending >80% and physical progress <50%'",
+                "Ask: 'What duplicate scopes exist in New Delhi district?'",
+                "Ask: 'What statutory guidelines apply to milestone fund retention?'",
+            ];
+        }
+        else if (q.includes("why") && (q.includes("risk") || q.includes("flagged") || q.includes("mpl-004821"))) {
             responseSummary = `Project ${activeProject?.id} ("${activeProject?.title}") is prioritized as Critical Risk (87/100) due to 5 correlated multi-source anomalies: severe financial/physical progress divergence (36% gap), perceptual image reuse (99.4% hash match), RCC structural milestone delay, high spatial duplicate overlap with MPL-004822, and final bill amount exceeding sanctioned ceiling.`;
             riskSignals = [
                 {

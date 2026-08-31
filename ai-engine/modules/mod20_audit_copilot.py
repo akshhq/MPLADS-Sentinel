@@ -28,7 +28,8 @@ Operating Guidelines:
    - Central Vigilance Commission (CVC) Procurement Guidelines.
 2. For financial velocity and progress divergence, explain the Physical-Financial Divergence gap: δ = (Financial Progress % - Physical Progress %).
 3. Provide crisp, structured, and authoritative responses with clear bullet points.
-4. Suggest concrete next audit actions (e.g. Issue Geotagged Physical Inspection Warrant, freeze Running Account bill disbursements, audit Measurement Book entries).
+4. If the user greets you (e.g. "hello", "hi", "namaste"), respond with a warm, professional, institutional greeting, introducing yourself as the MoSPI Sentinel AI Copilot and outlining how you can assist their audit verification.
+5. Suggest concrete next audit actions (e.g. Issue Geotagged Physical Inspection Warrant, freeze Running Account bill disbursements, audit Measurement Book entries).
 """
 
 
@@ -86,9 +87,9 @@ class AuditCopilot:
                     citations=citations,
                     matched_works=[],
                     suggested_follow_ups=[
-                        "Show projects with >35% physical-financial divergence gap",
-                        "Check contractor bill splitting under GFR Rule 157",
-                        "Explain the 8-dimension weighted composite risk formula",
+                        "Why is project MPL-004821 prioritized as high risk?",
+                        "Show projects where spending >80% and physical progress <50%",
+                        "What statutory guidelines apply to milestone fund retention?",
                     ],
                     confidence=0.98,
                 )
@@ -104,7 +105,27 @@ class AuditCopilot:
         citations = []
         follow_ups = []
 
-        if "divergence" in q or "progress gap" in q or "disbursed vs physical" in q or "spending" in q:
+        if q in ["hello", "hi", "hey", "namaste", "good morning", "good afternoon", "greetings", "hello sentinel"]:
+            intent = "greeting_intent"
+            citations = [
+                "MPLADS Guidelines 2023 (MoSPI Official Manual)",
+                "National Surveillance & Risk Intelligence Standard §1.1",
+            ]
+            answer = (
+                "Greetings! I am **MPLADS Sentinel AI Copilot**, your official surveillance, risk intelligence, and statutory compliance assistant for the Ministry of Statistics and Programme Implementation (MoSPI).\n\n"
+                "I can assist you with:\n"
+                "• **Project Risk Analysis**: Investigating multi-source anomaly scores and perceptual photo reuse.\n"
+                "• **Progress Divergence**: Detecting works where expenditure exceeds certified physical milestones.\n"
+                "• **Statutory Compliance**: Checking GFR 2017 Rules 130/157/238 and MPLADS 2023 Guidelines.\n"
+                "• **Duplicate Detection**: Identifying overlapping proposals across Lok Sabha and Rajya Sabha.\n\n"
+                "How can I assist your audit investigation today?"
+            )
+            follow_ups = [
+                "Why is project MPL-004821 prioritized as high risk?",
+                "Show projects where spending >80% and physical progress <50%",
+                "Identify duplicate scopes flagged in New Delhi district",
+            ]
+        elif "divergence" in q or "progress gap" in q or "disbursed vs physical" in q or "spending" in q:
             intent = "divergence_query"
             citations = [
                 "MPLADS Guidelines 2023 §3.4 (Milestone-linked releases)",
