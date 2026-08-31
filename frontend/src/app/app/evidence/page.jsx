@@ -154,6 +154,14 @@ export default function EvidenceRepositoryPage() {
 
     setEvidenceList([newEvidenceItem, ...evidenceList]);
     setUploadSuccess(`Evidence item ${newEvidenceItem.id} uploaded and fingerprinted with SHA-256 successfully.`);
+
+    // Persist to backend and Supabase database
+    try {
+      api.uploadEvidence(newEvidenceItem);
+    } catch (err) {
+      console.warn("[Upload Evidence Persist Warning]", err);
+    }
+
     setTimeout(() => {
       setIsUploadOpen(false);
       setUploadSuccess(null);

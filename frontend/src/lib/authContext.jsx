@@ -129,6 +129,98 @@ export const ROLE_PERMISSIONS = {
 };
 
 /**
+ * Strict Route Protection Matrix (Enforcing Section 11 & 12 of RBAC Specification)
+ * Prevents URL tampering and unauthorized access to restricted features.
+ */
+export const ROLE_ALLOWED_ROUTES = {
+  mospi_officer: [
+    "/app",
+    "/app/command-center",
+    "/app/analytics",
+    "/app/projects",
+    "/app/risk",
+    "/app/investigations",
+    "/app/evidence",
+    "/app/copilot",
+    "/app/data",
+  ],
+  state_nodal_authority: [
+    "/app",
+    "/app/command-center",
+    "/app/analytics",
+    "/app/projects",
+    "/app/risk",
+    "/app/evidence",
+    "/app/copilot",
+    "/app/data",
+  ],
+  mp: [
+    "/app",
+    "/app/projects",
+    "/app/copilot",
+    "/app/data",
+  ],
+  implementing_agency: [
+    "/app",
+    "/app/projects",
+    "/app/evidence",
+    "/app/copilot",
+  ],
+  investigator: [
+    "/app",
+    "/app/investigations",
+    "/app/risk",
+    "/app/projects",
+    "/app/evidence",
+    "/app/copilot",
+    "/app/data",
+  ],
+  field_verification_officer: [
+    "/app",
+    "/app/evidence",
+    "/app/projects",
+    "/app/copilot",
+  ],
+  system_admin: [
+    "/app",
+    "/app/command-center",
+    "/app/data",
+    "/app/copilot",
+    "/app/projects",
+  ],
+};
+
+export const ROLE_DEFAULT_ROUTES = {
+  mospi_officer: "/app/command-center",
+  state_nodal_authority: "/app/command-center",
+  mp: "/app/projects",
+  implementing_agency: "/app/projects",
+  investigator: "/app/investigations",
+  field_verification_officer: "/app/evidence",
+  system_admin: "/app/command-center",
+};
+
+export const isRouteAllowed = (role, pathname) => {
+  if (!role) return false;
+  // Public or universal root routes
+  if (
+    !pathname ||
+    pathname === "/app" ||
+    pathname === "/login" ||
+    pathname === "/" ||
+    pathname === "/about" ||
+    pathname === "/methodology" ||
+    pathname === "/how-it-works" ||
+    pathname === "/research" ||
+    pathname === "/transparency"
+  ) {
+    return true;
+  }
+  const allowedPrefixes = ROLE_ALLOWED_ROUTES[role] || ["/app"];
+  return allowedPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(prefix + "/") || pathname.startsWith(prefix + "#"));
+};
+
+/**
  * 7 Official Institutional Stakeholder Profiles (Strict RBAC Master)
  */
 export const INITIAL_INSTITUTIONAL_USERS = [

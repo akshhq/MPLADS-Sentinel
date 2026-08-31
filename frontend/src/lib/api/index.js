@@ -8,6 +8,7 @@ import { supabase } from "../supabaseClient";
 // In-memory fallback state
 const investigationsStore = [...MOCK_INVESTIGATIONS];
 const projectsStore = [...MOCK_PROJECTS];
+const evidenceStore = [...MOCK_EVIDENCE];
 async function getAuthHeaders() {
     const headers = {};
     if (typeof window !== "undefined") {
@@ -326,6 +327,60 @@ export const api = {
         investigationsStore[idx] = updated;
         return updated;
     },
+    // --- Evidence Vault ---
+    async getEvidence(params) {
+        const queryParams = new URLSearchParams();
+        if (params?.projectId) queryParams.set("projectId", params.projectId);
+        if (params?.type && params.type !== "all") queryParams.set("type", params.type);
+        if (params?.status && params.status !== "all") queryParams.set("status", params.status);
+        if (params?.search) queryParams.set("search", params.search);
+
+        const qs = queryParams.toString();
+        const backendItems = await fetchFromBackend(`/evidence${qs ? `?${qs}` : ""}`);
+        if (backendItems && Array.isArray(backendItems)) {
+            return backendItems;
+        }
+
+        let list = [...evidenceStore];
+        if (params?.projectId) list = list.filter((e) => e.projectId === params.projectId);
+        if (params?.type && params.type !== "all") list = list.filter((e) => e.type === params.type);
+        if (params?.status && params.status !== "all") list = list.filter((e) => e.status === params.status);
+        if (params?.search) {
+            const q = params.search.toLowerCase();
+            list = list.filter((e) => e.title.toLowerCase().includes(q) || e.projectTitle.toLowerCase().includes(q) || e.id.toLowerCase().includes(q));
+        }
+        return list;
+    },
+    async getEvidenceById(id) {
+        const backendItem = await fetchFromBackend(`/evidence/${id}`);
+        if (backendItem) return backendItem;
+        return evidenceStore.find((e) => e.id.toLowerCase() === id.toLowerCase()) || null;
+    },
+    async uploadEvidence(evidenceData) {
+        const backendCreated = await fetchFromBackend("/evidence", {
+            method: "POST",
+            body: JSON.stringify(evidenceData),
+        });
+        if (backendCreated) {
+            evidenceStore.unshift(backendCreated);
+            return backendCreated;
+        }
+        evidenceStore.unshift(evidenceData);
+        return evidenceData;
+    },
+    async getAuditDossier(workId) {
+        const AI_ENGINE_URL = process.env.NEXT_PUBLIC_AI_ENGINE_URL || "https://mplads-sentinel-2.onrender.com";
+        try {
+            const res = await fetch(`${AI_ENGINE_URL}/api/v1/dossier/${encodeURIComponent(workId || "MPL-004821")}`);
+            if (res.ok) {
+                const data = await res.json();
+                return data;
+            }
+        } catch {
+            // Fallback
+        }
+        return null;
+    },
     // --- Analytics ---
     async getNationalAnalytics() {
         const backendNational = await fetchFromBackend("/analytics/national");
@@ -390,6 +445,40 @@ export const api = {
         if (backendDatasets)
             return backendDatasets;
         return MOCK_DATASETS;
+    },
+    async getNationalDatasetSummary() {
+        const backendSummary = await fetchFromBackend("/datasets/summary/national");
+        if (backendSummary)
+            return backendSummary;
+        return {
+            totalRecordsMonitored: 45806,
+            totalSanctionedWorks: 24190,
+            totalCompletedWorks: 14210,
+            totalSanctionedCr: 4820.5,
+            totalExpenditureCr: 3663.58,
+            activeRiskFlags: {
+                criticalCount: 48,
+                highCount: 113,
+                duplicateLedgerRows: 526,
+                splitPaymentStructuring: 38,
+                timelineSlaBreaches: 142,
+            },
+            cloudDatasetCatalog: {
+                lokSabhaDatasets: 6,
+                rajyaSabhaDatasets: 6,
+                totalOfficialFiles: 12,
+                storageCdn: "https://vehldtcasdnmghnoktay.supabase.co/storage/v1/object/public/datasets",
+            },
+            topStates: [
+                { state: "Uttar Pradesh", totalWorks: 3820, sanctionedCr: 720.4, completionRate: 64.2, riskCount: 18 },
+                { state: "Maharashtra", totalWorks: 2940, sanctionedCr: 580.1, completionRate: 71.5, riskCount: 12 },
+                { state: "Rajasthan", totalWorks: 2410, sanctionedCr: 490.8, completionRate: 58.9, riskCount: 14 },
+                { state: "West Bengal", totalWorks: 2180, sanctionedCr: 440.2, completionRate: 52.1, riskCount: 11 },
+                { state: "Bihar", totalWorks: 1950, sanctionedCr: 395.0, completionRate: 49.8, riskCount: 15 },
+                { state: "Tamil Nadu", totalWorks: 1870, sanctionedCr: 380.6, completionRate: 78.4, riskCount: 6 },
+            ],
+            lastComputedAt: new Date().toISOString(),
+        };
     },
     // --- AI Copilot ---
     async queryCopilot(query, context) {
