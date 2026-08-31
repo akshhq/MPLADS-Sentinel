@@ -482,24 +482,72 @@ export const api = {
     },
     // --- AI Copilot ---
     async queryCopilot(query, context) {
+        const AI_ENGINE_URL = process.env.NEXT_PUBLIC_AI_ENGINE_URL || "https://mplads-sentinel-2.onrender.com";
+        const q = (query || "").toLowerCase();
+        const activeProject = context?.projectId
+            ? projectsStore.find((p) => p.id === context.projectId)
+            : projectsStore.find((p) => p.id === "MPL-004821");
+
+        // 1. Try Live Cloud AI Engine on Render directly (FastAPI + Gemini 2.0 Flash)
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
+            const aiRes = await fetch(`${AI_ENGINE_URL}/api/v1/copilot/query`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    query: query,
+                    user_role: "mospi_officer",
+                    target_work_id: activeProject?.id,
+                    target_district: activeProject?.district,
+                    target_state: activeProject?.state,
+                }),
+                signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
+            if (aiRes.ok) {
+                const aiData = await aiRes.json();
+                if (aiData && aiData.answer) {
+                    return {
+                        id: `COPILOT-MSG-${Date.now()}`,
+                        sender: "sentinel",
+                        timestamp: new Date().toISOString(),
+                        content: aiData.answer,
+                        structuredResponse: {
+                            summary: aiData.answer,
+                            guidelinesCited: aiData.citations?.map((c) => ({
+                                section: c,
+                                clause: "Statutory Scheme Rule",
+                                text: "Official MoSPI / GFR standard clause applied to grounded audit examination.",
+                            })),
+                            recommendedVerificationSteps: aiData.suggested_follow_ups,
+                        },
+                        contextProjectId: activeProject?.id,
+                    };
+                }
+            }
+        } catch {
+            // Fallback to Express backend or local grounded rule engine
+        }
+
+        // 2. Try Express Backend
         const backendCopilot = await fetchFromBackend("/copilot/query", {
             method: "POST",
             body: JSON.stringify({ query, context }),
         });
-        if (backendCopilot)
+        if (backendCopilot) {
             return backendCopilot;
-        // In-memory fallback
-        const q = query.toLowerCase();
-        const activeProject = context?.projectId
-            ? projectsStore.find((p) => p.id === context.projectId)
-            : projectsStore.find((p) => p.id === "MPL-004821");
+        }
+
+        // 3. Robust In-Memory Grounded Statutory Intelligence Engine
         let responseSummary = "";
         let riskSignals = [];
         let evidenceSources = [];
         let guidelinesCited = [];
         let recommendedSteps = [];
+
         if (q.includes("why") && (q.includes("risk") || q.includes("flagged") || q.includes("mpl-004821"))) {
-            responseSummary = `Project ${activeProject?.id} ("${activeProject?.title}") is prioritized as Critical Risk (87/100) due to 5 correlated multi-source anomalies: severe financial/physical progress divergence, perceptual image reuse, RCC structural milestone delay, high spatial duplicate overlap with MPL-004822, and final bill amount exceeding sanctioned ceiling.`;
+            responseSummary = `Project ${activeProject?.id} ("${activeProject?.title}") is prioritized as Critical Risk (87/100) due to 5 correlated multi-source anomalies: severe financial/physical progress divergence (36% gap), perceptual image reuse (99.4% hash match), RCC structural milestone delay, high spatial duplicate overlap with MPL-004822, and final bill amount exceeding sanctioned ceiling.`;
             riskSignals = [
                 {
                     signal: "Financial / Physical Progress Divergence (36% Gap)",
@@ -553,6 +601,13 @@ export const api = {
                 { id: "MPL-004821", type: "project", title: "Community Hall at Village Khera" },
                 { id: "MPL-005104", type: "project", title: "50 Solar High-Mast Lighting Systems" },
             ];
+            guidelinesCited = [
+                {
+                    section: "MPLADS Guidelines 2023",
+                    clause: "Section 3.4",
+                    text: "No advance beyond 1st installment may be disbursed without certified MB entries and photographic evidence.",
+                },
+            ];
             recommendedSteps = [
                 "Open Digital Project Twin for MPL-004821 and MPL-005104.",
                 "Generate formal audit inquiry into advance fund retention by implementing agencies.",
@@ -571,19 +626,39 @@ export const api = {
                 { id: "MPL-004821", type: "project", title: "Village Khera Community Hall" },
                 { id: "MPL-004822", type: "project", title: "Village Khera Ext Community Centre" },
             ];
+            guidelinesCited = [
+                {
+                    section: "MPLADS Guidelines 2023",
+                    clause: "Annexure-II §3",
+                    text: "Creation of duplicate or overlapping public community infrastructure within 500 meters is non-permissible.",
+                },
+            ];
             recommendedSteps = [
                 "Compare Cadastral Revenue plot numbers.",
                 "Verify if two distinct community structures are legitimately required in the same ward.",
             ];
         }
-        else {
-            responseSummary = `Based on grounded analysis of ${activeProject?.id || "the monitored works"}, Sentinel evaluated all financial transactions, milestone submissions, document OCR extractions, and perceptual computer vision features. What specific verification aspect or guideline check would you like me to analyze?`;
+        else if (q.includes("guideline") || q.includes("statutory") || q.includes("gfr") || q.includes("rule")) {
+            responseSummary = "MPLADS Sentinel enforces statutory compliance across: (1) MPLADS Guidelines 2023 (§3.4 Milestone releases, §2.6 45-day Sanction SLA, Annexure-II Negative List of Ineligible Works), (2) General Financial Rules 2017 (Rule 130 Excess expenditure, Rule 157 Splitting of tenders, Rule 238 Utilization Certificate reconciliation), and (3) CVC Procurement Directives.";
+            guidelinesCited = [
+                { section: "MPLADS Guidelines 2023", clause: "Section 2.6 & 3.4", text: "45-day sanction SLA & milestone-linked releases" },
+                { section: "GFR 2017", clause: "Rule 130 / 157 / 238", text: "Sanction ceilings, tender splitting, and UC reconciliation" },
+            ];
             recommendedSteps = [
-                `Ask: "Why is ${activeProject?.id || "MPL-004821"} high risk?"`,
-                "Ask: 'Show projects with spending >80% and progress <50%'",
-                "Ask: 'Which vendors are associated with split payment flags?'",
+                "Check contractor bill splitting under GFR Rule 157",
+                "Audit 45-day sanction turnaround SLA compliance",
             ];
         }
+        else {
+            responseSummary = `Based on grounded analysis of ${activeProject?.id || "the monitored works"} (${activeProject?.title || "MPLADS Projects"}), Sentinel evaluated all financial transactions, milestone submissions, document OCR extractions, and perceptual computer vision features. What specific verification aspect or guideline check would you like me to analyze?`;
+            recommendedSteps = [
+                `Ask: "Why is ${activeProject?.id || "MPL-004821"} high risk?"`,
+                "Ask: 'Show projects where spending >80% and physical progress <50%'",
+                "Ask: 'Identify duplicate scopes flagged in New Delhi district'",
+                "Ask: 'What statutory guidelines apply to milestone fund retention?'",
+            ];
+        }
+
         return {
             id: `COPILOT-MSG-${Date.now()}`,
             sender: "sentinel",
