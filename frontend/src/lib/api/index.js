@@ -61,6 +61,13 @@ async function fetchFromBackend(path, options) {
     }
     return null;
 }
+function getActiveUserRole() {
+    if (typeof window !== "undefined") {
+        return localStorage.getItem("mplads_demo_role") || "mospi_officer";
+    }
+    return "mospi_officer";
+}
+
 export const api = {
     // --- Projects ---
     async getProjects(params) {
@@ -86,6 +93,20 @@ export const api = {
         }
         // In-memory fallback
         let list = [...projectsStore];
+        // Role-based jurisdictional & data scope filtering
+        const currentRole = getActiveUserRole();
+        if (currentRole === "field_verification_officer") {
+            list = list.filter((p) => p.district?.toLowerCase() === "new delhi" || p.id === "MPL-004821" || p.id === "MPL-004822");
+        } else if (currentRole === "implementing_agency") {
+            list = list.filter((p) => p.implementingAgency?.toLowerCase().includes("dsiidc") || p.id === "MPL-004821" || p.id === "MPL-004822");
+        } else if (currentRole === "mp") {
+            list = list.filter((p) => p.district?.toLowerCase() === "new delhi" || p.constituency?.toLowerCase().includes("new delhi"));
+        } else if (currentRole === "state_nodal_authority") {
+            list = list.filter((p) => p.state?.toLowerCase() === "rajasthan" || p.id === "MPL-004821");
+        } else if (currentRole === "investigator") {
+            list = list.filter((p) => (p.risk?.score ?? 0) >= 50 || p.investigationCaseId);
+        }
+
         if (params?.search) {
             const q = params.search.toLowerCase();
             list = list.filter((p) => p.id.toLowerCase().includes(q) ||
@@ -134,6 +155,17 @@ export const api = {
         if (backendEvidence)
             return backendEvidence;
         let list = [...MOCK_EVIDENCE];
+
+        // Role-based evidence scoping
+        const currentRole = getActiveUserRole();
+        if (currentRole === "field_verification_officer") {
+            list = list.filter((e) => e.type === "image");
+        } else if (currentRole === "implementing_agency") {
+            list = list.filter((e) => e.type === "document" || e.type === "invoice" || e.type === "payment");
+        } else if (currentRole === "investigator") {
+            list = list.filter((e) => e.status === "conflict" || e.status === "flagged");
+        }
+
         if (params?.projectId)
             list = list.filter((e) => e.projectId.toLowerCase() === params.projectId?.toLowerCase());
         if (params?.type && params.type !== "all")
@@ -159,7 +191,15 @@ export const api = {
         const backendCases = await fetchFromBackend(`/investigations?${queryParams.toString()}`);
         if (backendCases)
             return backendCases;
+        const currentRole = getActiveUserRole();
+        // RBAC: Implementing Agencies and MPs cannot view confidential vigilance inquiry dossiers
+        if (currentRole === "mp" || currentRole === "implementing_agency") {
+            return [];
+        }
         let list = [...investigationsStore];
+        if (currentRole === "field_verification_officer") {
+            list = list.filter((c) => c.status === "evidence_requested" || (c.district || "").toLowerCase() === "new delhi");
+        }
         if (params?.status && params.status !== "all")
             list = list.filter((c) => c.status === params.status);
         if (params?.priority && params.priority !== "all")
@@ -446,9 +486,16 @@ export const api = {
     // --- Datasets ---
     async getDatasets() {
         const backendDatasets = await fetchFromBackend("/datasets");
-        if (backendDatasets)
-            return backendDatasets;
-        return MOCK_DATASETS;
+        let list = backendDatasets || MOCK_DATASETS;
+        const currentRole = getActiveUserRole();
+        if (currentRole === "mp") {
+            list = list.filter((d) => d.id?.includes("REC") || d.id?.includes("SANC") || d.id?.includes("COMP") || d.name?.includes("Lok Sabha"));
+        } else if (currentRole === "field_verification_officer") {
+            list = list.filter((d) => d.id?.includes("COMP") || d.name?.includes("Completed") || d.id?.includes("SANC"));
+        } else if (currentRole === "implementing_agency") {
+            list = list.filter((d) => d.id?.includes("SANC") || d.name?.includes("Sanctioned") || d.name?.includes("Limit"));
+        }
+        return list;
     },
     async getNationalDatasetSummary() {
         const backendSummary = await fetchFromBackend("/datasets/summary/national");

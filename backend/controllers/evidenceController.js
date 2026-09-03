@@ -5,7 +5,8 @@ const { supabase, isConfigured } = require("../config/supabase");
 exports.getEvidence = async (req, res) => {
   try {
     const { projectId, type, status, search } = req.query;
-    const items = await supabaseService.getEvidence({ projectId, type, status, search });
+    const userRole = req.user?.role || req.profile?.role || req.headers["x-demo-role"] || req.headers["x-user-role"];
+    const items = await supabaseService.getEvidence({ projectId, type, status, search, userRole });
     res.json({ success: true, count: items.length, data: items });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

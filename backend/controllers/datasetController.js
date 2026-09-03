@@ -4,9 +4,21 @@ const { loadCSVFile, getAvailableDatasetsMeta, parseCurrency } = require("../uti
 exports.getDatasets = async (req, res) => {
   try {
     const metaList = getAvailableDatasetsMeta();
+    const userRole = req.user?.role || req.profile?.role || req.headers["x-demo-role"] || req.headers["x-user-role"] || "mospi_officer";
+
+    let filteredMetaList = metaList;
+    if (userRole === "mp") {
+      filteredMetaList = metaList.filter((m) => m.house === "Lok Sabha" || m.category === "recommendations" || m.category === "limits");
+    } else if (userRole === "state_nodal_authority") {
+      filteredMetaList = metaList.filter((m) => m.category === "sanctions" || m.category === "completed" || m.category === "calamity");
+    } else if (userRole === "field_verification_officer") {
+      filteredMetaList = metaList.filter((m) => m.category === "completed" || m.category === "sanctions");
+    } else if (userRole === "implementing_agency") {
+      filteredMetaList = metaList.filter((m) => m.category === "sanctions" || m.category === "limits");
+    }
 
     const formatted = await Promise.all(
-      metaList.map(async (meta) => {
+      filteredMetaList.map(async (meta) => {
         const sampleRows = await loadCSVFile(meta.filename, 5);
         const columns =
           sampleRows.length > 0

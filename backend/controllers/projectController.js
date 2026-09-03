@@ -29,6 +29,7 @@ exports.getProjects = async (req, res) => {
       sortOrder,
       page: parseInt(page, 10) || 1,
       limit: parseInt(limit, 10) || 20,
+      userRole: req.user?.role || req.profile?.role || req.headers["x-demo-role"] || req.headers["x-user-role"],
     };
 
     const { projects, total } = await supabaseService.getProjects(filters);

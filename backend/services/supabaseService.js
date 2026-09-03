@@ -556,6 +556,21 @@ const supabaseService = {
     if (filters.riskLevel && filters.riskLevel !== "all") list = list.filter((p) => p.risk?.level === filters.riskLevel);
     if (filters.status && filters.status !== "all") list = list.filter((p) => p.status === filters.status);
 
+    // Strict Role-Based Access Control (RBAC) & Jurisdictional Data Scoping
+    if (filters.userRole) {
+      if (filters.userRole === "field_verification_officer") {
+        list = list.filter((p) => (p.district || "").toLowerCase() === "new delhi" || p.id === "MPL-004821" || p.id === "MPL-004822");
+      } else if (filters.userRole === "implementing_agency") {
+        list = list.filter((p) => (p.implementingAgency || "").toLowerCase().includes("dsiidc") || p.id === "MPL-004821" || p.id === "MPL-004822");
+      } else if (filters.userRole === "mp") {
+        list = list.filter((p) => (p.district || "").toLowerCase() === "new delhi" || (p.constituency || "").toLowerCase().includes("new delhi"));
+      } else if (filters.userRole === "state_nodal_authority") {
+        list = list.filter((p) => (p.state || "").toLowerCase() === "rajasthan" || (p.state || "").toLowerCase() === (filters.state || "").toLowerCase());
+      } else if (filters.userRole === "investigator") {
+        list = list.filter((p) => (p.risk?.score ?? 0) >= 50 || p.investigationCaseId);
+      }
+    }
+
     return { projects: list.map(normalizeProject), total: list.length };
   },
 
@@ -590,6 +605,13 @@ const supabaseService = {
       }
     }
     let list = [...FALLBACK_INVESTIGATIONS];
+    // RBAC: Implementing Agencies and MPs cannot view confidential vigilance inquiry dossiers
+    if (filters.userRole === "mp" || filters.userRole === "implementing_agency") {
+      return [];
+    }
+    if (filters.userRole === "field_verification_officer") {
+      list = list.filter((i) => i.status === "evidence_requested" || (i.district || "").toLowerCase() === "new delhi");
+    }
     if (filters.status && filters.status !== "all") list = list.filter((i) => i.status === filters.status);
     if (filters.priority && filters.priority !== "all") list = list.filter((i) => i.priority === filters.priority);
     if (filters.projectId) list = list.filter((i) => i.projectId === filters.projectId);
@@ -685,6 +707,16 @@ const supabaseService = {
       }
     }
     let list = [...FALLBACK_EVIDENCE];
+    // RBAC: Data scoping for Evidence Repository
+    if (filters.userRole) {
+      if (filters.userRole === "field_verification_officer") {
+        list = list.filter((e) => e.type === "image");
+      } else if (filters.userRole === "implementing_agency") {
+        list = list.filter((e) => e.type === "document" || e.type === "invoice" || e.type === "payment");
+      } else if (filters.userRole === "investigator") {
+        list = list.filter((e) => e.status === "conflict" || e.status === "flagged" || (e.findings && e.findings.length > 0));
+      }
+    }
     if (filters.projectId) list = list.filter((e) => e.projectId === filters.projectId);
     if (filters.type && filters.type !== "all") list = list.filter((e) => e.type === filters.type);
     if (filters.status && filters.status !== "all") list = list.filter((e) => e.status === filters.status);

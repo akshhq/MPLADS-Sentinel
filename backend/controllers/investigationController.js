@@ -4,7 +4,8 @@ const supabaseService = require("../services/supabaseService");
 exports.getInvestigations = async (req, res) => {
   try {
     const { status, priority, projectId, search } = req.query;
-    const cases = await supabaseService.getInvestigations({ status, priority, projectId, search });
+    const userRole = req.user?.role || req.profile?.role || req.headers["x-demo-role"] || req.headers["x-user-role"];
+    const cases = await supabaseService.getInvestigations({ status, priority, projectId, search, userRole });
     res.json({ success: true, count: cases.length, data: cases });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

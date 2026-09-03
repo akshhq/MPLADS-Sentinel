@@ -22,10 +22,13 @@ import {
   Info,
   Clock,
   Building2,
+  Lock,
+  UserCheck,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { api } from "@/lib/api";
 import { formatIndianCurrency } from "@/lib/formatters";
+import { useAuth } from "@/lib/authContext";
 
 // Pre-packaged official e-SAKSHI demo test files for 1-click evaluation
 const DEMO_PRESETS = [
@@ -76,16 +79,36 @@ const DEMO_PRESETS = [
 ];
 
 export default function ESakshiIngestionPage() {
+  const { profile } = useAuth();
+  const role = profile?.role || "mospi_officer";
+
+  // Filter presets authorized for current role per RBAC specification
+  const authorizedPresets = DEMO_PRESETS.filter((p) => {
+    if (role === "field_verification_officer") return p.category === "site_photo";
+    if (role === "implementing_agency") return p.category === "contractor_bill";
+    if (role === "mp") return p.category === "registry_csv";
+    if (role === "state_nodal_authority") return p.category === "registry_csv" || p.category === "pfms_voucher";
+    return true; // mospi_officer, investigator, system_admin
+  });
+
+  const authorizedCategories = [
+    { value: "contractor_bill", label: "Invoices & Contractor RA Bills", roles: ["mospi_officer", "implementing_agency", "investigator", "state_nodal_authority", "system_admin"] },
+    { value: "site_photo", label: "Geotagged Milestone Site Photographs", roles: ["mospi_officer", "field_verification_officer", "investigator", "state_nodal_authority", "system_admin"] },
+    { value: "pfms_voucher", label: "PFMS Treasury Disbursement Vouchers", roles: ["mospi_officer", "state_nodal_authority", "investigator", "system_admin"] },
+    { value: "sanction_order", label: "Administrative & Financial Sanction Orders", roles: ["mospi_officer", "mp", "state_nodal_authority", "investigator", "system_admin"] },
+    { value: "registry_csv", label: "Master Scheme Dataset / Works CSV", roles: ["mospi_officer", "mp", "state_nodal_authority", "system_admin"] },
+  ].filter((c) => c.roles.includes(role));
+
   const [activeTab, setActiveTab] = useState("upload"); // 'upload' | 'explorer'
 
   // Ingestion Form State
-  const [selectedPreset, setSelectedPreset] = useState(DEMO_PRESETS[0]);
-  const [fileType, setFileType] = useState(DEMO_PRESETS[0].category);
-  const [projectId, setProjectId] = useState(DEMO_PRESETS[0].projectId);
-  const [projectTitle, setProjectTitle] = useState(DEMO_PRESETS[0].projectTitle);
+  const [selectedPreset, setSelectedPreset] = useState(authorizedPresets[0] || DEMO_PRESETS[0]);
+  const [fileType, setFileType] = useState(authorizedPresets[0]?.category || DEMO_PRESETS[0].category);
+  const [projectId, setProjectId] = useState(authorizedPresets[0]?.projectId || DEMO_PRESETS[0].projectId);
+  const [projectTitle, setProjectTitle] = useState(authorizedPresets[0]?.projectTitle || DEMO_PRESETS[0].projectTitle);
   const [customFile, setCustomFile] = useState(null);
-  const [fileName, setFileName] = useState(DEMO_PRESETS[0].fileName);
-  const [fileSize, setFileSize] = useState(DEMO_PRESETS[0].fileSize);
+  const [fileName, setFileName] = useState(authorizedPresets[0]?.fileName || DEMO_PRESETS[0].fileName);
+  const [fileSize, setFileSize] = useState(authorizedPresets[0]?.fileSize || DEMO_PRESETS[0].fileSize);
 
   // Pipeline Execution State
   const [isProcessing, setIsProcessing] = useState(false);
@@ -111,7 +134,22 @@ export default function ESakshiIngestionPage() {
       }
     }
     loadData();
-  }, []);
+  }, [role]);
+
+  // Sync default preset when role switches
+  useEffect(() => {
+    if (authorizedPresets.length > 0) {
+      const defaultP = authorizedPresets[0];
+      setSelectedPreset(defaultP);
+      setFileType(defaultP.category);
+      setFileName(defaultP.fileName);
+      setFileSize(defaultP.fileSize);
+      setProjectId(defaultP.projectId);
+      setProjectTitle(defaultP.projectTitle);
+      setCustomFile(null);
+      setSurveillanceResult(null);
+    }
+  }, [role]);
 
   const handleSelectPreset = (preset) => {
     setSelectedPreset(preset);
@@ -249,6 +287,45 @@ export default function ESakshiIngestionPage() {
           </div>
         </div>
 
+        {/* Stakeholder Jurisdictional & RBAC Data Scope Banner */}
+        <div className="p-3.5 rounded-2xl bg-slate-900 dark:bg-slate-950 text-slate-200 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-blue-600 text-white font-bold flex items-center justify-center shrink-0 shadow-xs text-xs">
+              {profile?.avatar_initials || "AS"}
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-white text-xs">{profile?.full_name || "Authorized Official"}</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30 uppercase">
+                  {profile?.role_label || profile?.role?.replace(/_/g, " ")}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1.5">
+                <span>Jurisdiction:</span>
+                <strong className="text-slate-200 font-medium">{profile?.jurisdiction || "National Oversight (All India)"}</strong>
+              </p>
+            </div>
+          </div>
+          <div className="text-left sm:text-right border-t sm:border-t-0 sm:border-l border-slate-800 pt-2 sm:pt-0 sm:pl-4">
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">
+              Authorized Surveillance Scope
+            </span>
+            <span className="text-xs font-bold text-emerald-400 font-mono">
+              {role === "field_verification_officer"
+                ? "Physical Inspection Geotags & Site Photos"
+                : role === "implementing_agency"
+                ? "Assigned Works & Contractor RA Invoices"
+                : role === "mp"
+                ? "Constituency Sanction Register & Proposals"
+                : role === "state_nodal_authority"
+                ? "State Works, Calamity Ledger & PFMS Releases"
+                : role === "investigator"
+                ? "Flagged Inquiries & Fraud Collusion Dossiers"
+                : "Full National Multi-Source PURVIEW (All Datasets)"}
+            </span>
+          </div>
+        </div>
+
         {/* TAB 1: UPLOAD & INGESTION PORTAL */}
         {activeTab === "upload" && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -263,14 +340,16 @@ export default function ESakshiIngestionPage() {
                       1-Click e-SAKSHI Demo Test Files
                     </h3>
                   </div>
-                  <span className="text-[10px] text-slate-400">SIH26102 Test Vectors</span>
+                  <span className="text-[10px] font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/80 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
+                    {authorizedPresets.length} Authorized Vector{authorizedPresets.length > 1 ? "s" : ""}
+                  </span>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Select a pre-configured official e-SAKSHI lifecycle artifact to verify how the 21-Module AI engine intercepts anomalies:
+                  Select an authorized e-SAKSHI lifecycle artifact for your role to verify how the 21-Module AI engine evaluates evidence:
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                  {DEMO_PRESETS.map((preset) => {
+                  {authorizedPresets.map((preset) => {
                     const Icon = preset.icon;
                     const isSelected = selectedPreset?.id === preset.id;
                     return (
@@ -323,11 +402,11 @@ export default function ESakshiIngestionPage() {
                       onChange={(e) => setFileType(e.target.value)}
                       className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                     >
-                      <option value="contractor_bill">Invoices & Contractor RA Bills</option>
-                      <option value="site_photo">Geotagged Milestone Site Photographs</option>
-                      <option value="pfms_voucher">PFMS Treasury Disbursement Vouchers</option>
-                      <option value="sanction_order">Administrative & Financial Sanction Orders</option>
-                      <option value="registry_csv">Master Scheme Dataset / Works CSV</option>
+                      {authorizedCategories.map((cat) => (
+                        <option key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -563,11 +642,11 @@ export default function ESakshiIngestionPage() {
                   <div className="pt-2">
                     <button
                       type="button"
-                      onClick={() => handleSelectPreset(DEMO_PRESETS[0])}
+                      onClick={() => handleSelectPreset(authorizedPresets[0] || DEMO_PRESETS[0])}
                       className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>Load Recommended Test Case (Village Khera RA Bill)</span>
+                      <span>Load Authorized Test Case ({authorizedPresets[0]?.label || "Demo Vector"})</span>
                     </button>
                   </div>
                 </div>
@@ -579,6 +658,17 @@ export default function ESakshiIngestionPage() {
         {/* TAB 2: MASTER SCHEME DATASET EXPLORER */}
         {activeTab === "explorer" && (
           <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Authorized Institutional Datasets ({datasets.length})
+                </span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded-full">
+                  Filtered for {profile?.role_label || profile?.role?.replace(/_/g, " ")}
+                </span>
+              </div>
+            </div>
+
             {/* Dataset Switcher Tabs */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {datasets.map((ds) => {
