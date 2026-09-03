@@ -32,6 +32,7 @@ from modules import (
 )
 from services.cloud_dataset_service import CloudDatasetService
 from services.pipeline_orchestrator import PipelineOrchestrator
+from services.semantic_engine import SemanticEngine
 
 app = FastAPI(
     title="MPLADS Sentinel AI Engine",
@@ -93,6 +94,51 @@ def analyze_work_profile(payload: Dict[str, Any]):
         return {"success": True, "data": analysis_result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/v1/semantic/similarity")
+def compute_semantic_similarity(payload: Dict[str, str]):
+    """
+    Computes 384-dimensional dense semantic similarity using all-MiniLM-L6-v2 (Sentence-BERT).
+    """
+    text1 = payload.get("text1", "")
+    text2 = payload.get("text2", "")
+    if not text1 or not text2:
+        raise HTTPException(status_code=400, detail="Both 'text1' and 'text2' are required.")
+
+    similarity = SemanticEngine.compute_similarity(text1, text2)
+    is_duplicate = similarity >= 0.82
+    return {
+        "success": True,
+        "model": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_dimensions": 384,
+        "similarity_score": round(similarity, 4),
+        "similarity_percentage": f"{similarity * 100:.1f}%",
+        "is_potential_duplicate": is_duplicate,
+        "threshold_applied": 0.82,
+        "verdict": (
+            "CRITICAL: High Semantic Duplication"
+            if similarity >= 0.90
+            else ("HIGH: Significant Overlap Detected" if is_duplicate else "NORMAL: Distinct Asset Scopes")
+        ),
+    }
+
+
+@app.post("/api/v1/semantic/rules-search")
+def search_statutory_rules(payload: Dict[str, Any]):
+    """
+    Retrieval-Augmented Generation (RAG) vector search over official MoSPI statutory rules.
+    """
+    query = payload.get("query", "")
+    top_k = int(payload.get("top_k", 3))
+    results = SemanticEngine.search_rules(query, top_k=top_k)
+    return {
+        "success": True,
+        "query": query,
+        "model": "all-MiniLM-L6-v2",
+        "matched_rules_count": len(results),
+        "results": results,
+    }
 
 
 @app.post("/api/v1/copilot/query", response_model=AuditCopilotResponse)

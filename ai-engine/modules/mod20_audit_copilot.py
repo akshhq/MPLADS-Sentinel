@@ -6,6 +6,7 @@ Responsibilities: Natural-language query interface powered by Google Gemini LLM 
 import os
 from typing import List, Dict, Any, Optional
 from models.schemas import AuditCopilotQuery, AuditCopilotResponse
+from services.semantic_engine import SemanticEngine
 
 _GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 _GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
@@ -34,7 +35,7 @@ Operating Guidelines:
 
 
 class AuditCopilot:
-    """Module 20: Grounded conversational audit intelligence for MoSPI and Vigilance officers."""
+    """Module 20: Grounded conversational audit intelligence for MoSPI and Vigilance officers with all-MiniLM-L6-v2 RAG."""
 
     @classmethod
     def get_client(cls):
@@ -53,7 +54,12 @@ class AuditCopilot:
     ) -> AuditCopilotResponse:
         client = cls.get_client()
 
-        # If Gemini API is available, generate grounded response via Gemini
+        # 1. RAG Vector Retrieval: Search statutory clauses using all-MiniLM-L6-v2 semantic embeddings
+        retrieved_rules = SemanticEngine.search_rules(query_obj.query, top_k=2)
+        retrieved_citations = [r["source"] for r in retrieved_rules]
+        retrieved_context = "\n".join([f"- {r['title']} ({r['source']}): {r['text']}" for r in retrieved_rules])
+
+        # If Gemini API is available, generate grounded response via Gemini with RAG context
         if client:
             try:
                 from google.genai import types
@@ -61,6 +67,7 @@ class AuditCopilot:
                     f"User Role: {query_obj.user_role}\n"
                     f"Jurisdiction: State={query_obj.target_state or 'All India'}, District={query_obj.target_district or 'All'}\n"
                     f"Target Work ID: {query_obj.target_work_id or 'General'}\n"
+                    f"Retrieved Statutory Grounding (all-MiniLM-L6-v2 SBERT Vector RAG):\n{retrieved_context}\n\n"
                     f"Auditor Query: {query_obj.query}"
                 )
 
@@ -74,7 +81,7 @@ class AuditCopilot:
                     ),
                 )
 
-                citations = [
+                citations = retrieved_citations + [
                     "MPLADS Guidelines 2023 (Official Scheme Manual)",
                     "General Financial Rules (GFR) 2017 Rules 130 / 157 / 238",
                     "CVC Procurement & Anti-Collusion Guidelines",
