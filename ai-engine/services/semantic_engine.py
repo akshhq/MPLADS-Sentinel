@@ -74,6 +74,38 @@ STATUTORY_KNOWLEDGE_BASE = [
 ]
 
 
+# Common Indian administrative, civil works & scheme lexicon for cross-lingual alignment
+REGIONAL_LEXICON_MAP = {
+    "सामुदायिक": "community multipurpose",
+    "भवन": "hall building centre bhawan",
+    "निर्माण": "construction erection building",
+    "सड़क": "road pathway street",
+    "मार्ग": "road highway route",
+    "प्रकाश": "lighting solar lights luminaire",
+    "शौचालय": "toilet sanitation facility",
+    "पेयजल": "drinking water pipeline supply",
+    "कल्याण": "welfare social",
+    "शाला": "school education classroom",
+    "दुरुस्ती": "repair renovation maintenance",
+    "पुनर्निर्माण": "reconstruction redevelopment",
+}
+
+
+def normalize_regional_text(text: str) -> str:
+    """Enhances regional language tokens with cross-lingual concepts for high-accuracy alignment."""
+    if not text:
+        return ""
+    words = text.split()
+    normalized = []
+    for w in words:
+        clean_w = w.strip(".,;:\"'()")
+        if clean_w in REGIONAL_LEXICON_MAP:
+            normalized.append(f"{clean_w} {REGIONAL_LEXICON_MAP[clean_w]}")
+        else:
+            normalized.append(clean_w)
+    return " ".join(normalized)
+
+
 class SemanticEngine:
     """Singleton service for all-MiniLM-L6-v2 neural embeddings and vector similarity."""
 
@@ -125,7 +157,7 @@ class SemanticEngine:
     @classmethod
     def compute_similarity(cls, text1: str, text2: str) -> float:
         """
-        Computes the cosine semantic similarity between two texts using all-MiniLM-L6-v2.
+        Computes the cosine semantic similarity between two texts using all-MiniLM-L6-v2 with cross-lingual alignment.
         Returns a float between 0.0 and 1.0.
         """
         if not text1 or not text2:
@@ -134,7 +166,10 @@ class SemanticEngine:
         if text1.strip().lower() == text2.strip().lower():
             return 1.0
 
-        embeddings = cls.encode([text1.strip(), text2.strip()])
+        t1_norm = normalize_regional_text(text1.strip())
+        t2_norm = normalize_regional_text(text2.strip())
+
+        embeddings = cls.encode([t1_norm, t2_norm])
         if embeddings.shape[0] < 2:
             return 0.0
 
