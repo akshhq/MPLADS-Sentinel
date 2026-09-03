@@ -29,16 +29,18 @@ The **Member of Parliament Local Area Development Scheme (MPLADS)** facilitates 
   └── Milestone Dependencies  └── Risk Fusion Matrix      └── Field Inspection Orders
 ```
 
-### 1.2. Scope Lock: Native 12-CSV Cloud Core vs. External & Phase 2 Roadmap
-To maintain rigorous engineering integrity, Sentinel enforces an explicit **Data Scope Lock**:
+### 1.2. e-SAKSHI Integration Model & Native Cloud Core
+MPLADS Sentinel does **not** replace the existing e-SAKSHI portal; instead, it operates as an **autonomous risk-intelligence, evidence verification, and vigilance surveillance layer** atop it. Sentinel ingests and analyzes data already generated across the project lifecycle:
 
-1. **Native Dataset Core (MVP — 45,806 Cleaned Records Across 12 CSVs)**:
+1. **Native Dataset Core (45,806 Cleaned Records Across 12 Cloud CSVs)**:
    - Hosted directly on **Supabase Cloud Storage** (`datasets` public bucket) and streamed on-demand via public CDN with in-memory LRU caching, removing local disk storage dependencies.
    - Covers 100% of tabular financial records, recommendation logs, administrative sanctions, completion status strings, vendor expenditures, and calamity consents from Lok Sabha & Rajya Sabha.
    - Powers all deterministic compliance checks, statistical cost anomalies, installment structuring detectors, duplicate work NLP, vendor concentration graph models, and SLA breach engines.
-2. **Phase 2 & External Verification Connectors (Extended Roadmap)**:
-   - **Visual & Document Binaries**: Ingests actual image pixel buffers and scanned PDF/TIFF documents with real-time SHA-256 fingerprinting.
-   - **External Statutory Registries**: Connectors to GSTN (GSTIN active status), MCA21 (Director master data / shell firm identification), PFMS (treasury clearance logs), and Bhoomi / CIMS (land title & GIS cadastral records).
+2. **e-SAKSHI Document & Evidence Ingestion Hub (`/app/data`)**:
+   - Allows authorized stakeholders to upload active lifecycle documents (PDF Sanction Orders, Contractor RA Bills, Geotagged Site Inspection Photographs, Completion Certificates).
+   - Automatically parses, extracts, and runs the multi-modal detection grid against national and peer-district baselines.
+3. **External Statutory Registries (Connectors)**:
+   - Connectors to GSTN (active status), MCA21 (Director master data / shell firm identification), PFMS (treasury clearance logs), and Bhoomi / CIMS (land title & cadastral records).
 
 ---
 
@@ -88,10 +90,12 @@ $$\begin{array}{|l|l|c|l|}
 \textbf{Category} & \textbf{Anomaly Signature} & \textbf{Data Requirement} & \textbf{Detection Methodology} \\ \hline
 \text{Financial} & \text{Split Payments / Multi-Installment Structuring} & \text{Expenditure CSV} & \text{Frequency \& IQR Installment Clustering (e.g. 52 installments)} \\ \hline
 \text{Financial} & \text{Exact Duplicate Ledger Transactions} & \text{Expenditure CSV} & \text{Composite Key Exact Match Hash (172 LS / 354 RS rows)} \\ \hline
+\text{Financial} & \text{Multi-Dimensional Velocity Outlier} & \text{Spend + Sanction} & \text{scikit-learn Isolation Forest (100 Trees, 7-dim Z-Scores)} \\ \hline
 \text{Financial} & \text{Disbursement Exceeding Sanctioned Allocation} & \text{Sanction + Spend} & \text{Cross-Dataset Arithmetic Balance Check} \\ \hline
 \text{Financial} & \text{Year-End Fund Dumping (March Spikes)} & \text{Expenditure CSV} & \text{Temporal Outlier Histogram (\% spend in Q4 vs Q1-Q3)} \\ \hline
 \text{Financial} & \text{Cross-Year Work ID Obfuscation} & \text{Spend + Sanctions} & \text{Multi-FY Temporal Sequence Graph} \\ \hline
-\text{Policy} & \text{Non-Permissible Banned Works Funded} & \text{Works Recommended} & \text{NLP Semantic Search + Prohibited Lexicon (Banned assets)} \\ \hline
+\text{Policy} & \text{Non-Permissible Banned Works Funded} & \text{Works Recommended} & \text{all-MiniLM-L6-v2 Semantic Search + Prohibited Lexicon} \\ \hline
+\text{Policy} & \text{Multilingual / Indic Scope Duplication} & \text{Works Recommended} & \text{SBERT Cross-Lingual Embeddings + Regional Lexicon (\ge 0.50)} \\ \hline
 \text{Policy} & \text{45-Day Sanction SLA Violation} & \text{Recom + Sanction} & \text{Date Delta Validation Matrix (Flag if } \Delta t > 45\text{ days)} \\ \hline
 \text{Policy} & \text{0-Day Rubber-Stamping Sanction} & \text{Recom + Sanction} & \text{Zero-day sanction timestamp detection without vetting} \\ \hline
 \text{Policy} & \text{1-Year Completion SLA Violation} & \text{Sanction + Complete} & \text{Chronological State Machine (Flag if } \Delta t > 365\text{ days)} \\ \hline
@@ -104,11 +108,13 @@ $$\begin{array}{|l|l|c|l|}
 \text{Policy} & \text{UC Non-Filing \& Aging (GFR 12-A)} & \text{Expenditure CSV} & \text{Unspent Balance Aging Analysis (>12 months post-spend)} \\ \hline
 \text{Vendor} & \text{Fuzzy Shell Vendor Name Fragmentation} & \text{Expenditure CSV} & \text{Levenshtein + Jaro-Winkler Distance (Threshold } \ge 0.88\text{)} \\ \hline
 \text{Vendor} & \text{IDA / Contractor Self-Dealing Conflict} & \text{Expenditure CSV} & \text{Graph Centrality \& Entity Matching (IDA == Vendor)} \\ \hline
-\text{Vendor} & \text{Vendor & Agency Monopoly Concentration} & \text{Expenditure CSV} & \text{Herfindahl-Hirschman Index (HHI > 2500 in District)} \\ \hline
+\text{Vendor} & \text{Bid-Rigging Syndicates \& Cartel Rings} & \text{Expenditure CSV} & \text{NetworkX Louvain Modularity Community Clustering} \\ \hline
+\text{Vendor} & \text{Vendor \& Agency Monopoly Concentration} & \text{Expenditure CSV} & \text{Herfindahl-Hirschman Index (HHI > 2500 in District)} \\ \hline
 \text{Visual} & \text{Missing Image on Completed Works} & \text{Works Completed} & \text{Null / Placeholder String Flagging (~40\% missing)} \\ \hline
-\text{Visual} & \text{Reused Image Hash across Projects (Phase 2)} & \text{Evidence Store} & \text{pHash / dHash + CLIP Vector Embeddings (Cosine } > 0.95\text{)} \\ \hline
-\text{Geospatial} & \text{EXIF Geofence Violation (>250m) (Phase 2)} & \text{GPS + Photo EXIF} & \text{Haversine Great-Circle Distance Metric} \\ \hline
-\text{Document} & \text{Altered Sanction / Invoice Layers (Phase 2)} & \text{PDF / Scans} & \text{PaddleOCR + Coordinate Bounding Box Zone Match} \\ \hline
+\text{Visual} & \text{Reused Image Across Constituencies} & \text{Evidence Store} & \text{64-bit dHash Difference Hashing (Hamming } \le 6\text{ bits / \ge 90\%)} \\ \hline
+\text{Visual} & \text{Zero-Shot Asset Category Mismatch} & \text{Evidence Store} & \text{CLIP (ViT-B/32) Cross-Modal Zero-Shot Matching} \\ \hline
+\text{Geospatial} & \text{EXIF Geofence Violation (>250m)} & \text{GPS + Photo EXIF} & \text{Haversine Great-Circle Distance Metric} \\ \hline
+\text{Document} & \text{Digital Alteration & Spliced Layers} & \text{PDF / Scans} & \text{Error Level Analysis (ELA) Compression Artifact Spikes} \\ \hline
 \hline
 \end{array}$$
 
@@ -265,27 +271,27 @@ graph TB
 $$\begin{array}{|c|l|l|l|l|c|}
 \hline
 \textbf{\#} & \textbf{AI Module} & \textbf{Input Data} & \textbf{Core Technique} & \textbf{Primary Output} & \textbf{Scope} \\ \hline
-1 & \text{Data Quality AI} & \text{Cloud CSVs / Schemas} & \text{Pydantic / Type checks / Hash sets} & \text{Data Quality Score \& Bad-row Flags} & \text{MVP} \\ \hline
-2 & \text{Entity Resolution AI} & \text{Work IDs, Names, Dates} & \text{Levenshtein + Date delta + Embeddings} & \text{Canonical Work Profile \& Link Graph} & \text{MVP} \\ \hline
-3 & \text{Proposal Intelligence} & \text{Work Description, Estimates} & \text{all-MiniLM-L6-v2 + Robust Median} & \text{Pre-Sanction Price \& Scope Risk} & \text{MVP} \\ \hline
-4 & \text{Statutory Compliance AI} & \text{Category, MP Limits, Dates} & \text{Deterministic Rules + Regex Lexicons} & \text{Guideline Violation Flags \& Citations} & \text{MVP} \\ \hline
-5 & \text{Cost Anomaly AI} & \text{Sanction, Spend, Unit rates} & \text{Isolation Forest + Local Outlier Factor} & \text{Cost Inflation / Deflation Outlier Score} & \text{MVP} \\ \hline
-6 & \text{Timeline Intelligence} & \text{Recom, Sanction, Comp dates} & \text{State Machine + Historical SLA distributions} & \text{SLA Breach Score \& Stalled Status Flag} & \text{MVP} \\ \hline
-7 & \text{Financial Intelligence} & \text{Expenditure vouchers, Amounts} & \text{IQR Spikes, Z-score, Benford's Law} & \text{Split Payment \& Exact Duplicate Alert} & \text{MVP} \\ \hline
-8 & \text{Physical-Financial Divergence} & \text{PFMS spend vs Progress \%} & \text{Ratio gap arithmetic (\delta = \%spend - \%phys)} & \text{Disbursement Advance Risk Score} & \text{MVP} \\ \hline
-9 & \text{Duplicate / Split Work AI} & \text{Descriptions, Costs, Locations} & \text{Semantic Cosine Sim + Distance threshold} & \text{Ghost Work \& Work Splitting Probability} & \text{MVP} \\ \hline
-10 & \text{Vendor Intelligence} & \text{Vendor names, Work values} & \text{Fuzzy string clustering + HHI concentration} & \text{Shell Vendor \& Monopoly Index Flag} & \text{MVP} \\ \hline
-11 & \text{Document Intelligence (OCR)} & \text{PDF Sanctions, Bills (Vault)} & \text{PaddleOCR + Bounding Box Layout match} & \text{Sanction-vs-Bill Inconsistency Flag} & \text{Phase 2} \\ \hline
-12 & \text{Document Similarity AI} & \text{Scanned Certificates (Vault)} & \text{Document Fingerprinting + OCR Embeddings} & \text{Reused Certificate Alert} & \text{Phase 2} \\ \hline
-13 & \text{Visual Verification AI} & \text{Site Photographs (Vault)} & \text{pHash, dHash, CLIP, YOLOv8 Asset Class} & \text{Reused Photo \& Stage Mismatch Alert} & \text{Phase 2} \\ \hline
-14 & \text{Geospatial Intelligence} & \text{GPS coordinates, Geofences} & \text{Haversine Distance + Spatial Clustering} & \text{Geofence Breach (>250m) Flag} & \text{Phase 2} \\ \hline
-15 & \text{Graph Intelligence} & \text{MP-Agency-Vendor Network} & \text{NetworkX Degree \& Betweenness Centrality} & \text{Collusion \& IDA Self-Dealing Subgraphs} & \text{MVP} \\ \hline
-16 & \text{Predictive Risk AI} & \text{Historical milestone velocities} & \text{Ridge Regression / Survival Analysis} & \text{Probability of Chronic Delay (>80\%)} & \text{MVP} \\ \hline
-17 & \text{Risk Fusion Engine} & \text{All module sub-scores (S_i)} & \text{Weighted Multi-Signal Confirmation Matrix} & \text{Composite Risk Score (0-100) \& Band} & \text{MVP} \\ \hline
-18 & \text{Explanation Engine} & \text{Triggered rules, Source rows} & \text{Attribution trees + Formatted Citations} & \text{Plain English Evidence Summary} & \text{MVP} \\ \hline
-19 & \text{Investigation Dossier Gen.} & \text{Work Twin, Audit logs, Hash} & \text{Dynamic PDF Template + SHA-256 Stamp} & \text{Auditor-Ready Investigation Brief} & \text{MVP} \\ \hline
-20 & \text{MoSPI Audit Copilot} & \text{Natural Language auditor query} & \text{Statutory RAG (Guidelines 2023 + SQL)} & \text{Cited Guideline Answers \& Data Cohorts} & \text{MVP} \\ \hline
-21 & \text{Active Feedback \& Learning} & \text{Auditor disposition outcomes} & \text{Bayesian Weight Updating / Supervised tune} & \text{Recalibrated Thresholds \& Drift Metrics} & \text{Phase 2} \\ \hline
+1 & \text{Data Quality AI} & \text{Cloud CSVs / Schemas} & \text{Pydantic / Type checks / Hash sets} & \text{Data Quality Score \& Bad-row Flags} & \text{Core} \\ \hline
+2 & \text{Entity Resolution AI} & \text{Work IDs, Names, Dates} & \text{Levenshtein + Date delta + Embeddings} & \text{Canonical Work Profile \& Link Graph} & \text{Core} \\ \hline
+3 & \text{Proposal Intelligence} & \text{Work Description, Estimates} & \text{all-MiniLM-L6-v2 + Robust Median} & \text{Pre-Sanction Price \& Scope Risk} & \text{Core} \\ \hline
+4 & \text{Statutory Compliance AI} & \text{Category, MP Limits, Dates} & \text{Deterministic Rules + Regex Lexicons} & \text{Guideline Violation Flags \& Citations} & \text{Core} \\ \hline
+5 & \text{Cost Anomaly AI} & \text{Sanction, Spend, Unit rates} & \text{Isolation Forest (100 Trees) + Z-Scores} & \text{Multi-Dimensional Velocity Outlier Score} & \text{Core} \\ \hline
+6 & \text{Timeline Intelligence} & \text{Recom, Sanction, Comp dates} & \text{State Machine + Historical SLA distributions} & \text{SLA Breach Score \& Stalled Status Flag} & \text{Core} \\ \hline
+7 & \text{Financial Intelligence} & \text{Expenditure vouchers, Amounts} & \text{IQR Spikes, Z-score, Benford's Law} & \text{Split Payment \& Exact Duplicate Alert} & \text{Core} \\ \hline
+8 & \text{Physical-Financial Divergence} & \text{PFMS spend vs Progress \%} & \text{Ratio gap arithmetic (\delta = \%spend - \%phys)} & \text{Disbursement Advance Risk Score} & \text{Core} \\ \hline
+9 & \text{Duplicate / Split Work AI} & \text{Descriptions, Costs, Locations} & \text{all-MiniLM-L6-v2 + Indic Lexicon + Fuzz} & \text{Cross-Lingual Scope Duplication (\ge 50\%)} & \text{Core} \\ \hline
+10 & \text{Vendor Intelligence} & \text{Vendor names, Work values} & \text{Fuzzy string clustering + HHI concentration} & \text{Shell Vendor \& Monopoly Index Flag} & \text{Core} \\ \hline
+11 & \text{Document Intelligence (OCR)} & \text{PDF Sanctions, Bills (Vault)} & \text{PaddleOCR + Bounding Box Layout match} & \text{Sanction-vs-Bill Inconsistency Flag} & \text{Core} \\ \hline
+12 & \text{Document Forensics (ELA)} & \text{Scanned Certificates & Bills} & \text{Error Level Analysis (JPEG Artifact Spikes)} & \text{Digital Alteration & Splicing Flag} & \text{Core} \\ \hline
+13 & \text{Visual Verification AI} & \text{Site Photographs (Vault)} & \text{64-bit dHash + CLIP (ViT-B/32 Zero-Shot)} & \text{Reused Photo \& Asset Mismatch Alert} & \text{Core} \\ \hline
+14 & \text{Geospatial Intelligence} & \text{GPS coordinates, Geofences} & \text{Haversine Distance + Spatial Clustering} & \text{Geofence Breach (>250m) Flag} & \text{Core} \\ \hline
+15 & \text{Graph Intelligence} & \text{MP-Agency-Vendor Network} & \text{NetworkX Louvain Modularity + HHI} & \text{Bid-Rigging Syndicates & Cartel Rings} & \text{Core} \\ \hline
+16 & \text{Predictive Risk AI} & \text{Historical milestone velocities} & \text{Ridge Regression / Survival Analysis} & \text{Probability of Chronic Delay (>80\%)} & \text{Core} \\ \hline
+17 & \text{Risk Fusion Engine} & \text{All module sub-scores (S_i)} & \text{Weighted Multi-Signal Confirmation Matrix} & \text{Composite Risk Score (0-100) \& Band} & \text{Core} \\ \hline
+18 & \text{Explanation Engine} & \text{Triggered rules, Source rows} & \text{Attribution trees + Formatted Citations} & \text{Plain English Evidence Summary} & \text{Core} \\ \hline
+19 & \text{Investigation Dossier Gen.} & \text{Work Twin, Audit logs, Hash} & \text{Dynamic PDF Template + SHA-256 Stamp} & \text{Auditor-Ready Investigation Brief} & \text{Core} \\ \hline
+20 & \text{MoSPI Audit Copilot} & \text{Natural Language auditor query} & \text{Statutory RAG (all-MiniLM-L6-v2) + Gemini} & \text{Cited Legal Answers \& Grounded SQL} & \text{Core} \\ \hline
+21 & \text{Active Feedback & Learning} & \text{Auditor disposition outcomes} & \text{Bayesian Weight Updating / Supervised tune} & \text{Recalibrated Thresholds \& Drift Metrics} & \text{Core} \\ \hline
 \end{array}$$
 
 ---
@@ -445,6 +451,20 @@ sequenceDiagram
 └─────────────┘
 ```
 
+### 7.2. Strict Institutional Role-Based Access Control (RBAC) & Jurisdictional Scoping Matrix
+
+To uphold statutory confidentiality and prevent conflict-of-interest tampering, Sentinel enforces strict jurisdictional scoping and data visibility rules across all 7 institutional personas:
+
+| Persona / Role | Jurisdictional Scope | Data Visibility & Permissions | Prohibited Actions / Blind Spots |
+|---|---|---|---|
+| **1. MoSPI Central Officer** (`mospi_central_officer`) | **All-India (National)** — 543 Lok Sabha & 250 Rajya Sabha constituencies. | Full read/write access to all 45,806 projects, nationwide anomaly heatmaps, master scheme datasets, statutory threshold configs, and executive policy reports. | Cannot bypass audit logging of manual parameter recalibrations. |
+| **2. State Nodal Authority** (`state_nodal_authority`) | **State-Level** (e.g. Rajasthan, Delhi, Maharashtra). | Filtered view of works, expenditure vouchers, and district queues within their designated State. Can authorize state-level compliance clearances. | Cannot inspect or query projects or investigations belonging to other States. |
+| **3. District Authority / DM** (`district_authority`) | **District-Level** (e.g. New Delhi, Varanasi, Jaipur). | Monitors district sanction workflows, SLA breach counters, and milestone progress. Authorizes local administrative sanctions. | Cannot alter state/national risk threshold weights. |
+| **4. Hon'ble Member of Parliament** (`mp`) | **Constituency Scope** (e.g. New Delhi PC-04). | Recommends new works, tracks execution velocity, monitors unspent quota balance, views citizen grievance status. | **Strictly Prohibited**: Cannot view confidential internal vigilance inquiry dossiers (`/app/investigations`) or auditor memos on their own works. |
+| **5. Implementing Agency (IDA)** (`implementing_agency`) | **Agency Scope** (e.g. DSIIDC, CPWD, PWD). | Uploads contractor invoices, Running Account (RA) bills, and Measurement Book (MB) records for works assigned to their agency. | **Strictly Prohibited**: Cannot view internal vigilance inquiry dossiers, collusion detection subgraphs, or case escalations targeting their own agency. |
+| **6. Field Verification Officer** (`field_verification_officer`) | **Assigned District / Site Warrants**. | Uploads geotagged mobile photos, verifies GPS coordinates within 250m geofence, and signs off on physical milestone percentages. | Only sees image evidence tasks and on-site inspection orders. |
+| **7. Vigilance Investigator / Auditor** (`investigator`) | **Cross-District Investigation Queues**. | Accesses flagged cases (Risk Score $\ge 50$), full forensic evidence chains, subpoena audit briefs, and legal dossiers. | Read-only enforcement on original e-SAKSHI source rows (cannot mutate ledger records). |
+
 ---
 
 ## 8. Role-Organized Evidence Intake & Cryptographic Vault Standard
@@ -539,13 +559,17 @@ Natural-language interface grounded exclusively in structured project records an
 
 | Layer | Technologies & Frameworks | Key Responsibilities |
 |---|---|---|
-| **Frontend** | Next.js 16, React 19 (Pure JSX), Tailwind CSS v4, Recharts, Lucide | Stakeholder Command Centers, Digital Project Twins, Role Upload Vault, Copilot |
-| **API Backend** | Node.js, Express, Multer, JWT, Morgan, Winston | RBAC enforcement, Cloud dataset streaming, Case lifecycle, API routing |
-| **Cloud Datasets** | Supabase Cloud Storage (`datasets` bucket, CDN streaming) | 12 official CSV datasets (45,806 records), In-memory LRU caching |
+| **Frontend** | Next.js 16 (App Router), React 19 (Pure JSX), Tailwind CSS v4, Recharts, Lucide React | 7 Institutional Command Centers, Project Digital Twins, Role Ingestion Hub (`/app/data`), Grounded Audit Copilot |
+| **API Backend** | Node.js, Express REST API, Multer, JWT, Morgan, Winston | Strict 7-role RBAC enforcement, Cloud dataset streaming, Case lifecycle state machine, REST endpoints |
+| **Cloud Datasets** | Supabase Cloud Storage (`datasets` bucket, CDN streaming) | 12 official CSV datasets (45,806 records across Lok Sabha & Rajya Sabha), In-memory LRU caching |
 | **Database & Auth** | Supabase PostgreSQL, Row Level Security (RLS) | Relational storage for projects, evidence chains, and audit logs |
-| **AI Microservices** | Python 3.11, FastAPI, Pydantic, Uvicorn | 21 AI modules, Isolation Forest, SBERT, NetworkX, PaddleOCR, pHash |
-| **Vector Engine** | `pgvector` / FAISS (`all-MiniLM-L6-v2`) | Semantic duplicate work search, description clustering, RAG retrieval |
-| **Evidence Vault** | SHA-256 Hashes, Pillow EXIF extraction, Supabase Storage | Cryptographic proof chains, tamper verification, role-organized intake |
+| **AI Microservices** | Python 3.14, FastAPI, Pydantic, Uvicorn | 21 AI modules, multi-modal surveillance grid, sub-second inference |
+| **NLP & Vectors** | `sentence-transformers` (`all-MiniLM-L6-v2` + Indic Lexicon Mapping) | 384-dimensional dense embeddings, multilingual & Indic duplicate work detection, statutory RAG retrieval |
+| **Tabular ML** | `scikit-learn` (IsolationForest 100 Trees, LOF) | Unsupervised multi-dimensional spending velocity outlier detection, physical-financial divergence z-scores |
+| **Vision Forensics** | 64-bit Perceptual `dHash` + `CLIP` Zero-Shot (ViT-B/32) | Cross-constituency image deduplication, zero-shot asset category verification, luminescence consistency |
+| **Document Forensics** | Error Level Analysis (ELA) + JPEG Compression Gradients | Tamper detection, digitally altered figures, and spliced stamps on contractor running bills |
+| **Graph Intelligence** | `NetworkX` Louvain Modularity Community Detection + HHI | Bid-rigging syndicates, contractor cartel rings, and vendor monopoly concentration index |
+| **AI Copilot** | Statutory Vector RAG (`all-MiniLM-L6-v2`) + Google Gemini 2.0 Flash | Grounded natural language queries citing MoSPI 2023 Guidelines and GFR 2017 Rules |
 
 ---
 
