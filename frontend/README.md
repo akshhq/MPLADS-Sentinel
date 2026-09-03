@@ -1,41 +1,32 @@
-# MPLADS Sentinel (रक्षक) — MERN Stack Application
+# MPLADS Sentinel (रक्षक) — Web Application
 
 **Beneficiary Ministry:** Ministry of Statistics and Programme Implementation (MoSPI), Government of India  
 
-MPLADS Sentinel is a full-stack **MERN** (MongoDB, Express.js, React 19 / Next.js 16, Node.js) surveillance and risk intelligence platform built for public infrastructure audit. It continuously screens project proposals, PFMS treasury disbursements, milestone execution timelines, OCR-extracted invoices, and site photographs to prioritize potentially irregular works for authorized human investigation.
+MPLADS Sentinel is a multi-source surveillance and risk intelligence platform built for public infrastructure audit. It continuously screens project proposals, PFMS treasury disbursements, milestone execution timelines, OCR-extracted invoices, and site photographs to prioritize potentially irregular works for authorized human investigation.
 
-> 📖 **Complete System Flow Documentation:** See [SYSTEM_OPERATIONAL_FLOW.md](./SYSTEM_OPERATIONAL_FLOW.md) for the in-depth architectural and operational lifecycle breakdown.
+> 📖 **Complete System Flow Documentation:** See [SYSTEM_OPERATIONAL_FLOW.md](../SYSTEM_ARCHITECTURE_AND_DETECTION_FLOW.md) for the in-depth architectural and operational lifecycle breakdown.
 
 ---
 
-## 🏛️ MERN Stack Architecture Overview
+## 🏛️ System Architecture Overview
 
-```
-┌────────────────────────────────────────────────────────┐
-│               REACT / NEXT.JS FRONTEND                 │
-│         (Port 3000 - Turbopack, Tailwind CSS v4)       │
-└──────────────────────────┬─────────────────────────────┘
-                           │ HTTP REST (JSON)
-┌──────────────────────────▼─────────────────────────────┐
-│               EXPRESS.JS / NODE.JS API                 │
-│             (Port 5000 - Modular Routes)               │
-│                                                        │
-│  • /api/projects        • /api/evidence                │
-│  • /api/investigations  • /api/copilot                 │
-│  • /api/analytics       • /api/datasets                │
-│  • /api/layout          • /api/ai                      │
-└──────────────────────────┬─────────────────────────────┘
-                           │ Mongoose ODM
-┌──────────────────────────▼─────────────────────────────┐
-│                   MONGODB DATABASE                     │
-│         (Collections: Projects, Evidence,              │
-│          Investigations, Analytics, Datasets)          │
-└────────────────────────────────────────────────────────┘
+```text
+ML & Analysis:
+Python • Pandas • NumPy • SciPy • RapidFuzz • NetworkX (Graph Analytics) • Perceptual Image Hashing (dHash) • Multi-Vector Risk Fusion (21 AI Modules)
+
+Backend & API:
+Node.js (Express.js Gateway & RBAC) • Python (FastAPI AI Engine) • Supabase PostgreSQL • Supabase Auth & Storage CDN
+
+Frontend & GIS:
+Next.js 16 • React 19 • Tailwind CSS v4 • Recharts • Haversine GIS Spatial Buffering & Proximity Clustering
+
+XAI & COPILOT:
+Google Gemini 2.0 Flash • Grounded RAG (MPLADS Guidelines 2023 & GFR 2017) • Explainable Multi-Source Evidence Lineage
 ```
 
 ---
 
-## 🚀 How to Run the MERN Stack Application
+## 🚀 How to Run the Application
 
 ### Prerequisites
 - **Node.js**: v18.18.0 or newer (Node.js 20+ recommended)

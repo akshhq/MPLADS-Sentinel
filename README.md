@@ -19,6 +19,24 @@
 
 ---
 
+## 🛠️ Architecture & Technology Stack
+
+```text
+ML & Analysis:
+Python • Pandas • NumPy • SciPy • RapidFuzz • NetworkX (Graph Analytics) • Perceptual Image Hashing (dHash) • Multi-Vector Risk Fusion (21 AI Modules)
+
+Backend & API:
+Node.js (Express.js Gateway & RBAC) • Python (FastAPI AI Engine) • Supabase PostgreSQL • Supabase Auth & Storage CDN
+
+Frontend & GIS:
+Next.js 16 • React 19 • Tailwind CSS v4 • Recharts • Haversine GIS Spatial Buffering & Proximity Clustering
+
+XAI & COPILOT:
+Google Gemini 2.0 Flash • Grounded RAG (MPLADS Guidelines 2023 & GFR 2017) • Explainable Multi-Source Evidence Lineage
+```
+
+---
+
 ## 🏗️ Monorepo Codebase Structure
 
 ```text
