@@ -7,6 +7,36 @@
 
 ---
 
+## 🔄 Operational Relationship: e-SAKSHI vs. MPLADS Sentinel
+
+```text
+┌────────────────────────────────────────────────────────┐
+│               e-SAKSHI (System of Record)              │
+│  • Work Proposals & MP Recommendations                 │
+│  • Administrative (AS) & Financial (FS) Sanctions      │
+│  • Measurement Books & Contractor RA Bills             │
+│  • Mobile Geo-tagged Milestone Site Photos             │
+│  • PFMS Treasury Vouchers & Utilization Certificates   │
+└──────────────────────────┬─────────────────────────────┘
+                           │ Data Ingestion Pipeline (Upload / API Webhooks)
+┌──────────────────────────▼─────────────────────────────┐
+│             MPLADS SENTINEL (Surveillance Layer)       │
+│  • 21-Module AI Detection Grid                         │
+│  • Multi-Source Evidence Cross-Reconciliation          │
+│  • Cost Anomaly (CPWD) & Divergence Analysis           │
+│  • Visual Deduplication (dHash 99.4%) & Geo-Fencing    │
+│  • Calibrated Composite Risk Scoring (0 to 100)        │
+│  • Prioritized Investigation Queues & Audit Briefs     │
+└────────────────────────────────────────────────────────┘
+```
+
+> **Key Architectural Principle**:  
+> **MPLADS Sentinel does NOT replace e-SAKSHI.** e-SAKSHI is the statutory transaction and workflow system. Sentinel serves as an **AI-powered surveillance, verification, and risk-intelligence layer** that consumes data generated across the project lifecycle.
+> 
+> *e-SAKSHI File Ingestion Hub:* Since live e-SAKSHI API webhooks are simulated in sandbox environments, Sentinel provides a dedicated **e-SAKSHI File Ingestion Hub** (`/app/data`) where officers and evaluators can upload lifecycle files (Sanctions, RA Bills, Site Photos, PFMS Vouchers, Master CSVs) or use **1-click official demo test files** to trigger the 21-Module AI Detection Grid in real time.
+
+---
+
 ## 🌐 Live Deployments & Cloud Endpoints
 
 | Component | Technology | Live URL |

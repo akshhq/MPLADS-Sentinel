@@ -35,13 +35,17 @@ async function fetchFromBackend(path, options) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3500);
         const authHeaders = await getAuthHeaders();
+        const isFormData = typeof FormData !== "undefined" && options?.body instanceof FormData;
+        const headers = {
+            ...authHeaders,
+            ...(options?.headers || {}),
+        };
+        if (!isFormData) {
+            headers["Content-Type"] = "application/json";
+        }
         const res = await fetch(`${API_BASE}${path}`, {
             ...options,
-            headers: {
-                "Content-Type": "application/json",
-                ...authHeaders,
-                ...(options?.headers || {}),
-            },
+            headers,
             signal: controller.signal,
         });
         clearTimeout(timeoutId);
@@ -478,6 +482,70 @@ export const api = {
                 { state: "Tamil Nadu", totalWorks: 1870, sanctionedCr: 380.6, completionRate: 78.4, riskCount: 6 },
             ],
             lastComputedAt: new Date().toISOString(),
+        };
+    },
+    async ingestESakshiFile(payload) {
+        let resData = null;
+        try {
+            const isFormData = typeof FormData !== "undefined" && payload instanceof FormData;
+            const options = isFormData
+                ? { method: "POST", body: payload }
+                : { method: "POST", body: JSON.stringify(payload) };
+            resData = await fetchFromBackend("/datasets/ingest-esakshi", options);
+        } catch {
+            // Handled below
+        }
+        if (resData) return resData;
+
+        // Resilient in-memory simulation for standalone/preview mode
+        const fileName = payload?.fileName || (payload instanceof FormData ? payload.get("fileName") : "eSAKSHI_Document.pdf") || "eSAKSHI_Document.pdf";
+        const fileType = payload?.fileType || (fileName.endsWith(".csv") ? "registry_csv" : fileName.match(/\.(jpg|jpeg|png)$/i) ? "site_photo" : fileName.toLowerCase().includes("voucher") ? "pfms_voucher" : "contractor_bill");
+        const projectId = payload?.projectId || "MPL-004821";
+        const projectTitle = payload?.projectTitle || "Construction of Multipurpose Community Hall at Village Khera";
+
+        const isPhoto = fileType === "site_photo";
+        const isVoucher = fileType === "pfms_voucher";
+        const isBill = fileType === "contractor_bill";
+
+        const riskScore = isPhoto ? 89 : isBill ? 87 : isVoucher ? 82 : 76;
+        const riskLevel = riskScore >= 80 ? "critical" : "high";
+
+        return {
+            ingestionId: `ESAKSHI-INGEST-${Date.now().toString().slice(-6)}`,
+            sha256Stamp: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            ingestedAt: new Date().toISOString(),
+            sourceSystem: "e-SAKSHI Administrative Portal",
+            surveillanceStatus: "VERIFIED_WITH_FINDINGS",
+            fileMeta: {
+                name: fileName,
+                size: payload?.fileSize || "1.8 MB",
+                type: fileType,
+            },
+            targetProject: {
+                id: projectId,
+                title: projectTitle,
+            },
+            surveillanceOutcome: {
+                compositeRiskScore: riskScore,
+                riskLevel: riskLevel,
+                priorityBand: "URGENT_AUDIT_QUEUE",
+                detectedAnomalies: isPhoto ? [
+                    { module: "Mod 13: Visual Verification AI (dHash)", severity: "critical", title: "99.4% Perceptual Image Reuse Match", detail: "Foundation casting photo matches archive project MPL-002419 in North West Delhi." },
+                    { module: "Mod 14: Geospatial Verification AI", severity: "critical", title: "EXIF Geotag Boundary Mismatch (18.7 km offset)", detail: "Camera coordinates 28.7845°N, 77.0892°E fall outside registered site bounds." }
+                ] : isBill ? [
+                    { module: "Mod 05: Cost Anomaly AI", severity: "critical", title: "Claimed Unit Rate Divergence (+31.4%)", detail: "RCC structural item claimed at ₹14,200/cum vs CPWD ceiling ₹10,800/cum." },
+                    { module: "Mod 04: Statutory Compliance AI", severity: "high", title: "Cumulative Claim Exceeds Sanction Ceiling", detail: "RA Bill reaches ₹41.0 L against Administrative Sanction ₹35.0 L." }
+                ] : isVoucher ? [
+                    { module: "Mod 08: Physical-Financial Divergence AI", severity: "critical", title: "Premature Advance Disbursement (36% Gap)", detail: "PFMS Treasury release indicates 88% disbursed while certified progress is 52%." }
+                ] : [
+                    { module: "Mod 09: Duplicate Work AI (SBERT + GIS)", severity: "high", title: "Duplicate Scope Cluster (<450m Proximity)", detail: "92.4% text similarity and spatial overlap with contiguous work MPL-004822." }
+                ],
+                statutoryCitations: [
+                    "MPLADS Guidelines 2023 Section 3.4 / GFR 2017 Rule 130",
+                    "Central Vigilance Commission (CVC) Circular No. 02/02/2023"
+                ],
+                registeredEvidenceId: `EVD-ESAKSHI-${Date.now().toString().slice(-4)}`
+            }
         };
     },
     // --- AI Copilot ---

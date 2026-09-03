@@ -11,6 +11,7 @@ import {
   BarChart3,
   Sparkles,
   Database,
+  UploadCloud,
   ShieldCheck,
   ExternalLink,
   ScanLine,
@@ -39,7 +40,7 @@ export const Sidebar = ({ onCloseMobile }) => {
           { label: "Investigations", href: "/app/investigations", icon: SearchCode, badge: "3 Urgent", badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300" },
           { label: "Analytics & Maps", href: "/app/analytics", icon: BarChart3 },
           { label: "AI Copilot", href: "/app/copilot", icon: Sparkles, badge: "AI", badgeColor: "bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300" },
-          { label: "Data Explorer", href: "/app/data", icon: Database },
+          { label: "e-SAKSHI Ingestion Hub", href: "/app/data", icon: UploadCloud, badge: "Ingest", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
         ];
 
       case "field_verification_officer":
@@ -47,6 +48,7 @@ export const Sidebar = ({ onCloseMobile }) => {
           { label: "Field Command Center", href: "/app/command-center", icon: LayoutDashboard },
           { label: "Assigned Field Inspections", href: "/app/projects", icon: ClipboardCheck, badge: "9 Tasks", badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
           { label: "Site Evidence & Geotag", href: "/app/evidence", icon: FileCheck, badge: "Upload", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
+          { label: "e-SAKSHI Ingestion Hub", href: "/app/data", icon: UploadCloud },
           { label: "Field Inquiry Notes", href: "/app/investigations", icon: SearchCode },
         ];
 
@@ -55,6 +57,7 @@ export const Sidebar = ({ onCloseMobile }) => {
           { label: "Agency Command Center", href: "/app/command-center", icon: LayoutDashboard },
           { label: "Executed Works", href: "/app/projects", icon: HardHat, badge: "26 Works", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
           { label: "Contractor Invoices & Evidence", href: "/app/evidence", icon: FileCheck, badge: "Upload", badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300" },
+          { label: "e-SAKSHI Ingestion Hub", href: "/app/data", icon: UploadCloud, badge: "Upload", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
         ];
 
       case "mp":
@@ -62,6 +65,7 @@ export const Sidebar = ({ onCloseMobile }) => {
           { label: "Constituency Command Center", href: "/app/command-center", icon: LayoutDashboard },
           { label: "Constituency Works", href: "/app/projects", icon: FolderKanban },
           { label: "Constituency Analytics", href: "/app/analytics", icon: BarChart3 },
+          { label: "e-SAKSHI Ingestion Hub", href: "/app/data", icon: UploadCloud },
           { label: "AI Project Copilot", href: "/app/copilot", icon: Sparkles, badge: "AI", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
         ];
 
@@ -74,7 +78,7 @@ export const Sidebar = ({ onCloseMobile }) => {
           { label: "Audit Investigations", href: "/app/investigations", icon: SearchCode },
           { label: "State Analytics & Maps", href: "/app/analytics", icon: BarChart3 },
           { label: "AI Copilot", href: "/app/copilot", icon: Sparkles, badge: "AI", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
-          { label: "Data Explorer", href: "/app/data", icon: Database },
+          { label: "e-SAKSHI Ingestion Hub", href: "/app/data", icon: UploadCloud },
         ];
 
       case "investigator":
@@ -85,7 +89,7 @@ export const Sidebar = ({ onCloseMobile }) => {
           { label: "Layout Similarity Studio", href: "/app/risk/documents/compare", icon: ScanLine, badge: "OCR", badgeColor: "bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300" },
           { label: "Evidence Chain Repository", href: "/app/evidence", icon: FileCheck },
           { label: "Forensic Copilot", href: "/app/copilot", icon: Sparkles, badge: "AI", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
-          { label: "Data Explorer", href: "/app/data", icon: Database },
+          { label: "e-SAKSHI Ingestion Hub", href: "/app/data", icon: UploadCloud },
         ];
 
       case "mospi_officer":
@@ -99,7 +103,7 @@ export const Sidebar = ({ onCloseMobile }) => {
           { label: "Investigations", href: "/app/investigations", icon: SearchCode, badge: "3 Urgent", badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300" },
           { label: "Analytics & Maps", href: "/app/analytics", icon: BarChart3 },
           { label: "AI Copilot", href: "/app/copilot", icon: Sparkles, badge: "AI", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
-          { label: "Data Explorer", href: "/app/data", icon: Database },
+          { label: "e-SAKSHI Ingestion Hub", href: "/app/data", icon: UploadCloud, badge: "Ingest", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
         ];
     }
   };

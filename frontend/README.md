@@ -2,9 +2,10 @@
 
 **Beneficiary Ministry:** Ministry of Statistics and Programme Implementation (MoSPI), Government of India  
 
-MPLADS Sentinel is a multi-source surveillance and risk intelligence platform built for public infrastructure audit. It continuously screens project proposals, PFMS treasury disbursements, milestone execution timelines, OCR-extracted invoices, and site photographs to prioritize potentially irregular works for authorized human investigation.
+MPLADS Sentinel is a multi-source surveillance and risk intelligence platform built for public infrastructure audit. Instead of replacing **e-SAKSHI**, Sentinel ingests and analyzes data already generated across the project lifecycle (proposals, sanction orders, contractor RA bills, geotagged milestone photos, and PFMS treasury disbursements) to prioritize irregular works for authorized human investigation.
 
-> 📖 **Complete System Flow Documentation:** See [SYSTEM_OPERATIONAL_FLOW.md](../SYSTEM_ARCHITECTURE_AND_DETECTION_FLOW.md) for the in-depth architectural and operational lifecycle breakdown.
+> 💡 **e-SAKSHI File Ingestion:** Direct live integration with e-SAKSHI is simulated via the built-in **e-SAKSHI Ingestion Hub** (`/app/data`), allowing users to upload lifecycle files or load 1-click test vectors to run the 21-Module AI Detection Grid.  
+> 📖 **Complete System Flow Documentation:** See [SYSTEM_ARCHITECTURE_AND_DETECTION_FLOW.md](../SYSTEM_ARCHITECTURE_AND_DETECTION_FLOW.md) for the in-depth architectural and operational lifecycle breakdown.
 
 ---
 

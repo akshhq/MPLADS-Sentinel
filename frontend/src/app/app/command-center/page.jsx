@@ -29,6 +29,7 @@ import {
   RefreshCw,
   ExternalLink,
   Layers,
+  UploadCloud,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { MetricCard } from "@/components/common/MetricCard";
@@ -169,6 +170,13 @@ export default function CommandCenterPage() {
             </div>
 
             <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+              <Link
+                href="/app/data"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition"
+              >
+                <UploadCloud className="w-3.5 h-3.5" />
+                <span>Ingest e-SAKSHI File</span>
+              </Link>
               <button
                 type="button"
                 onClick={loadDashboardData}
