@@ -19,11 +19,13 @@ export default function RootLayout({ children, }) {
         <script dangerouslySetInnerHTML={{
             __html: `
               try {
-                const savedTheme = localStorage.getItem('mplads_theme');
+                var savedTheme = localStorage.getItem('mplads_theme');
+                if (!savedTheme) {
+                  localStorage.setItem('mplads_theme', 'light');
+                }
+                document.documentElement.classList.remove('dark');
                 if (savedTheme === 'dark') {
                   document.documentElement.classList.add('dark');
-                } else {
-                  document.documentElement.classList.remove('dark');
                 }
               } catch (_) {}
             `,

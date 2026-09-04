@@ -385,3 +385,47 @@ exports.ingestESakshiFile = async (req, res) => {
     res.status(500).json({ success: false, message: "e-SAKSHI Ingestion Failed: " + error.message });
   }
 };
+
+// GET /api/datasets/slots - Returns 6 role-authorized document slots
+exports.getDynamicSlots = async (req, res) => {
+  try {
+    const DynamicIngestionService = require("../services/dynamicIngestionService");
+    const userRole = req.user?.role || req.profile?.role || req.headers["x-demo-role"] || req.headers["x-user-role"] || "mospi_officer";
+    const slots = DynamicIngestionService.getSlotDefinitions(userRole);
+    res.json({ success: true, count: slots.length, data: slots });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// POST /api/datasets/dynamic-ingest - Multi-slot ingestion with adaptive scoring & missing data notices
+exports.dynamicIngestFiles = async (req, res) => {
+  try {
+    const DynamicIngestionService = require("../services/dynamicIngestionService");
+    const userRole = req.user?.role || req.profile?.role || req.headers["x-demo-role"] || req.headers["x-user-role"] || "mospi_officer";
+    const house = req.body?.house || "lok_sabha";
+    const usePreset = req.body?.usePreset || null;
+
+    // Package uploaded slots from multer files
+    const uploadedSlots = {};
+    if (req.files) {
+      ["recommended", "sanctioned", "completed", "expenditure", "limits", "calamity"].forEach((slotKey) => {
+        const fieldName = `slot_${slotKey}`;
+        if (req.files[fieldName] && req.files[fieldName][0]) {
+          uploadedSlots[slotKey] = req.files[fieldName][0];
+        }
+      });
+    }
+
+    const result = await DynamicIngestionService.processDynamicIngestion({
+      house,
+      userRole,
+      uploadedSlots,
+      usePreset,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Dynamic Ingestion Failed: " + error.message });
+  }
+};

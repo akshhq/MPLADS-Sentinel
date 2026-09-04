@@ -8,6 +8,8 @@ const {
   getDatasetById,
   getNationalDatasetSummary,
   ingestESakshiFile,
+  getDynamicSlots,
+  dynamicIngestFiles,
 } = require("../controllers/datasetController");
 
 const uploadsDir = path.join(__dirname, "../uploads");
@@ -25,8 +27,19 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage, limits: { fileSize: 15 * 1024 * 1024 } });
+const upload = multer({ storage, limits: { fileSize: 25 * 1024 * 1024 } });
 
+const multiSlotUpload = upload.fields([
+  { name: "slot_recommended", maxCount: 1 },
+  { name: "slot_sanctioned", maxCount: 1 },
+  { name: "slot_completed", maxCount: 1 },
+  { name: "slot_expenditure", maxCount: 1 },
+  { name: "slot_limits", maxCount: 1 },
+  { name: "slot_calamity", maxCount: 1 },
+]);
+
+router.get("/slots", getDynamicSlots);
+router.post("/dynamic-ingest", multiSlotUpload, dynamicIngestFiles);
 router.get("/summary/national", getNationalDatasetSummary);
 router.get("/", getDatasets);
 router.post("/ingest-esakshi", upload.single("file"), ingestESakshiFile);

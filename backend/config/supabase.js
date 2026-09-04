@@ -22,16 +22,26 @@ const isValidSupabaseConfig =
   SUPABASE_ANON_KEY.length > 20 &&
   !SUPABASE_ANON_KEY.includes("your-supabase");
 
+// Validate service role key format (either standard Supabase JWT starting with eyJ or new sb_secret_ format)
+const isServiceRoleKeyValid =
+  SUPABASE_SERVICE_ROLE_KEY &&
+  (SUPABASE_SERVICE_ROLE_KEY.startsWith("eyJ") || SUPABASE_SERVICE_ROLE_KEY.startsWith("sb_secret_"));
+
+const activeKey = isServiceRoleKeyValid ? SUPABASE_SERVICE_ROLE_KEY : SUPABASE_ANON_KEY;
+
 if (isValidSupabaseConfig) {
   try {
-    supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+    supabase = createClient(SUPABASE_URL, activeKey, {
       auth: {
         persistSession: false,
         autoRefreshToken: false,
       },
     });
     isConfigured = true;
-    console.log(`[Supabase] Live client initialized for project URL: ${SUPABASE_URL}`);
+    console.log(`[Supabase] Live client initialized for project URL: ${SUPABASE_URL} (${isServiceRoleKeyValid ? "Service Role Mode" : "Standard Key Mode"})`);
+    if (!isServiceRoleKeyValid && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.warn("[Supabase] Notice: SUPABASE_SERVICE_ROLE_KEY appears to be a JWT Secret rather than a service_role API key. Using SUPABASE_ANON_KEY for queries.");
+    }
   } catch (err) {
     console.error("[Supabase Init Error]", err.message);
   }

@@ -24,13 +24,91 @@ import {
   Building2,
   Lock,
   UserCheck,
+  FileSpreadsheet,
+  Landmark,
+  Check,
+  X,
+  FileUp,
+  Activity,
+  FileQuestion,
+  SlidersHorizontal,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { api } from "@/lib/api";
 import { formatIndianCurrency } from "@/lib/formatters";
 import { useAuth } from "@/lib/authContext";
 
-// Pre-packaged official e-SAKSHI demo test files for 1-click evaluation
+// Master definition of the 6 official MPLADS document slots
+const MASTER_SLOTS = [
+  {
+    key: "recommended",
+    label: "1. Works Recommended",
+    shortTitle: "Proposals & Recommendations",
+    description: "Developmental works proposed and prioritized by Hon'ble MPs.",
+    icon: FileSpreadsheet,
+    officialFileLs: "Works Recommended (Lok Sabha).csv",
+    officialFileRs: "Works Recommended (Rajya Sabha).csv",
+    relevantRoles: ["mospi_officer", "mp", "state_nodal_authority", "investigator", "system_admin"],
+    criticalFor: "Duplicate Scope AI (Mod 09)",
+  },
+  {
+    key: "sanctioned",
+    label: "2. Works Sanctioned",
+    shortTitle: "Administrative Sanctions",
+    description: "Administratively approved projects, cost estimates, and implementing agency work orders.",
+    icon: Landmark,
+    officialFileLs: "Works Sanctioned (Lok Sabha).csv",
+    officialFileRs: "Works Sanctioned (Rajya Sabha).csv",
+    relevantRoles: ["mospi_officer", "state_nodal_authority", "mp", "implementing_agency", "investigator", "field_verification_officer", "system_admin"],
+    criticalFor: "Central Works Registry (Mod 02) & Cost Outlier AI (Mod 05)",
+  },
+  {
+    key: "completed",
+    label: "3. Works Completed",
+    shortTitle: "Completion Certificates",
+    description: "Handover inspection certificates, certified completion dates, and asset status.",
+    icon: CheckCircle2,
+    officialFileLs: "Works Completed (Lok Sabha).csv",
+    officialFileRs: "Works Completed (Rajya Sabha).csv",
+    relevantRoles: ["mospi_officer", "state_nodal_authority", "implementing_agency", "field_verification_officer", "investigator", "system_admin"],
+    criticalFor: "Physical Milestone Sign-off (Mod 08)",
+  },
+  {
+    key: "expenditure",
+    label: "4. Expenditure & Disbursements",
+    shortTitle: "Treasury Vouchers & RA Bills",
+    description: "Itemized treasury drawdowns, contractor payments, and Running Account (RA) bills.",
+    icon: BadgeIndianRupee,
+    officialFileLs: "Expenditure on Completed and On-going Works as on Date (Lok Sabha).csv",
+    officialFileRs: "Expenditure on Completed and On-going Works as on Date (Rajya Sabha).csv",
+    relevantRoles: ["mospi_officer", "state_nodal_authority", "implementing_agency", "investigator", "system_admin"],
+    criticalFor: "Physical-Financial Divergence AI (Mod 08) & Cartel Rings (Mod 15)",
+  },
+  {
+    key: "limits",
+    label: "5. Allocated Limits for Hon'ble MPs",
+    shortTitle: "MP Quota Entitlements",
+    description: "Annual statutory entitlement limits, sanctioned commitments, and unspent balances.",
+    icon: Layers,
+    officialFileLs: "Allocated Limit for Honble MPs (Lok Sabha).csv",
+    officialFileRs: "Allocated Limit for Honble MPs (Rajya Sabha).csv",
+    relevantRoles: ["mospi_officer", "state_nodal_authority", "mp", "investigator", "system_admin"],
+    criticalFor: "Statutory Compliance AI (Mod 04 - Quota Caps)",
+  },
+  {
+    key: "calamity",
+    label: "6. Calamity Consents",
+    shortTitle: "Disaster Relief Allocations",
+    description: "Special emergency contributions for declared national and state calamities.",
+    icon: ShieldAlert,
+    officialFileLs: "Amount consented for Calamity (Lok Sabha).csv",
+    officialFileRs: "Amount consented for Calamity (Rajya Sabha).csv",
+    relevantRoles: ["mospi_officer", "state_nodal_authority", "mp", "investigator", "system_admin"],
+    criticalFor: "Statutory Compliance AI (Mod 04 - Guideline §5.2)",
+  },
+];
+
+// Single artifact presets for individual file verification
 const DEMO_PRESETS = [
   {
     id: "bill_overclaim",
@@ -65,212 +143,234 @@ const DEMO_PRESETS = [
     projectTitle: "Construction of Multipurpose Community Hall at Village Khera",
     description: "88% fund disbursement recorded while certified physical progress is only 52%.",
   },
-  {
-    id: "batch_csv",
-    label: "Sanctioned Works Registry Batch (Duplicate Scope)",
-    category: "registry_csv",
-    icon: Database,
-    fileName: "eSAKSHI_Works_Sanctioned_Batch_2026.csv",
-    fileSize: "4.1 MB",
-    projectId: "MPL-004821",
-    projectTitle: "Construction of Multipurpose Community Hall at Village Khera",
-    description: "Official scheme CSV triggering <450m proximity duplicate cluster against MPL-004822.",
-  },
 ];
 
-export default function ESakshiIngestionPage() {
+export default function DynamicIngestionPage() {
   const { profile } = useAuth();
   const role = profile?.role || "mospi_officer";
 
-  // Filter presets authorized for current role per RBAC specification
-  const authorizedPresets = DEMO_PRESETS.filter((p) => {
-    if (role === "field_verification_officer") return p.category === "site_photo";
-    if (role === "implementing_agency") return p.category === "contractor_bill";
-    if (role === "mp") return p.category === "registry_csv";
-    if (role === "state_nodal_authority") return p.category === "registry_csv" || p.category === "pfms_voucher";
-    return true; // mospi_officer, investigator, system_admin
+  // Tab State: 'dynamic_slots' (Primary) | 'single_artifact' | 'explorer'
+  const [activeTab, setActiveTab] = useState("dynamic_slots");
+
+  // House Selector State
+  const [selectedHouse, setSelectedHouse] = useState("lok_sabha"); // 'lok_sabha' | 'rajya_sabha' | 'both'
+
+  // 6 Slots Upload State: { [slotKey]: { file: File | null, isPreset: boolean, fileName: string, fileSize: string } }
+  const [slotFiles, setSlotFiles] = useState({
+    recommended: null,
+    sanctioned: null,
+    completed: null,
+    expenditure: null,
+    limits: null,
+    calamity: null,
   });
 
-  const authorizedCategories = [
-    { value: "contractor_bill", label: "Invoices & Contractor RA Bills", roles: ["mospi_officer", "implementing_agency", "investigator", "state_nodal_authority", "system_admin"] },
-    { value: "site_photo", label: "Geotagged Milestone Site Photographs", roles: ["mospi_officer", "field_verification_officer", "investigator", "state_nodal_authority", "system_admin"] },
-    { value: "pfms_voucher", label: "PFMS Treasury Disbursement Vouchers", roles: ["mospi_officer", "state_nodal_authority", "investigator", "system_admin"] },
-    { value: "sanction_order", label: "Administrative & Financial Sanction Orders", roles: ["mospi_officer", "mp", "state_nodal_authority", "investigator", "system_admin"] },
-    { value: "registry_csv", label: "Master Scheme Dataset / Works CSV", roles: ["mospi_officer", "mp", "state_nodal_authority", "system_admin"] },
-  ].filter((c) => c.roles.includes(role));
-
-  const [activeTab, setActiveTab] = useState("upload"); // 'upload' | 'explorer'
-
-  // Ingestion Form State
-  const [selectedPreset, setSelectedPreset] = useState(authorizedPresets[0] || DEMO_PRESETS[0]);
-  const [fileType, setFileType] = useState(authorizedPresets[0]?.category || DEMO_PRESETS[0].category);
-  const [projectId, setProjectId] = useState(authorizedPresets[0]?.projectId || DEMO_PRESETS[0].projectId);
-  const [projectTitle, setProjectTitle] = useState(authorizedPresets[0]?.projectTitle || DEMO_PRESETS[0].projectTitle);
-  const [customFile, setCustomFile] = useState(null);
-  const [fileName, setFileName] = useState(authorizedPresets[0]?.fileName || DEMO_PRESETS[0].fileName);
-  const [fileSize, setFileSize] = useState(authorizedPresets[0]?.fileSize || DEMO_PRESETS[0].fileSize);
-
-  // Pipeline Execution State
+  // Processing & Surveillance Outcome State
   const [isProcessing, setIsProcessing] = useState(false);
   const [pipelineStep, setPipelineStep] = useState(0);
-  const [surveillanceResult, setSurveillanceResult] = useState(null);
+  const [dynamicResult, setDynamicResult] = useState(null);
 
-  // Explorer Data State
+  // Single Artifact Upload State (Tab 2)
+  const [selectedPreset, setSelectedPreset] = useState(DEMO_PRESETS[0]);
+  const [singleFileType, setSingleFileType] = useState(DEMO_PRESETS[0].category);
+  const [singleCustomFile, setSingleCustomFile] = useState(null);
+  const [singleResult, setSingleResult] = useState(null);
+
+  // Explorer Data State (Tab 3)
   const [datasets, setDatasets] = useState([]);
-  const [selectedDatasetId, setSelectedDatasetId] = useState("DS-REC-01");
+  const [selectedDatasetId, setSelectedDatasetId] = useState("DS-01");
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function loadData() {
-      setLoading(true);
+    async function loadDatasets() {
       try {
         const ds = await api.getDatasets();
-        setDatasets(ds);
+        setDatasets(ds || []);
       } catch (err) {
         console.error("Failed to load datasets:", err);
-      } finally {
-        setLoading(false);
       }
     }
-    loadData();
-  }, [role]);
+    loadDatasets();
+  }, []);
 
-  // Sync default preset when role switches
-  useEffect(() => {
-    if (authorizedPresets.length > 0) {
-      const defaultP = authorizedPresets[0];
-      setSelectedPreset(defaultP);
-      setFileType(defaultP.category);
-      setFileName(defaultP.fileName);
-      setFileSize(defaultP.fileSize);
-      setProjectId(defaultP.projectId);
-      setProjectTitle(defaultP.projectTitle);
-      setCustomFile(null);
-      setSurveillanceResult(null);
-    }
-  }, [role]);
-
-  const handleSelectPreset = (preset) => {
-    setSelectedPreset(preset);
-    setFileType(preset.category);
-    setFileName(preset.fileName);
-    setFileSize(preset.fileSize);
-    setProjectId(preset.projectId);
-    setProjectTitle(preset.projectTitle);
-    setCustomFile(null);
-    setSurveillanceResult(null);
-  };
-
-  const handleFileChange = (e) => {
+  // Handle Custom File Upload into a Specific Slot
+  const handleSlotFileChange = (slotKey, e) => {
     const file = e.target.files?.[0];
     if (file) {
-      setCustomFile(file);
-      setFileName(file.name);
-      setFileSize(`${(file.size / (1024 * 1024)).toFixed(1)} MB`);
-      setSelectedPreset(null);
-      setSurveillanceResult(null);
-
-      // Auto-detect category
-      if (file.name.endsWith(".csv")) setFileType("registry_csv");
-      else if (file.name.match(/\.(jpg|jpeg|png)$/i)) setFileType("site_photo");
-      else if (file.name.toLowerCase().includes("voucher") || file.name.toLowerCase().includes("pfms")) setFileType("pfms_voucher");
-      else setFileType("contractor_bill");
+      setSlotFiles((prev) => ({
+        ...prev,
+        [slotKey]: {
+          file,
+          isPreset: false,
+          fileName: file.name,
+          fileSize: `${(file.size / 1024).toFixed(1)} KB`,
+        },
+      }));
+      setDynamicResult(null);
     }
   };
 
-  const handleRunSurveillance = async () => {
+  // Remove / Clear a specific slot
+  const handleClearSlot = (slotKey) => {
+    setSlotFiles((prev) => ({
+      ...prev,
+      [slotKey]: null,
+    }));
+  };
+
+  // Presentation Mode: Pre-load the 6 official Lok Sabha files (1-click)
+  const handleLoadLokSabhaPreset = () => {
+    setSelectedHouse("lok_sabha");
+    setSlotFiles({
+      recommended: { isPreset: true, fileName: "Works Recommended (Lok Sabha).csv", fileSize: "2.2 MB" },
+      sanctioned: { isPreset: true, fileName: "Works Sanctioned (Lok Sabha).csv", fileSize: "1.7 MB" },
+      completed: { isPreset: true, fileName: "Works Completed (Lok Sabha).csv", fileSize: "933 KB" },
+      expenditure: { isPreset: true, fileName: "Expenditure on Completed and On-going Works as on Date (Lok Sabha).csv", fileSize: "2.0 MB" },
+      limits: { isPreset: true, fileName: "Allocated Limit for Honble MPs (Lok Sabha).csv", fileSize: "35 KB" },
+      calamity: { isPreset: true, fileName: "Amount consented for Calamity (Lok Sabha).csv", fileSize: "1.3 KB" },
+    });
+    setDynamicResult(null);
+  };
+
+  // Presentation Mode: Pre-load the 6 official Rajya Sabha files (1-click)
+  const handleLoadRajyaSabhaPreset = () => {
+    setSelectedHouse("rajya_sabha");
+    setSlotFiles({
+      recommended: { isPreset: true, fileName: "Works Recommended (Rajya Sabha).csv", fileSize: "1.4 MB" },
+      sanctioned: { isPreset: true, fileName: "Works Sanctioned (Rajya Sabha).csv", fileSize: "1.9 MB" },
+      completed: { isPreset: true, fileName: "Works Completed (Rajya Sabha).csv", fileSize: "2.1 MB" },
+      expenditure: { isPreset: true, fileName: "Expenditure on Completed and On-going Works as on Date (Rajya Sabha).csv", fileSize: "1.9 MB" },
+      limits: { isPreset: true, fileName: "Allocated Limit for Honble MPs (Rajya Sabha).csv", fileSize: "21 KB" },
+      calamity: { isPreset: true, fileName: "Amount consented for Calamity (Rajya Sabha).csv", fileSize: "2.5 KB" },
+    });
+    setDynamicResult(null);
+  };
+
+  // Presentation Mode: Pre-load Partial 3-Stream Ingestion (demonstrates missing data resilience)
+  const handleLoadPartialPreset = () => {
+    setSelectedHouse("lok_sabha");
+    setSlotFiles({
+      recommended: { isPreset: true, fileName: "Works Recommended (Lok Sabha).csv", fileSize: "2.2 MB" },
+      sanctioned: { isPreset: true, fileName: "Works Sanctioned (Lok Sabha).csv", fileSize: "1.7 MB" },
+      completed: { isPreset: true, fileName: "Works Completed (Lok Sabha).csv", fileSize: "933 KB" },
+      expenditure: null, // intentionally empty
+      limits: null,      // intentionally empty
+      calamity: null,    // intentionally empty
+    });
+    setDynamicResult(null);
+  };
+
+  // Clear all slots
+  const handleClearAllSlots = () => {
+    setSlotFiles({
+      recommended: null,
+      sanctioned: null,
+      completed: null,
+      expenditure: null,
+      limits: null,
+      calamity: null,
+    });
+    setDynamicResult(null);
+  };
+
+  // Count staged slots
+  const stagedSlotsCount = Object.values(slotFiles).filter(Boolean).length;
+
+  // Execute Dynamic Ingestion & Multi-Modal Audit
+  const handleRunDynamicAudit = async () => {
     setIsProcessing(true);
-    setSurveillanceResult(null);
+    setDynamicResult(null);
 
-    // Step-by-step progress simulation for realistic high-assurance surveillance
-    setPipelineStep(1);
+    // Multi-stage visual audit pipeline
+    setPipelineStep(1); // Column Schema Normalization
     await new Promise((r) => setTimeout(r, 650));
-
-    setPipelineStep(2);
+    setPipelineStep(2); // Cross-Entity Record Linking
     await new Promise((r) => setTimeout(r, 700));
-
-    setPipelineStep(3);
+    setPipelineStep(3); // Multi-Signal Risk Fusion
     await new Promise((r) => setTimeout(r, 750));
-
-    setPipelineStep(4);
+    setPipelineStep(4); // Data Completeness & Degradation Notice Assembly
     await new Promise((r) => setTimeout(r, 600));
 
     try {
+      // Check if user uploaded any custom files or used presets
+      const hasCustomUploads = Object.values(slotFiles).some((s) => s?.file);
+
       let res;
-      if (customFile) {
+      if (hasCustomUploads) {
         const formData = new FormData();
-        formData.append("file", customFile);
-        formData.append("fileType", fileType);
-        formData.append("projectId", projectId);
-        formData.append("projectTitle", projectTitle);
-        formData.append("fileName", fileName);
-        formData.append("fileSize", fileSize);
-        res = await api.ingestESakshiFile(formData);
+        formData.append("house", selectedHouse);
+        Object.entries(slotFiles).forEach(([key, slot]) => {
+          if (slot?.file) {
+            formData.append(`slot_${key}`, slot.file);
+          }
+        });
+        res = await api.dynamicIngestFiles(formData);
       } else {
-        res = await api.ingestESakshiFile({
-          fileName,
-          fileSize,
-          fileType,
-          projectId,
-          projectTitle,
+        // Preset or simulated batch mode
+        const allPreset = Object.values(slotFiles).every((s) => s?.isPreset);
+        const partialPreset = stagedSlotsCount === 3 && slotFiles.recommended && slotFiles.sanctioned && slotFiles.completed;
+        const presetType = partialPreset
+          ? "presentation_partial"
+          : selectedHouse === "rajya_sabha"
+          ? "presentation_rajya_sabha"
+          : "presentation_lok_sabha";
+
+        res = await api.dynamicIngestFiles({
+          house: selectedHouse,
+          usePreset: presetType,
         });
       }
-      setSurveillanceResult(res);
+
+      setDynamicResult(res);
     } catch (err) {
-      console.error("Surveillance Ingestion Error:", err);
+      console.error("Dynamic Ingestion Audit Error:", err);
     } finally {
       setIsProcessing(false);
       setPipelineStep(0);
     }
   };
 
-  const currentDataset = datasets.find((d) => d.id === selectedDatasetId) || datasets[0];
-  const filteredRows = currentDataset
-    ? currentDataset.sampleRows.filter((row) => {
-        if (!search) return true;
-        const q = search.toLowerCase();
-        return Object.values(row).some((val) => String(val).toLowerCase().includes(q));
-      })
-    : [];
-
   return (
-    <AppShell breadcrumbs={[{ label: "e-SAKSHI Ingestion & Surveillance Hub" }]}>
+    <AppShell breadcrumbs={[{ label: "Dynamic e-SAKSHI Multi-Slot Ingestion Hub" }]}>
       <div className="space-y-6 max-w-7xl mx-auto">
         {/* Institutional Positioning Banner */}
-        <div className="rounded-2xl border border-blue-200 dark:border-blue-900 bg-gradient-to-r from-blue-50/80 via-slate-50 to-indigo-50/70 dark:from-blue-950/40 dark:via-slate-900 dark:to-indigo-950/30 p-5 shadow-xs">
+        <div className="rounded-2xl border border-blue-200 dark:border-blue-900 bg-gradient-to-r from-blue-50/90 via-slate-50 to-indigo-50/80 dark:from-blue-950/40 dark:via-slate-900 dark:to-indigo-950/30 p-5 shadow-xs">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/60 px-2.5 py-0.5 rounded-full border border-blue-300 dark:border-blue-800">
-                  e-SAKSHI Surveillance & Ingestion Layer
+                  Dynamic Multi-Slot Ingestion Engine
                 </span>
                 <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800 flex items-center gap-1">
-                  <Info className="w-3 h-3" />
-                  Independent Verification • Does Not Replace e-SAKSHI
+                  <SlidersHorizontal className="w-3 h-3" />
+                  Resilient Column & Title Mapping Active
+                </span>
+                <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
+                  <Activity className="w-3 h-3" />
+                  Adaptive Scoring (Degrades Missing Data)
                 </span>
               </div>
               <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-                e-SAKSHI Project Lifecycle Ingestion Hub
+                e-SAKSHI Dynamic Multi-Source Surveillance Intake
               </h1>
               <p className="text-xs text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
-                <strong className="font-semibold text-slate-900 dark:text-white">Operational Paradigm: </strong>
-                e-SAKSHI records administrative transactions and milestone workflows. MPLADS Sentinel acts as an independent AI-powered risk intelligence layer that audits, cross-verifies, and correlates evidence generated across the project lifecycle.
+                Upload official or custom e-SAKSHI CSV datasets across the 6 statutory streams. Upload only what you have—the AI automatically adapts to varying column titles, re-weights evaluations over available streams, and marks unverified dimensions in the final audit report.
               </p>
             </div>
 
             {/* Navigation Tabs */}
             <div className="flex items-center gap-1 p-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shrink-0 shadow-xs">
               <button
-                onClick={() => setActiveTab("upload")}
+                onClick={() => setActiveTab("dynamic_slots")}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                  activeTab === "upload"
+                  activeTab === "dynamic_slots"
                     ? "bg-blue-600 text-white shadow-sm"
                     : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                <UploadCloud className="w-3.5 h-3.5" />
-                <span>Ingest e-SAKSHI Files</span>
+                <Layers className="w-3.5 h-3.5" />
+                <span>6-Slot Ingestion Studio</span>
               </button>
               <button
                 onClick={() => setActiveTab("explorer")}
@@ -281,16 +381,16 @@ export default function ESakshiIngestionPage() {
                 }`}
               >
                 <Database className="w-3.5 h-3.5" />
-                <span>e-SAKSHI Master Registry</span>
+                <span>Dataset Explorer</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Stakeholder Jurisdictional & RBAC Data Scope Banner */}
+        {/* Stakeholder Jurisdictional & Role Banner */}
         <div className="p-3.5 rounded-2xl bg-slate-900 dark:bg-slate-950 text-slate-200 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-blue-600 text-white font-bold flex items-center justify-center shrink-0 shadow-xs text-xs">
+            <div className="w-8 h-8 rounded-xl bg-blue-600 text-white font-bold flex items-center justify-center shrink-0 text-xs shadow-xs">
               {profile?.avatar_initials || "AS"}
             </div>
             <div>
@@ -308,455 +408,595 @@ export default function ESakshiIngestionPage() {
           </div>
           <div className="text-left sm:text-right border-t sm:border-t-0 sm:border-l border-slate-800 pt-2 sm:pt-0 sm:pl-4">
             <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">
-              Authorized Surveillance Scope
+              Authorized Ingestion Scope
             </span>
             <span className="text-xs font-bold text-emerald-400 font-mono">
-              {role === "field_verification_officer"
-                ? "Physical Inspection Geotags & Site Photos"
+              {role === "mp"
+                ? "Constituency Recommendations & Sanctions"
                 : role === "implementing_agency"
-                ? "Assigned Works & Contractor RA Invoices"
-                : role === "mp"
-                ? "Constituency Sanction Register & Proposals"
-                : role === "state_nodal_authority"
-                ? "State Works, Calamity Ledger & PFMS Releases"
-                : role === "investigator"
-                ? "Flagged Inquiries & Fraud Collusion Dossiers"
-                : "Full National Multi-Source PURVIEW (All Datasets)"}
+                ? "Sanctioned Works & Expenditure Invoices"
+                : role === "field_verification_officer"
+                ? "Physical Inspection Warrants & Completed Works"
+                : "Full 6-Slot National Ingestion (All Streams)"}
             </span>
           </div>
         </div>
 
-        {/* TAB 1: UPLOAD & INGESTION PORTAL */}
-        {activeTab === "upload" && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Column: Upload Controls & 1-Click Presets */}
-            <div className="lg:col-span-6 space-y-5">
-              {/* 1-Click Quick Demo Presets */}
-              <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
-                      1-Click e-SAKSHI Demo Test Files
-                    </h3>
-                  </div>
-                  <span className="text-[10px] font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/80 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
-                    {authorizedPresets.length} Authorized Vector{authorizedPresets.length > 1 ? "s" : ""}
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Select an authorized e-SAKSHI lifecycle artifact for your role to verify how the 21-Module AI engine evaluates evidence:
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                  {authorizedPresets.map((preset) => {
-                    const Icon = preset.icon;
-                    const isSelected = selectedPreset?.id === preset.id;
-                    return (
-                      <button
-                        key={preset.id}
-                        type="button"
-                        onClick={() => handleSelectPreset(preset)}
-                        className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between ${
-                          isSelected
-                            ? "bg-blue-50/80 dark:bg-blue-950/60 border-blue-500 dark:border-blue-500 shadow-xs"
-                            : "bg-slate-50/60 dark:bg-slate-850/50 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <div className={`p-1.5 rounded-lg ${isSelected ? "bg-blue-600 text-white" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300"}`}>
-                            <Icon className="w-3.5 h-3.5" />
-                          </div>
-                          <span className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1">
-                            {preset.label}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                          {preset.description}
-                        </p>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Ingestion Configuration Form */}
-              <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
-                    <FileCheck className="w-4 h-4 text-emerald-600" />
-                    e-SAKSHI File Metadata & Scope Linking
-                  </h3>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                    Target: {projectId}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  <div>
-                    <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                      e-SAKSHI Document Category
-                    </label>
-                    <select
-                      value={fileType}
-                      onChange={(e) => setFileType(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                      {authorizedCategories.map((cat) => (
-                        <option key={cat.value} value={cat.value}>
-                          {cat.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                      Project Digital Twin ID
-                    </label>
-                    <input
-                      type="text"
-                      value={projectId}
-                      onChange={(e) => setProjectId(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                {/* Drag-and-Drop / File Picker Zone */}
-                <div className="relative border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-6 text-center hover:border-blue-500 transition-colors bg-slate-50/50 dark:bg-slate-950/40">
-                  <input
-                    type="file"
-                    onChange={handleFileChange}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    accept=".pdf,.csv,.xlsx,.jpg,.jpeg,.png,.json"
-                  />
-                  <div className="space-y-2 pointer-events-none">
-                    <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 mx-auto flex items-center justify-center">
-                      <UploadCloud className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-slate-900 dark:text-white">
-                        {customFile ? customFile.name : fileName}
-                      </p>
-                      <p className="text-[11px] text-slate-400">
-                        {customFile ? `${fileSize} • Click to replace file` : "Drag e-SAKSHI file here or click to browse local files"}
-                      </p>
-                    </div>
-                    <span className="inline-block text-[10px] text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
-                      Supports PDF, CSV, GeoJPEG, PNG, MB Excel, PFMS Vouchers (Max 15MB)
-                    </span>
-                  </div>
-                </div>
-
-                {/* Execution Button */}
-                <button
-                  type="button"
-                  onClick={handleRunSurveillance}
-                  disabled={isProcessing}
-                  className="w-full py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-md transition-all active:scale-[0.99]"
-                >
-                  {isProcessing ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                      <span>Running 21-Module AI Surveillance Pipeline...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ShieldCheck className="w-4 h-4" />
-                      <span>Run Sentinel Surveillance Verification</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Right Column: Processing Timeline & Surveillance Findings */}
-            <div className="lg:col-span-6 space-y-5">
-              {/* Pipeline Multi-Stage Progress Animation */}
-              {isProcessing && (
-                <div className="rounded-2xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-900 p-6 shadow-sm space-y-4 animate-in fade-in duration-200">
-                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-2">
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                      Executing Real-Time Multi-Source Pipeline
-                    </h3>
-                    <span className="text-[10px] font-mono font-bold text-slate-400">
-                      Step {pipelineStep} of 4
-                    </span>
-                  </div>
-
-                  <div className="space-y-3 font-mono text-xs">
-                    <div className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pipelineStep >= 1 ? "bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300" : "text-slate-400"}`}>
-                      <CheckCircle2 className={`w-4 h-4 shrink-0 ${pipelineStep >= 1 ? "text-blue-600" : "text-slate-300"}`} />
-                      <span>[1/4] Validating e-SAKSHI schema & generating SHA-256 stamp</span>
-                    </div>
-                    <div className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pipelineStep >= 2 ? "bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300" : "text-slate-400"}`}>
-                      <CheckCircle2 className={`w-4 h-4 shrink-0 ${pipelineStep >= 2 ? "text-blue-600" : "text-slate-300"}`} />
-                      <span>[2/4] Cross-reconciling against PFMS Treasury & CPWD Cost Norms</span>
-                    </div>
-                    <div className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pipelineStep >= 3 ? "bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300" : "text-slate-400"}`}>
-                      <CheckCircle2 className={`w-4 h-4 shrink-0 ${pipelineStep >= 3 ? "text-blue-600" : "text-slate-300"}`} />
-                      <span>[3/4] Running Computer Vision (dHash 99.4%) & SBERT Entity Resolution</span>
-                    </div>
-                    <div className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pipelineStep >= 4 ? "bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300" : "text-slate-400"}`}>
-                      <CheckCircle2 className={`w-4 h-4 shrink-0 ${pipelineStep >= 4 ? "text-blue-600" : "text-slate-300"}`} />
-                      <span>[4/4] Synthesizing Multi-Vector Risk Score (0-100) & Evidence Dossier</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Surveillance Results Card */}
-              {surveillanceResult && !isProcessing && (
-                <div className="rounded-2xl bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-900/80 p-5 shadow-sm space-y-4 animate-in fade-in zoom-in-95 duration-200">
-                  {/* Top Status & Score Badge */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 flex items-center gap-1">
-                          <ShieldAlert className="w-3 h-3" />
-                          {surveillanceResult.data?.surveillanceOutcome?.priorityBand || "URGENT_AUDIT_QUEUE"}
-                        </span>
-                        <span className="text-[10px] font-mono text-slate-400">
-                          {surveillanceResult.data?.ingestionId}
-                        </span>
-                      </div>
-                      <h3 className="text-base font-black text-slate-900 dark:text-white mt-1">
-                        Surveillance Anomalies Intercepted
-                      </h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Linked Project: <strong className="text-slate-700 dark:text-slate-200 font-mono">{surveillanceResult.data?.targetProject?.id}</strong>
-                      </p>
-                    </div>
-
-                    <div className="text-right sm:border-l sm:border-slate-200 dark:sm:border-slate-800 sm:pl-4">
-                      <span className="text-[10px] uppercase font-bold text-slate-400 block">
-                        Composite Risk
-                      </span>
-                      <span className="text-3xl font-black font-mono text-rose-600 dark:text-rose-400">
-                        {surveillanceResult.data?.surveillanceOutcome?.compositeRiskScore}
-                        <span className="text-xs text-slate-400 font-normal"> / 100</span>
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Cryptographic Provenance Fingerprint */}
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 text-[11px] space-y-1">
-                    <div className="flex items-center justify-between text-slate-500 dark:text-slate-400">
-                      <span className="flex items-center gap-1.5 font-bold">
-                        <Fingerprint className="w-3.5 h-3.5 text-blue-600" />
-                        Tamper-Evident SHA-256 Digest
-                      </span>
-                      <span className="text-[10px] font-mono">{new Date().toLocaleTimeString()}</span>
-                    </div>
-                    <p className="font-mono text-[10px] text-slate-700 dark:text-slate-300 break-all">
-                      {surveillanceResult.data?.sha256Stamp}
-                    </p>
-                  </div>
-
-                  {/* Intercepted Anomalies List */}
-                  <div className="space-y-2.5">
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                      Flagged Irregularities ({surveillanceResult.data?.surveillanceOutcome?.detectedAnomalies?.length || 0})
-                    </h4>
-                    {surveillanceResult.data?.surveillanceOutcome?.detectedAnomalies?.map((anomaly, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/40 dark:bg-rose-950/30 space-y-1"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-rose-700 dark:text-rose-300">
-                            {anomaly.title}
-                          </span>
-                          <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-md bg-rose-100 dark:bg-rose-900 text-rose-700 dark:text-rose-300 uppercase">
-                            {anomaly.severity}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
-                          {anomaly.detail}
-                        </p>
-                        <span className="text-[10px] text-slate-400 font-mono block">
-                          Model: {anomaly.module}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Statutory Citations */}
-                  <div className="space-y-1.5 pt-1">
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                      Statutory Violations Cited
-                    </h4>
-                    <div className="space-y-1">
-                      {surveillanceResult.data?.surveillanceOutcome?.statutoryCitations?.map((cit, idx) => (
-                        <div key={idx} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-300">
-                          <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                          <span className="text-[11px] leading-relaxed">{cit}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Action Links */}
-                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                    <Link
-                      href={`/app/projects/${projectId}`}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition"
-                    >
-                      <span>Open Project Twin</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                    <Link
-                      href="/app/evidence"
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition"
-                    >
-                      <Layers className="w-3.5 h-3.5" />
-                      <span>Inspect in Evidence Vault</span>
-                    </Link>
-                    <Link
-                      href={`/app/copilot?project=${projectId}`}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-xs font-bold hover:bg-purple-100 transition"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>Audit Copilot Query</span>
-                    </Link>
-                  </div>
-                </div>
-              )}
-
-              {/* Idle Placeholder Info */}
-              {!surveillanceResult && !isProcessing && (
-                <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-8 text-center space-y-4 shadow-xs">
-                  <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 mx-auto flex items-center justify-center">
-                    <ShieldCheck className="w-7 h-7" />
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                      Awaiting e-SAKSHI Ingestion Stream
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
-                      Upload any e-SAKSHI sanction order, measurement book bill, site photo, or scheme CSV, or select one of the 1-click test presets to trigger real-time AI verification.
-                    </p>
-                  </div>
-                  <div className="pt-2">
-                    <button
-                      type="button"
-                      onClick={() => handleSelectPreset(authorizedPresets[0] || DEMO_PRESETS[0])}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>Load Authorized Test Case ({authorizedPresets[0]?.label || "Demo Vector"})</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* TAB 2: MASTER SCHEME DATASET EXPLORER */}
-        {activeTab === "explorer" && (
-          <div className="space-y-6 animate-in fade-in duration-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  Authorized Institutional Datasets ({datasets.length})
+        {/* ========================================================================= */}
+        {/* TAB 1: 6-SLOT DYNAMIC INGESTION STUDIO */}
+        {/* ========================================================================= */}
+        {activeTab === "dynamic_slots" && (
+          <div className="space-y-6">
+            {/* Top Bar: House Selector & 1-Click Presentation Bar */}
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+              {/* House Selector */}
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                  <Landmark className="w-3.5 h-3.5 text-blue-600" />
+                  Parliamentary House:
                 </span>
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded-full">
-                  Filtered for {profile?.role_label || profile?.role?.replace(/_/g, " ")}
-                </span>
-              </div>
-            </div>
-
-            {/* Dataset Switcher Tabs */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {datasets.map((ds) => {
-                const isSelected = ds.id === currentDataset?.id;
-                return (
+                <div className="inline-flex rounded-xl p-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                   <button
-                    key={ds.id}
-                    onClick={() => setSelectedDatasetId(ds.id)}
-                    className={`p-4 rounded-2xl border text-left transition-all flex flex-col justify-between space-y-2 ${
-                      isSelected
-                        ? "bg-blue-50/60 dark:bg-blue-950/40 border-blue-300 dark:border-blue-700 shadow-xs"
-                        : "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
+                    type="button"
+                    onClick={() => setSelectedHouse("lok_sabha")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      selectedHouse === "lok_sabha"
+                        ? "bg-blue-600 text-white shadow-xs"
+                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Database className={`w-4 h-4 ${isSelected ? "text-blue-600 dark:text-blue-400" : "text-slate-400"}`} />
-                        <span className="text-xs font-bold font-mono text-slate-800 dark:text-slate-200">
-                          {ds.id}
+                    Lok Sabha (543 MPs)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedHouse("rajya_sabha")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      selectedHouse === "rajya_sabha"
+                        ? "bg-blue-600 text-white shadow-xs"
+                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                    }`}
+                  >
+                    Rajya Sabha (250 MPs)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedHouse("both")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      selectedHouse === "both"
+                        ? "bg-blue-600 text-white shadow-xs"
+                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                    }`}
+                  >
+                    Combined Ledger
+                  </button>
+                </div>
+              </div>
+
+              {/* Presentation Presets Action Group */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1 mr-1">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  Presentation Presets:
+                </span>
+                <button
+                  type="button"
+                  onClick={handleLoadLokSabhaPreset}
+                  className="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 transition-all flex items-center gap-1.5 shadow-xs"
+                >
+                  <FileCheck className="w-3.5 h-3.5" />
+                  Load 6 Lok Sabha Files
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLoadRajyaSabhaPreset}
+                  className="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 transition-all flex items-center gap-1.5 shadow-xs"
+                >
+                  <FileCheck className="w-3.5 h-3.5" />
+                  Load 6 Rajya Sabha Files
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLoadPartialPreset}
+                  className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 transition-all flex items-center gap-1.5 shadow-xs"
+                  title="Upload only 3 files to verify how missing data is adapted and reported"
+                >
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  Partial 3-Stream Demo
+                </button>
+                {stagedSlotsCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleClearAllSlots}
+                    className="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 transition-all"
+                  >
+                    Clear All
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Staging Summary & Run Action Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-slate-900 to-blue-950 text-white shadow-md gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                  {stagedSlotsCount}/6
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <span>Staged Document Streams</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30">
+                      {stagedSlotsCount === 6 ? "Full Multi-Source Audit" : stagedSlotsCount > 0 ? "Adaptive Partial Audit" : "Ready for Ingestion"}
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-300">
+                    {stagedSlotsCount === 6
+                      ? "All 6 statutory streams ready. Full 21-module surveillance grid will execute with 100% confidence."
+                      : stagedSlotsCount > 0
+                      ? `${6 - stagedSlotsCount} stream(s) omitted. AI will gracefully adapt risk weights and mark missing dimensions.`
+                      : "Choose preset or drag custom CSV files into the slots below. Leaving slots empty is fully supported."}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                disabled={stagedSlotsCount === 0 || isProcessing}
+                onClick={handleRunDynamicAudit}
+                className={`px-6 py-3 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 shadow-sm ${
+                  stagedSlotsCount === 0 || isProcessing
+                    ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/25 active:scale-95"
+                }`}
+              >
+                {isProcessing ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>Processing Pipeline Step {pipelineStep}/4...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 text-blue-200" />
+                    <span>Run Multi-Source Dynamic Audit</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* 6 INDIVIDUAL DOCUMENT SLOTS GRID */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {MASTER_SLOTS.map((slot, index) => {
+                const Icon = slot.icon;
+                const staged = slotFiles[slot.key];
+                const isAuthorized = slot.relevantRoles.includes(role) || role === "system_admin";
+                const officialFileName = selectedHouse === "rajya_sabha" ? slot.officialFileRs : slot.officialFileLs;
+
+                return (
+                  <div
+                    key={slot.key}
+                    className={`rounded-2xl border transition-all flex flex-col justify-between overflow-hidden ${
+                      staged
+                        ? "bg-blue-50/50 dark:bg-blue-950/20 border-blue-400 dark:border-blue-700 shadow-xs"
+                        : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
+                    }`}
+                  >
+                    {/* Slot Header */}
+                    <div className="p-4 border-b border-slate-100 dark:border-slate-800 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className={`p-2 rounded-xl ${staged ? "bg-blue-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"}`}>
+                            <Icon className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">
+                              Slot 0{index + 1}
+                            </span>
+                            <h4 className="text-xs font-extrabold text-slate-900 dark:text-white">
+                              {slot.label}
+                            </h4>
+                          </div>
+                        </div>
+
+                        {staged ? (
+                          <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800 flex items-center gap-1">
+                            <Check className="w-3 h-3" />
+                            Staged
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+                            Optional
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                        {slot.description}
+                      </p>
+
+                      <div className="flex items-center gap-1.5 pt-0.5">
+                        <span className="text-[9px] font-mono text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900">
+                          Critical: {slot.criticalFor}
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                        {ds.totalRows.toLocaleString("en-IN")} Rows
-                      </span>
                     </div>
-                    <p className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1">
-                      {ds.name}
-                    </p>
-                    <span className="text-[10px] text-slate-400 block truncate">
-                      {ds.sourceOfficialName}
-                    </span>
-                  </button>
+
+                    {/* Slot Body: Drag & Drop Dropzone or Staged Info */}
+                    <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
+                      {staged ? (
+                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 space-y-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="space-y-0.5 overflow-hidden">
+                              <span className="text-xs font-bold text-slate-900 dark:text-white truncate block">
+                                {staged.fileName}
+                              </span>
+                              <span className="text-[10px] text-slate-500 dark:text-slate-400">
+                                Size: {staged.fileSize} • {staged.isPreset ? "Official Pre-trained File" : "Custom Uploaded File"}
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleClearSlot(slot.key)}
+                              className="p-1 rounded-md text-slate-400 hover:text-rose-600 transition-colors"
+                              title="Remove file"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="relative border border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-4 text-center hover:border-blue-500 transition-all bg-slate-50/50 dark:bg-slate-950/40 flex-1 flex flex-col items-center justify-center">
+                          <input
+                            type="file"
+                            accept=".csv"
+                            onChange={(e) => handleSlotFileChange(slot.key, e)}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          />
+                          <UploadCloud className="w-5 h-5 text-slate-400 mb-1 pointer-events-none" />
+                          <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 pointer-events-none">
+                            Drop custom CSV or click to browse
+                          </p>
+                          <span className="text-[9px] text-slate-400 pointer-events-none">
+                            Auto-maps varying column titles
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Slot Footer Actions */}
+                      <div className="flex items-center justify-between pt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSlotFiles((prev) => ({
+                              ...prev,
+                              [slot.key]: {
+                                isPreset: true,
+                                fileName: officialFileName,
+                                fileSize: slot.key === "calamity" ? "2 KB" : slot.key === "limits" ? "30 KB" : "1.8 MB",
+                              },
+                            }));
+                            setDynamicResult(null);
+                          }}
+                          className="text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                        >
+                          <Sparkles className="w-3 h-3 text-amber-500" />
+                          Pre-load Official File
+                        </button>
+
+                        <span className="text-[10px] text-slate-400">
+                          {isAuthorized ? "✅ Role Authorized" : "🔒 Restricted Role"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 );
               })}
             </div>
 
-            {/* Data Table with Search */}
-            {currentDataset && (
-              <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden space-y-4 p-5">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                      {currentDataset.name}
-                    </h3>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      {currentDataset.description}
-                    </p>
+            {/* ========================================================================= */}
+            {/* SURVEILLANCE OUTCOME DISPLAY: DYNAMIC ADAPTIVE AUDIT REPORT */}
+            {/* ========================================================================= */}
+            {dynamicResult && (
+              <div className="space-y-6 pt-2 animate-in fade-in-50 duration-300">
+                {/* 1. Header Banner & Data Completeness Score */}
+                <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                          Batch ID: {dynamicResult.batchId}
+                        </span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                          Execution time: {dynamicResult.executionTimeMs}ms
+                        </span>
+                      </div>
+                      <h2 className="text-xl font-extrabold text-slate-900 dark:text-white mt-1">
+                        Dynamic Multi-Source Surveillance Audit Report
+                      </h2>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                          Data Completeness Score
+                        </span>
+                        <span className="text-2xl font-black text-blue-600 dark:text-blue-400">
+                          {dynamicResult.summary.completenessPercent}%
+                        </span>
+                      </div>
+                      <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 flex items-center justify-center font-bold text-xs text-blue-700 dark:text-blue-300">
+                        {dynamicResult.summary.slotsAvailableCount}/6
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-                    <input
-                      type="text"
-                      placeholder="Filter records in this schema..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      className="pl-9 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none"
-                    />
+                  {/* Missing Data Notices Alert Box */}
+                  {dynamicResult.missingDataNotices.length > 0 ? (
+                    <div className="p-4 rounded-xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                        <h4 className="text-xs font-bold text-amber-900 dark:text-amber-200 uppercase tracking-wider">
+                          Data Availability & Adaptive Scoring Notice ({dynamicResult.missingDataNotices.length} Stream{dynamicResult.missingDataNotices.length > 1 ? "s" : ""} Omitted)
+                        </h4>
+                      </div>
+                      <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+                        To prevent artificial score inflation or erroneous fraud flags, the Sentinel engine has re-normalized risk weights across only the verified data streams provided. The following evaluations were safely deferred:
+                      </p>
+                      <ul className="space-y-1.5 pt-1">
+                        {dynamicResult.missingDataNotices.map((notice, i) => (
+                          <li key={i} className="text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                            <span>
+                              <strong className="font-semibold">{notice.dimension}:</strong> {notice.impact}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    <div className="p-4 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <div>
+                        <h4 className="text-xs font-bold text-emerald-900 dark:text-emerald-200 uppercase tracking-wider">
+                          100% Comprehensive Statutory Verification (High Assurance)
+                        </h4>
+                        <p className="text-xs text-emerald-800 dark:text-emerald-300">
+                          All 6 statutory streams provided. Full 8-dimension risk fusion executed with complete confidence cross-referencing.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Active vs Degraded Dimensions Breakdown */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                    <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-1.5">
+                      <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block tracking-wider">
+                        Active Audited Dimensions ({dynamicResult.activeDimensions.length})
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {dynamicResult.activeDimensions.map((dim, i) => (
+                          <span key={i} className="text-[10px] font-medium bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-800">
+                            ✓ {dim}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-1.5">
+                      <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block tracking-wider">
+                        Deferred Dimensions ({dynamicResult.degradedDimensions.length})
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {dynamicResult.degradedDimensions.length > 0 ? (
+                          dynamicResult.degradedDimensions.map((dim, i) => (
+                            <span key={i} className="text-[10px] font-medium bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded">
+                              ⊘ {dim}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-[11px] text-slate-400 italic">None — full surveillance grid active.</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-50/80 dark:bg-slate-850/60 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-100 dark:border-slate-800 uppercase tracking-wider text-[10px]">
-                      <tr>
-                        {currentDataset.columns.map((col) => (
-                          <th key={col.key} className="px-4 py-3 whitespace-nowrap">
-                            {col.label}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-mono text-[11px]">
-                      {filteredRows.map((row, rIdx) => (
-                        <tr key={rIdx} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/50 transition-colors">
-                          {currentDataset.columns.map((col) => (
-                            <td key={col.key} className="px-4 py-3 whitespace-nowrap">
-                              {col.dataType === "currency" && typeof row[col.key] === "number"
-                                ? formatIndianCurrency(row[col.key])
-                                : String(row[col.key])}
-                            </td>
-                          ))}
+                {/* 2. Top Flagged Works Cross-Correlated */}
+                <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
+                        Flagged Anomaly Dossiers ({dynamicResult.flaggedCases.length} Works Identified)
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Cross-correlated across uploaded streams using Sentinel Multi-Signal Risk Fusion
+                      </p>
+                    </div>
+                    <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 font-bold">
+                      Multi-Signal Fusion
+                    </span>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                          <th className="pb-3">Work ID & Title</th>
+                          <th className="pb-3">Jurisdiction</th>
+                          <th className="pb-3">Implementing Agency</th>
+                          <th className="pb-3">Sanction / Spent</th>
+                          <th className="pb-3 text-center">Risk Score</th>
+                          <th className="pb-3">Primary Signal</th>
+                          <th className="pb-3 text-right">Action</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+                        {dynamicResult.flaggedCases.map((work) => (
+                          <tr key={work.work_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                            <td className="py-3.5 pr-3">
+                              <span className="font-mono font-bold text-blue-600 dark:text-blue-400 block">
+                                {work.work_id}
+                              </span>
+                              <span className="text-slate-800 dark:text-slate-200 line-clamp-1 max-w-xs font-semibold">
+                                {work.title}
+                              </span>
+                            </td>
+                            <td className="py-3.5 pr-3 text-slate-600 dark:text-slate-300">
+                              {work.district}, {work.state}
+                            </td>
+                            <td className="py-3.5 pr-3 text-slate-600 dark:text-slate-300 line-clamp-1 max-w-[180px]">
+                              {work.implementing_agency}
+                            </td>
+                            <td className="py-3.5 pr-3 whitespace-nowrap">
+                              <span className="font-mono text-slate-900 dark:text-white block">
+                                ₹{(work.sanction_amount / 100000).toFixed(1)} L
+                              </span>
+                              <span className="text-[10px] text-slate-400 font-mono">
+                                Disb: ₹{(work.disbursed_amount / 100000).toFixed(1)} L
+                              </span>
+                            </td>
+                            <td className="py-3.5 text-center">
+                              <span className={`inline-block px-2 py-0.5 rounded-full font-bold font-mono text-[11px] ${
+                                work.composite_risk_score >= 80
+                                  ? "bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800"
+                                  : "bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800"
+                              }`}>
+                                {work.composite_risk_score}
+                              </span>
+                            </td>
+                            <td className="py-3.5 pr-3 max-w-xs">
+                              {work.triggered_signals.length > 0 ? (
+                                <span className="text-[11px] text-slate-600 dark:text-slate-300 line-clamp-2">
+                                  {work.triggered_signals[0].finding}
+                                </span>
+                              ) : (
+                                <span className="text-[11px] text-slate-400 italic">Baseline variance check</span>
+                              )}
+                            </td>
+                            <td className="py-3.5 text-right whitespace-nowrap">
+                              <Link
+                                href={`/app/projects/${work.work_id}`}
+                                className="px-2.5 py-1 rounded-lg text-xs font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+                              >
+                                View Twin →
+                              </Link>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* 3. Schema Normalization & Header Adaptation Table */}
+                <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                        <SlidersHorizontal className="w-4 h-4 text-blue-600" />
+                        Dynamic Schema Mapping & Title Resolution Report
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Shows how differing CSV column headers were automatically mapped to canonical surveillance attributes
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 pt-2">
+                    {Object.entries(dynamicResult.schemaReports).map(([slotKey, schema]) => (
+                      <div key={slotKey} className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-900 dark:text-white capitalize">
+                            {slotKey.replace(/_/g, " ")} Stream
+                          </span>
+                          <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
+                            {schema.confidenceScore}% Match
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-slate-400 font-mono truncate">
+                          File: {schema.filename}
+                        </p>
+                        <div className="text-[10px] space-y-1 text-slate-600 dark:text-slate-300 pt-1 border-t border-slate-200 dark:border-slate-700">
+                          <div>Mapped Headers: <strong className="text-slate-900 dark:text-white">{Object.keys(schema.mappedHeaders).length} columns</strong></div>
+                          <div>Unmapped Extra: <span className="text-slate-400">{schema.unmappedHeaders.length} custom fields preserved</span></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
+            )}
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 2: EXPLORER VIEW */}
+        {/* ========================================================================= */}
+        {activeTab === "explorer" && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
+                  Official MPLADS Master Registry Explorer
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Inspect raw rows from the 12 official Lok Sabha & Rajya Sabha CSV datasets
+                </p>
+              </div>
+
+              {/* Dataset Picker */}
+              <select
+                value={selectedDatasetId}
+                onChange={(e) => setSelectedDatasetId(e.target.value)}
+                className="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+              >
+                {datasets.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name} ({d.house})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Search Input */}
+            <div className="relative max-w-md">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              <input
+                type="text"
+                placeholder="Search across columns..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none"
+              />
+            </div>
+
+            {/* Registry Preview Table */}
+            {datasets.length > 0 ? (
+              <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500 font-bold uppercase text-[10px]">
+                    <tr>
+                      {datasets[0]?.columns?.map((col) => (
+                        <th key={col.key} className="p-3 whitespace-nowrap">
+                          {col.label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {datasets[0]?.sampleRows?.slice(0, 10).map((row, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                        {Object.values(row).map((val, cIdx) => (
+                          <td key={cIdx} className="p-3 text-slate-700 dark:text-slate-300 max-w-xs truncate">
+                            {String(val)}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="p-8 text-center text-slate-400 text-xs">Loading datasets...</div>
             )}
           </div>
         )}
