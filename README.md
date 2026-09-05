@@ -31,9 +31,41 @@
 ```
 
 > **Key Architectural Principle**:  
-> **MPLADS Sentinel does NOT replace e-SAKSHI.** e-SAKSHI is the statutory transaction and workflow system. Sentinel serves as an **AI-powered surveillance, verification, and risk-intelligence layer** that consumes data generated across the project lifecycle.
-> 
-> *e-SAKSHI File Ingestion Hub:* Since live e-SAKSHI API webhooks are simulated in sandbox environments, Sentinel provides a dedicated **e-SAKSHI File Ingestion Hub** (`/app/data`) where officers and evaluators can upload lifecycle files (Sanctions, RA Bills, Site Photos, PFMS Vouchers, Master CSVs) or use **1-click official demo test files** to trigger the 21-Module AI Detection Grid in real time.
+> **MPLADS Sentinel does NOT replace e-SAKSHI.** e-SAKSHI is the statutory transaction and workflow system. Sentinel serves as an **autonomous AI-powered surveillance, verification, and risk-intelligence layer** that consumes data generated across the project lifecycle.
+
+---
+
+## 🌟 Core System Pillars & Latest Capabilities
+
+1. **Zero-Fake-Data Enforcement**:
+   - Strictly presents **only authentic, ingested/uploaded data**.
+   - All synthetic/mock fallback data has been eliminated. When un-ingested, the system rests at a clean zero baseline (`0 works monitored`, `₹0 Cr sanctioned`, `₹0 Cr disbursed`, `0 risk flags`).
+   - Surveillance metrics and anomaly queues populate strictly from uploaded work registers or statutory batches.
+
+2. **Persistent Reports Database (`reports_db.json`)**:
+   - Backed by `backend/services/reportsDatabaseService.js` and durably stored in `backend/data/reports_db.json` (with Supabase cloud sync).
+   - Every processed audit run, canonical work ledger, and itemized risk dossier is automatically saved and survives server restarts.
+   - Fully retrievable from the frontend at **Uploaded Reports** (`/app/reports`) and via REST API (`GET /api/datasets/reports`).
+   - Supports active surveillance scoping (`mode: "unloaded" | "uploaded"`) with 1-click administrative scope reset.
+
+3. **1-Click Batch Ingestion for System Administrators**:
+   - Ingest all 12 statutory official datasets (Lok Sabha & Rajya Sabha across all 6 lifecycle stages: Recommended, Sanctioned, Completed, Expenditure, Installments, Calamity) in a single click from the Command Center (`/app/command-center`) or Ingestion Hub (`/app/data`).
+   - Automatically executes schema normalization, cross-dataset entity matching, and multi-vector anomaly detection.
+
+4. **Live System Activity Telemetry (Bottom-Left Sidebar)**:
+   - Real-time operational health card embedded in the sidebar footer (`GET /api/system/activity`):
+     - **Database**: Status (`Connected` / `Online`), live record count, and active provider.
+     - **Backend**: Express port `5000`, process uptime, and heartbeat status.
+     - **AI Modules**: `21/21 Ready`, surveillance assurance tier, active model registry.
+
+5. **National Geospatial Project Risk Map**:
+   - Official India state-boundary geographic risk map (`/maps/india-states.png`) with calibrated WGS84 Geodetic normalization.
+   - Real-time geocoded anomaly points with animated pulsing radar pins (`animate-ping` for Critical/High risks).
+   - Interactive state/UT scope filtering, risk severity toggles (`Critical`, `High`, `Normal`), hover tooltips, and click-to-inspect Digital Project Twin side drawer.
+
+6. **Clean, Essential-Stats UI**:
+   - Streamlined, high-signal presentation across all pages.
+   - Eliminates decorative clutter and focuses exclusively on essential statutory metrics (Total Sanctioned, Total Disbursed, High/Critical Risk Concentration, and Avg Risk Score).
 
 ---
 
@@ -56,10 +88,10 @@ ML & Analysis:
 Python • Pandas • NumPy • SciPy • RapidFuzz • NetworkX (Graph Analytics) • Perceptual Image Hashing (dHash) • Multi-Vector Risk Fusion (21 AI Modules)
 
 Backend & API:
-Node.js (Express.js Gateway & RBAC) • Python (FastAPI AI Engine) • Supabase PostgreSQL • Supabase Auth & Storage CDN
+Node.js (Express.js Gateway & RBAC) • Python (FastAPI AI Engine) • Supabase PostgreSQL • Supabase Auth & Storage CDN • Persistent JSON File Database
 
 Frontend & GIS:
-Next.js 16 • React 19 • Tailwind CSS v4 • Recharts • Haversine GIS Spatial Buffering & Proximity Clustering
+Next.js 16 • React 19 • Tailwind CSS v4 • Recharts • Calibrated WGS84 Geodetic India State-Boundary Projection • Lucide React
 
 XAI & COPILOT:
 Google Gemini 2.0 Flash • Grounded RAG (MPLADS Guidelines 2023 & GFR 2017) • Explainable Multi-Source Evidence Lineage
@@ -83,17 +115,25 @@ MPLADS-Sentinel/
 │
 ├── backend/                    # ⚙️ Node.js Express Backend
 │   ├── config/                 # Supabase client configuration
-│   ├── controllers/            # REST endpoint controllers (Auth, Projects, Copilot, Datasets)
+│   ├── controllers/            # REST endpoint controllers (Auth, Projects, Copilot, Datasets, Analytics)
+│   ├── data/                   # 💾 Persistent storage (reports_db.json durable store)
 │   ├── middleware/             # RBAC and role enforcement middleware
-│   ├── routes/                 # Express API routes
-│   ├── services/               # AI Engine bridge client & Supabase service
+│   ├── routes/                 # Express API routes (/api/datasets, /api/analytics, /api/system)
+│   ├── services/               # Dynamic ingestion, persistent reports DB service, Supabase service
 │   ├── utils/                  # Supabase cloud CSV streaming loader & memory cache
-│   └── server.js               # Express application entrypoint
+│   └── server.js               # Express application entrypoint (port 5000)
 │
 ├── frontend/                   # 🌐 Next.js 16 Web Application (Pure JavaScript/JSX)
-│   ├── src/app/                # 25 App Router pages (Command Center, Digital Twin, Copilot, Vault)
-│   ├── src/components/         # Reusable UI design system, interactive charts, and evidence viewer
-│   ├── src/lib/                # AuthContext (7 Institutional Roles), API client, and constants
+│   ├── public/maps/            # 🗺️ Calibrated India State-Boundary Map Asset (india-states.png)
+│   ├── src/app/                # 26 App Router pages:
+│   │   ├── app/command-center/ # Surveillance Command Center (1-Click Ingest, Live Risk Anomaly Table)
+│   │   ├── app/analytics/      # National Analytics & Geospatial Project Risk Map
+│   │   ├── app/reports/        # Uploaded Final Reports & Audit Runs Dossier Explorer
+│   │   ├── app/data/           # e-SAKSHI Ingestion Hub (Multi-stream upload & batch ingest)
+│   │   ├── app/projects/       # Canonical Digital Project Twins & Work Details
+│   │   └── app/copilot/        # Grounded AI Audit Copilot with Statutory Citations
+│   ├── src/components/         # Reusable UI design system, RiskMapPanel, Sidebar with Live Telemetry
+│   ├── src/lib/                # AuthContext (7 Institutional Roles), API client, and formatters
 │   └── package.json            # React 19, Tailwind CSS v4, Lucide React, Recharts
 │
 └── Docs/                       # 📚 Canonical Documentation & Architecture Specifications
@@ -148,7 +188,7 @@ Public self-registration is permanently disabled. User accounts are provisioned 
 🏗️ Implementing Agency (IA)        ──► Milestone submissions, Invoice & contractor bill uploads
 🔍 Vigilance Investigator          ──► Dossier examination, Fraud escalation, Inquiries, Fund freezes
 📋 Field Verification Officer      ──► On-site GPS inspection, Geo-tagged photo evidence
-⚙️ Platform System Administrator   ──► Technical governance, User & RBAC provisioning, Audit logs
+⚙️ Platform System Administrator   ──► Technical governance, User & RBAC provisioning, 1-click batch ingest, Scope restore
 ```
 
 ---

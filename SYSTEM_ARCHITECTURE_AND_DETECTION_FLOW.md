@@ -42,6 +42,12 @@ MPLADS Sentinel does **not** replace the existing e-SAKSHI portal; instead, it o
 3. **External Statutory Registries (Connectors)**:
    - Connectors to GSTN (active status), MCA21 (Director master data / shell firm identification), PFMS (treasury clearance logs), and Bhoomi / CIMS (land title & cadastral records).
 
+### 1.3. Zero-Fake-Data Enforcement & Scoped Surveillance Lifecycle
+To ensure audit defensibility in vigilance proceedings, Sentinel enforces a strict **Zero-Fake-Data Policy**:
+- **Baseline Unloaded State (`mode: "unloaded"`)**: Prior to active dataset ingestion or user file uploads, the surveillance surface rests at a clean mathematical zero baseline (`0 works monitored`, `₹0 Cr sanctioned`, `₹0 Cr disbursed`, `0 risk flags`). All hardcoded mock numbers and synthetic fallback records have been removed.
+- **Dynamic Ingestion State (`mode: "uploaded"`)**: Ingested datasets dynamically generate real-time canonical work ledgers, financial expenditure aggregates, state and district performance indices, and geocoded risk anomaly points.
+- **Administrative Scope Reset**: System Administrators can restore the surveillance scope to baseline or switch active evaluation batches via `/api/datasets/scope/restore`, ensuring reproducible audit environments.
+
 ---
 
 ## 2. Exhaustive Fraud Taxonomy & Anomaly Signatures
@@ -293,6 +299,66 @@ $$\begin{array}{|c|l|l|l|l|c|}
 20 & \text{MoSPI Audit Copilot} & \text{Natural Language auditor query} & \text{Statutory RAG (all-MiniLM-L6-v2) + Gemini} & \text{Cited Legal Answers \& Grounded SQL} & \text{Core} \\ \hline
 21 & \text{Active Feedback & Learning} & \text{Auditor disposition outcomes} & \text{Bayesian Weight Updating / Supervised tune} & \text{Recalibrated Thresholds \& Drift Metrics} & \text{Core} \\ \hline
 \end{array}$$
+
+### 4.2. Persistent Reports Database Architecture (`reportsDatabaseService.js` / `reports_db.json`)
+To ensure complete provenance and historical traceability, all evaluated audit batches and work dossiers are committed to a durable persistence layer:
+- **Durable File-Backed Store (`backend/data/reports_db.json`)**: Employs an in-memory cache synchronized with atomic disk writes, guaranteeing that generated audit briefs, forensic evidence cards, and state metrics survive server restarts and network interruptions.
+- **Dossier Batch Schema**:
+  ```typescript
+  interface AuditReportBatch {
+    batchId: string;                     // e.g., "BATCH-2026-00412"
+    timestamp: string;                   // ISO 8601 creation timestamp
+    datasetsUploaded: string[];          // List of correlated lifecycle streams
+    completenessScore: number;           // 0 to 100% data stream availability
+    activeDimensions: string[];          // AI detection modules activated
+    workReports: CanonicalWorkReport[];  // Itemized works with composite scores & statutory citations
+    flaggedCases: CanonicalWorkReport[];  // Filtered Critical & High risk cases
+    analytics: {
+      totalWorksMonitored: number;
+      totalSanctionedCr: number;
+      totalExpenditureCr: number;
+      riskCounts: { critical: number; high: number; medium: number; low: number };
+      stateMetrics: StateRiskMetric[];
+      geoPoints: GeocodedRiskPoint[];
+    };
+  }
+  ```
+- **REST Endpoints & Navigation**:
+  - `GET /api/datasets/reports`: Returns catalog of all historical audit batches.
+  - `GET /api/datasets/reports/:batchId`: Retrieves specific audit batch and itemized works.
+  - `POST /api/datasets/scope/restore`: Clears active upload scope back to clean unloaded baseline.
+  - Frontend accessible at `/app/reports` (Uploaded Reports Hub).
+
+### 4.3. System Administrator 1-Click Multi-Stream Batch Ingestion (`POST /api/datasets/admin/ingest-all`)
+To facilitate rapid audit onboarding, the platform exposes an automated batch ingestion pipeline:
+- **Correlated Streams**: Concurrently ingests and joins all 12 statutory datasets across Lok Sabha and Rajya Sabha (Recommendations, Sanctions, Completions, Expenditures, Installments, Calamity Consents).
+- **Entity Consolidation**: Maps heterogeneous ledger schemas into unified `CanonicalWorkProfile` instances, resolves contractor aliases via Levenshtein clustering, and verifies timeline milestones.
+- **Trigger Execution**: Executes the 21-module AI grid in one operation and automatically commits the resulting surveillance state to the persistent reports database.
+
+### 4.4. Real-Time Operational Telemetry Subsystem (`GET /api/system/activity`)
+To ensure continuous audit operational readiness, Sentinel provides live telemetry via a dedicated heartbeat monitor:
+- **Database Health**: Real-time connection status (`Connected` / `Online`), total active records, and database engine type (Supabase PostgreSQL / Persistent JSON Store).
+- **Backend Service**: Server port (`5000`), active process uptime, and request throughput.
+- **AI Engine Readiness**: Operational module count (`21/21 Ready`), assurance tier (`Statutory Grade`), and inference model registry.
+- **Persistent UI Widget**: Rendered in the bottom-left sidebar footer across all dashboard views.
+
+### 4.5. National Geospatial Project Risk Map & WGS84 Geodetic Projection Engine
+To accurately pinpoint geographic anomaly concentrations across India without relying on external proprietary tile servers, Sentinel implements a calibrated geodetic projection engine atop the official Indian state-boundaries cartographic standard:
+- **Cartographic Asset**: Clean vector-rendered raster base (`/maps/india-states.png`, 624×468 px, 4:3 aspect ratio) reflecting official Survey of India political boundaries.
+- **WGS84 Geodetic Normalization Formulation**:
+  Maps geographical coordinates $(\text{Lat}, \text{Lon})$ directly to pixel percentages $(x_{\text{pct}}, y_{\text{pct}})$ within the container:
+  $$\begin{aligned}
+  x_{\text{px}} &= 116 + \left(\frac{\text{Lon} - 68.11}{97.40 - 68.11}\right) \times (507 - 116) \\
+  y_{\text{px}} &= 24 + \left(\frac{37.10 - \text{Lat}}{37.10 - 8.08}\right) \times (425 - 24) \\
+  x_{\text{pct}} &= \frac{x_{\text{px}}}{624} \times 100\% \\
+  y_{\text{pct}} &= \frac{y_{\text{px}}}{468} \times 100\%
+  \end{aligned}$$
+- **Interactive Geospatial UX Features**:
+  - **Dynamic Radar Pins**: Color-coded pins with pulsing radar ripples (`animate-ping` for Critical risk, `animate-pulse` for High risk).
+  - **Micro-Tooltips**: Instant hover details displaying project title, district, state, risk score, and sanctioned cost.
+  - **Selected Anomaly Inspector**: Interactive right drawer showing work metadata, statutory violation citations, and 1-click navigation to the Digital Project Twin (`/app/projects/:id`).
+  - **Multi-Level Filters**: State/UT scope dropdown and risk severity filters (`Critical`, `High`, `Normal`).
+  - **Zero-Fake-Data Overlay**: Displays a clean "Geospatial Surveillance Standing By" banner when un-ingested.
 
 ---
 
@@ -559,8 +625,10 @@ Natural-language interface grounded exclusively in structured project records an
 
 | Layer | Technologies & Frameworks | Key Responsibilities |
 |---|---|---|
-| **Frontend** | Next.js 16 (App Router), React 19 (Pure JSX), Tailwind CSS v4, Recharts, Lucide React | 7 Institutional Command Centers, Project Digital Twins, Role Ingestion Hub (`/app/data`), Grounded Audit Copilot |
-| **API Backend** | Node.js, Express REST API, Multer, JWT, Morgan, Winston | Strict 7-role RBAC enforcement, Cloud dataset streaming, Case lifecycle state machine, REST endpoints |
+| **Frontend** | Next.js 16 (App Router), React 19 (Pure JSX), Tailwind CSS v4, Recharts, Lucide React | 7 Institutional Command Centers, Project Digital Twins, Role Ingestion Hub (`/app/data`), Uploaded Reports (`/app/reports`), Live System Telemetry Card |
+| **API Backend** | Node.js, Express REST API, Multer, JWT, Morgan, Winston | Strict 7-role RBAC enforcement, Cloud dataset streaming, Case lifecycle state machine, System Activity monitor, Admin batch ingest |
+| **Persistent Reports DB** | Node.js FS atomic engine (`reports_db.json`) & Supabase sync | Durable persistence for all evaluated batches, itemized work dossiers, and active surveillance scope across server restarts |
+| **GIS & Geospatial** | WGS84 Geodetic Normalization Engine, India State-Boundaries Raster (`/maps/india-states.png`) | Pan-India risk anomaly pinning, calibrated geographic projection, state/UT drill-down, and proximity clustering |
 | **Cloud Datasets** | Supabase Cloud Storage (`datasets` bucket, CDN streaming) | 12 official CSV datasets (45,806 records across Lok Sabha & Rajya Sabha), In-memory LRU caching |
 | **Database & Auth** | Supabase PostgreSQL, Row Level Security (RLS) | Relational storage for projects, evidence chains, and audit logs |
 | **AI Microservices** | Python 3.14, FastAPI, Pydantic, Uvicorn | 21 AI modules, multi-modal surveillance grid, sub-second inference |
