@@ -64,14 +64,52 @@ export default function AnalyticsPage() {
 
         {/* Top KPI Metrics Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard title="Total Sanctioned" value="₹4,892 Cr" subtitle="Across 18,432 works" trend={{ value: "FY 2025-26", isPositive: true, isPositiveGood: true }} icon={Building} variant="default"/>
-          <MetricCard title="Total Disbursed" value="₹3,715 Cr" subtitle="75.9% utilization rate" trend={{ value: "PFMS verified", isPositive: true, isPositiveGood: true }} icon={TrendingUp} variant="default"/>
-          <MetricCard title="High-Risk Concentration" value="127 Works" subtitle="Delhi, UP & Maharashtra top" trend={{ value: "0.69% of all works", isPositive: false, isPositiveGood: false }} icon={ShieldAlert} variant="warning"/>
-          <MetricCard title="Avg National Risk Score" value="34.8 / 100" subtitle="Surveillance baseline" trend={{ value: "Controlled range", isPositive: true, isPositiveGood: true }} icon={BarChart3} variant="default"/>
+          <MetricCard
+            title="Total Sanctioned"
+            value={national?.totalSanctionedCr ? `₹${Number(national.totalSanctionedCr).toLocaleString("en-IN")} Cr` : "₹0 Cr"}
+            subtitle={national?.totalWorksMonitored ? `Across ${national.totalWorksMonitored.toLocaleString("en-IN")} works` : "0 works monitored"}
+            trend={{ value: "Current Scope", isPositive: true, isPositiveGood: true }}
+            icon={Building}
+            variant="default"
+          />
+          <MetricCard
+            title="Total Disbursed"
+            value={national?.totalExpenditureCr ? `₹${Number(national.totalExpenditureCr).toLocaleString("en-IN")} Cr` : "₹0 Cr"}
+            subtitle={
+              national?.totalSanctionedCr && national?.totalExpenditureCr
+                ? `${((national.totalExpenditureCr / national.totalSanctionedCr) * 100).toFixed(1)}% utilization rate`
+                : "0% utilization rate"
+            }
+            trend={{ value: "PFMS verified", isPositive: true, isPositiveGood: true }}
+            icon={TrendingUp}
+            variant="default"
+          />
+          <MetricCard
+            title="High-Risk Concentration"
+            value={`${(national?.highRiskCount || 0) + (national?.criticalRiskCount || 0)} Works`}
+            subtitle={`${national?.criticalRiskCount || 0} critical, ${national?.highRiskCount || 0} high risk`}
+            trend={{
+              value: national?.totalWorksMonitored
+                ? `${((((national?.highRiskCount || 0) + (national?.criticalRiskCount || 0)) / national.totalWorksMonitored) * 100).toFixed(1)}% of scope`
+                : "0% of scope",
+              isPositive: false,
+              isPositiveGood: false,
+            }}
+            icon={ShieldAlert}
+            variant={(national?.highRiskCount || 0) + (national?.criticalRiskCount || 0) > 0 ? "danger" : "default"}
+          />
+          <MetricCard
+            title="Avg National Risk Score"
+            value={national?.totalWorksMonitored > 0 ? `${national.averageRiskScore || 34.8} / 100` : "0 / 100"}
+            subtitle={national?.totalWorksMonitored > 0 ? "Surveillance baseline" : "Awaiting batch ingestion"}
+            trend={{ value: "Controlled range", isPositive: true, isPositiveGood: true }}
+            icon={BarChart3}
+            variant="default"
+          />
         </div>
 
         {/* Interactive Geospatial Risk Map */}
-        <RiskMapPanel points={geoPoints}/>
+        <RiskMapPanel points={geoPoints || []} states={states || []} />
 
         {/* State Performance Ranking Table */}
         <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
@@ -101,31 +139,41 @@ export default function AnalyticsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {states.map((st) => (<tr key={st.state} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/50 transition-colors group">
-                    <td className="px-4 py-3.5 font-bold text-slate-900 dark:text-white">
-                      <Link href={`/app/analytics/states/${st.state.toLowerCase().replace(/\s+/g, "-")}`} className="text-blue-600 dark:text-blue-400 hover:underline">
-                        {st.state}
-                      </Link>
+                {states.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="px-4 py-8 text-center text-slate-400">
+                      No state datasets currently loaded. Ingest official MPLADS batches or upload CSVs in Ingestion Hub to populate state risk metrics.
                     </td>
-                    <td className="px-4 py-3.5 font-mono">{st.totalWorks.toLocaleString("en-IN")}</td>
-                    <td className="px-4 py-3.5 font-mono font-semibold">₹{st.totalSanctionedCr} Cr</td>
-                    <td className="px-4 py-3.5 font-mono font-bold text-amber-600 dark:text-amber-400">
-                      {st.highRiskWorks}
-                    </td>
-                    <td className="px-4 py-3.5 font-mono font-bold text-rose-600 dark:text-rose-400">
-                      {st.criticalWorks}
-                    </td>
-                    <td className="px-4 py-3.5 font-mono">{st.averageRiskScore}</td>
-                    <td className="px-4 py-3.5 text-slate-600 dark:text-slate-300 max-w-xs text-[11px]">
-                      {st.primaryRiskFactor}
-                    </td>
-                    <td className="px-4 py-3.5 text-right whitespace-nowrap">
-                      <Link href={`/app/analytics/states/${st.state.toLowerCase().replace(/\s+/g, "-")}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white transition-colors">
-                        <span>Drill Down</span>
-                        <ArrowRight className="w-3.5 h-3.5"/>
-                      </Link>
-                    </td>
-                  </tr>))}
+                  </tr>
+                ) : (
+                  states.map((st) => (
+                    <tr key={st.state} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/50 transition-colors group">
+                      <td className="px-4 py-3.5 font-bold text-slate-900 dark:text-white">
+                        <Link href={`/app/analytics/states/${st.state.toLowerCase().replace(/\s+/g, "-")}`} className="text-blue-600 dark:text-blue-400 hover:underline">
+                          {st.state}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3.5 font-mono">{st.totalWorks?.toLocaleString("en-IN") || 0}</td>
+                      <td className="px-4 py-3.5 font-mono font-semibold">₹{st.totalSanctionedCr || 0} Cr</td>
+                      <td className="px-4 py-3.5 font-mono font-bold text-amber-600 dark:text-amber-400">
+                        {st.highRiskWorks || 0}
+                      </td>
+                      <td className="px-4 py-3.5 font-mono font-bold text-rose-600 dark:text-rose-400">
+                        {st.criticalWorks || 0}
+                      </td>
+                      <td className="px-4 py-3.5 font-mono">{st.averageRiskScore || 0}</td>
+                      <td className="px-4 py-3.5 text-slate-600 dark:text-slate-300 max-w-xs text-[11px]">
+                        {st.primaryRiskFactor || "Standard monitoring"}
+                      </td>
+                      <td className="px-4 py-3.5 text-right whitespace-nowrap">
+                        <Link href={`/app/analytics/states/${st.state.toLowerCase().replace(/\s+/g, "-")}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white transition-colors">
+                          <span>Drill Down</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

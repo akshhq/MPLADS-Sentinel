@@ -488,6 +488,108 @@ class DynamicIngestionService {
         { category: "Rural Roads", count: Math.round(totalWorksCount * 0.40), share: 40 },
         { category: "Education & Health", count: Math.max(1, totalWorksCount - Math.round(totalWorksCount * 0.75)), share: 25 },
       ],
+      stateMetrics: (() => {
+        const stateMap = {};
+        workReports.forEach((w) => {
+          const st = w.state || "National Scope";
+          if (!stateMap[st]) {
+            stateMap[st] = {
+              state: st,
+              totalWorks: 0,
+              totalSanctioned: 0,
+              totalExpenditure: 0,
+              highRiskWorks: 0,
+              criticalWorks: 0,
+              scoreSum: 0,
+              primaryRiskFactors: {},
+            };
+          }
+          stateMap[st].totalWorks++;
+          stateMap[st].totalSanctioned += w.sanction_amount || 0;
+          stateMap[st].totalExpenditure += w.disbursed_amount || 0;
+          stateMap[st].scoreSum += w.composite_risk_score || 0;
+          if (w.risk_band === "CRITICAL") stateMap[st].criticalWorks++;
+          if (w.risk_band === "HIGH") stateMap[st].highRiskWorks++;
+          const flag = w.triggered_signals?.[0]?.finding || w.risk?.primarySignal || "Operational variance";
+          stateMap[st].primaryRiskFactors[flag] = (stateMap[st].primaryRiskFactors[flag] || 0) + 1;
+        });
+
+        return Object.values(stateMap).map((s) => {
+          const topFactor = Object.entries(s.primaryRiskFactors).sort((a, b) => b[1] - a[1])[0]?.[0] || "Routine monitoring";
+          return {
+            state: s.state,
+            totalWorks: s.totalWorks,
+            totalSanctionedCr: +(s.totalSanctioned / 10000000).toFixed(2),
+            totalExpenditureCr: +(s.totalExpenditure / 10000000).toFixed(2),
+            highRiskWorks: s.highRiskWorks,
+            criticalWorks: s.criticalWorks,
+            averageRiskScore: +(s.scoreSum / Math.max(1, s.totalWorks)).toFixed(1),
+            primaryRiskFactor: topFactor,
+          };
+        }).sort((a, b) => (b.criticalWorks + b.highRiskWorks) - (a.criticalWorks + a.highRiskWorks));
+      })(),
+      geoPoints: (() => {
+        const STATE_COORDINATES = {
+          "Delhi": { lat: 28.6139, lon: 77.2090 },
+          "Uttar Pradesh": { lat: 26.8467, lon: 80.9462 },
+          "Maharashtra": { lat: 19.7515, lon: 75.7139 },
+          "Rajasthan": { lat: 27.0238, lon: 74.2179 },
+          "Gujarat": { lat: 22.2587, lon: 71.1924 },
+          "Karnataka": { lat: 15.3173, lon: 75.7139 },
+          "Tamil Nadu": { lat: 11.1271, lon: 78.6569 },
+          "West Bengal": { lat: 22.9868, lon: 87.8550 },
+          "Madhya Pradesh": { lat: 22.9734, lon: 78.6569 },
+          "Bihar": { lat: 25.0961, lon: 85.3131 },
+          "Punjab": { lat: 31.1471, lon: 75.3412 },
+          "Haryana": { lat: 29.0588, lon: 76.0856 },
+          "Kerala": { lat: 10.8505, lon: 76.2711 },
+          "Telangana": { lat: 18.1124, lon: 79.0193 },
+          "Andhra Pradesh": { lat: 15.9129, lon: 79.7400 },
+          "Odisha": { lat: 20.9517, lon: 85.0985 },
+          "Assam": { lat: 26.2006, lon: 92.9376 },
+          "Jharkhand": { lat: 23.6102, lon: 85.2799 },
+          "Chhattisgarh": { lat: 21.2787, lon: 81.8661 },
+          "Uttarakhand": { lat: 30.0668, lon: 79.0193 },
+          "Himachal Pradesh": { lat: 31.1048, lon: 77.1734 },
+          "Jammu and Kashmir": { lat: 33.7782, lon: 76.5762 },
+          "Ladakh": { lat: 34.1526, lon: 77.5771 },
+          "Goa": { lat: 15.2993, lon: 74.1240 },
+          "Tripura": { lat: 23.9408, lon: 91.9882 },
+          "Manipur": { lat: 24.6637, lon: 93.9063 },
+          "Meghalaya": { lat: 25.4670, lon: 91.3662 },
+          "Nagaland": { lat: 26.1584, lon: 94.5624 },
+          "Mizoram": { lat: 23.1645, lon: 92.9376 },
+          "Arunachal Pradesh": { lat: 28.2180, lon: 94.7278 },
+          "Sikkim": { lat: 27.5330, lon: 88.5122 },
+          "Puducherry": { lat: 11.9416, lon: 79.8083 },
+          "Chandigarh": { lat: 30.7333, lon: 76.7794 },
+          "Andaman and Nicobar": { lat: 11.7401, lon: 92.6586 },
+          "Andaman and Nicobar Islands": { lat: 11.7401, lon: 92.6586 },
+        };
+
+        const sampled = workReports.slice(0, 60);
+        return sampled.map((w, idx) => {
+          const base = STATE_COORDINATES[w.state] || { lat: 23.0 + (idx % 8) * 1.5, lon: 75.0 + (idx % 10) * 1.5 };
+          const hash = (w.id || "").split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) + idx * 19;
+          const jitterLat = ((hash % 30) - 15) * 0.05;
+          const jitterLon = (((hash * 3) % 30) - 15) * 0.05;
+
+          return {
+            id: `GEO-${w.id || idx}`,
+            projectId: w.id || w.work_id,
+            projectTitle: w.title,
+            state: w.state || "India",
+            district: w.district || "District",
+            latitude: +(base.lat + jitterLat).toFixed(4),
+            longitude: +(base.lon + jitterLon).toFixed(4),
+            riskScore: w.composite_risk_score || 50,
+            riskLevel: (w.risk_band || "LOW").toLowerCase(),
+            primarySignal: w.risk?.primarySignal || (w.triggered_signals?.[0]?.finding) || "Routine monitoring",
+            sanctionedAmount: w.sanction_amount || 0,
+            category: w.category || "Infrastructure",
+          };
+        });
+      })(),
     };
 
     const uploadedDatasetSummary = {
