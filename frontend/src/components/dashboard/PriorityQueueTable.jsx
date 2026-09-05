@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight, MapPin, Sparkles } from "lucide-react";
 import { RiskBadge } from "../common/RiskBadge";
 import { formatIndianCurrency, formatRelativeTime } from "@/lib/formatters";
-export const PriorityQueueTable = ({ projects }) => {
+export const PriorityQueueTable = ({ projects, totalWorks = "45,806" }) => {
     return (<div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
       {/* Table Header */}
       <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -23,7 +23,7 @@ export const PriorityQueueTable = ({ projects }) => {
         </div>
 
         <Link href="/app/projects" className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 self-start sm:self-auto">
-          <span>View All 18,432 Works</span>
+          <span>View All {totalWorks} Works</span>
           <ArrowRight className="w-3.5 h-3.5"/>
         </Link>
       </div>

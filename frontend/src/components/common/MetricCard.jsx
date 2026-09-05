@@ -26,14 +26,14 @@ export const MetricCard = ({ title, value, subtitle, trend, icon: Icon, variant 
     return (<div onClick={onClick} className={`relative p-5 rounded-2xl bg-white dark:bg-slate-900 border ${variantStyles.border} ${variantStyles.glow} shadow-sm transition-all duration-200 ${onClick ? "cursor-pointer hover:shadow-md active:scale-[0.99]" : ""} ${className}`}>
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             {title}
           </p>
-          <p className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white font-mono">
+          <p className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
             {value}
           </p>
         </div>
-        <div className={`p-3 rounded-xl shrink-0 ${variantStyles.iconBg}`}>
+        <div className={`p-2.5 rounded-xl shrink-0 ${variantStyles.iconBg}`}>
           <Icon className="w-5 h-5"/>
         </div>
       </div>
