@@ -24,8 +24,10 @@ import {
   X,
   ChevronDown,
   FileSpreadsheet,
+  Landmark,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { MetricCard } from "@/components/common/MetricCard";
 import { RiskBadge } from "@/components/common/RiskBadge";
 import { api } from "@/lib/api";
 import { formatIndianCurrency, formatRelativeTime } from "@/lib/formatters";
@@ -202,134 +204,105 @@ export default function UploadedReportsPage() {
   return (
     <AppShell breadcrumbs={[{ label: "Uploaded Work Reports & Dossiers" }]}>
       <div className="space-y-6 max-w-7xl mx-auto">
-        {/* Institutional Header Banner */}
-        <div className="rounded-3xl border border-blue-200/80 dark:border-blue-900/60 bg-gradient-to-r from-blue-50/90 via-slate-50 to-indigo-50/80 dark:from-blue-950/40 dark:via-slate-900 dark:to-indigo-950/30 p-5 sm:p-6 shadow-xs">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div className="space-y-1.5">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/60 px-2.5 py-0.5 rounded-full border border-blue-300 dark:border-blue-800">
-                  e-SAKSHI Uploaded Audits Hub
+        {/* CLEAN INSTITUTIONAL HEADER */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200/80 dark:border-slate-800 pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded-md border border-blue-200 dark:border-blue-900">
+                e-SAKSHI Uploaded Audits Hub
+              </span>
+              {activeScope?.mode === "uploaded" ? (
+                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/90 dark:bg-amber-950/80 px-2.5 py-0.5 rounded-md border border-amber-300 dark:border-amber-800 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                  <span>Scoped to Upload ({activeScope.batchId})</span>
                 </span>
-                {activeScope?.mode === "uploaded" ? (
-                  <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-950/70 px-2.5 py-0.5 rounded-full border border-amber-300 dark:border-amber-800 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                    Dashboard Scoped to Upload ({activeScope.batchId})
-                  </span>
-                ) : (
-                  <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 bg-slate-200/70 dark:bg-slate-800 px-2.5 py-0.5 rounded-full border border-slate-300 dark:border-slate-700">
-                    Dashboard on Master Database (All Works)
-                  </span>
-                )}
-              </div>
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-                Uploaded Work Reports & Audit Dossiers
-              </h1>
-              <p className="text-xs text-slate-600 dark:text-slate-300 max-w-3xl">
-                Comprehensive multi-stream surveillance audit records for every work uploaded through custom files. Inspect anomaly signals, missing data degradations, and forensic findings.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
-              <Link
-                href="/app/data"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition"
-              >
-                <UploadCloud className="w-3.5 h-3.5" />
-                <span>Upload New Files</span>
-              </Link>
-              <Link
-                href="/app/command-center"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 transition shadow-xs"
-              >
-                <LayoutDashboard className="w-3.5 h-3.5" />
-                <span>Command Center</span>
-              </Link>
-              {activeScope?.mode === "uploaded" && (
-                <button
-                  type="button"
-                  onClick={handleRestoreMasterDatabase}
-                  disabled={refreshing}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition"
-                  title="Restore dashboard view to show all works in the database"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
-                  <span>Restore Full Database View</span>
-                </button>
+              ) : (
+                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">
+                  Dashboard on Master Database (All Works)
+                </span>
               )}
             </div>
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white mt-1">
+              Uploaded Work Reports & Dossiers
+            </h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Itemized audit findings, anomaly signals, and forensic dossiers for works processed across custom e-SAKSHI CSV uploads.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            <Link
+              href="/app/data"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition"
+            >
+              <UploadCloud className="w-3.5 h-3.5" />
+              <span>Upload New Files</span>
+            </Link>
+            <Link
+              href="/app/command-center"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 shadow-xs transition"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              <span>Command Center</span>
+            </Link>
+            {activeScope?.mode === "uploaded" && (
+              <button
+                type="button"
+                onClick={handleRestoreMasterDatabase}
+                disabled={refreshing}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition"
+                title="Restore dashboard view to show all works in the database"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
+                <span>Restore All Works</span>
+              </button>
+            )}
           </div>
         </div>
 
         {/* NOTIFICATION TOAST */}
         {notification && (
-          <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 text-emerald-900 dark:text-emerald-200 flex items-center justify-between gap-3 text-xs animate-in fade-in duration-300 shadow-sm">
-            <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 text-emerald-900 dark:text-emerald-200 flex items-center justify-between text-xs animate-in fade-in duration-200">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span className="font-semibold">{notification}</span>
             </div>
-            <button
-              type="button"
-              onClick={() => setNotification(null)}
-              className="p-1 rounded-lg text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100"
-            >
-              <X className="w-4 h-4" />
+            <button type="button" onClick={() => setNotification(null)}>
+              <X className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
             </button>
           </div>
         )}
 
-        {/* SUMMARY KPI METRICS BAR */}
+        {/* ONLY THE NEEDED STATS - 4 CLEAN METRIC CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs">
-            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-              <span className="font-semibold">Uploaded Batches</span>
-              <Layers className="w-4 h-4 text-blue-500" />
-            </div>
-            <div className="text-2xl font-black text-slate-900 dark:text-white mt-1">
-              {batches.length}
-            </div>
-            <div className="text-[11px] text-slate-400 mt-0.5">
-              {batches.length > 0 ? `Latest: ${batches[0]?.batchId}` : "No uploads registered yet"}
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs">
-            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-              <span className="font-semibold">Active Batch Works</span>
-              <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
-            </div>
-            <div className="text-2xl font-black text-slate-900 dark:text-white mt-1">
-              {activeBatch?.summary?.totalWorksCount || workReports.length || 0}
-            </div>
-            <div className="text-[11px] text-slate-400 mt-0.5">
-              ₹{activeBatch?.summary?.totalSanctionedCr || "0.0"} Cr total sanctioned
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs">
-            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-              <span className="font-semibold">Flagged Anomalies</span>
-              <ShieldAlert className="w-4 h-4 text-rose-500" />
-            </div>
-            <div className="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">
-              {activeBatch?.summary?.flaggedCasesCount || (activeBatch?.flaggedCases?.length) || 0}
-            </div>
-            <div className="text-[11px] text-rose-500 dark:text-rose-400/80 mt-0.5">
-              {activeBatch?.summary?.criticalCount || 0} Critical • {activeBatch?.summary?.highCount || 0} High
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs">
-            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-              <span className="font-semibold">Data Assurance Rating</span>
-              <CheckCircle2 className="w-4 h-4 text-blue-500" />
-            </div>
-            <div className="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">
-              {activeBatch?.summary?.completenessPercent ?? 100}%
-            </div>
-            <div className="text-[11px] text-slate-400 mt-0.5">
-              {activeBatch?.summary?.slotsAvailableCount ?? 6}/6 Streams Verified
-            </div>
-          </div>
+          <MetricCard
+            title="Audited Works in Batch"
+            value={`${activeBatch?.summary?.totalWorksCount || workReports.length || 0}`}
+            subtitle="Uploaded Projects Evaluated"
+            icon={Building2}
+            variant="default"
+          />
+          <MetricCard
+            title="Sanctioned Allocation"
+            value={`₹${activeBatch?.summary?.totalSanctionedCr || "0.0"} Cr`}
+            subtitle="Total Approved Project Cap"
+            icon={BadgeIndianRupee}
+            variant="default"
+          />
+          <MetricCard
+            title="Disbursed Expenditure"
+            value={`₹${activeBatch?.summary?.totalExpenditureCr || "0.0"} Cr`}
+            subtitle="Treasury Tranche Releases"
+            icon={Landmark}
+            variant="default"
+          />
+          <MetricCard
+            title="Flagged Anomalies"
+            value={`${activeBatch?.summary?.flaggedCasesCount || (activeBatch?.flaggedCases?.length) || 0}`}
+            subtitle={`${activeBatch?.summary?.criticalCount || 0} Critical • ${activeBatch?.summary?.highCount || 0} High`}
+            icon={ShieldAlert}
+            variant="critical"
+          />
         </div>
 
         {/* BATCH SELECTOR & DATA AVAILABILITY CARD */}

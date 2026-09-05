@@ -136,6 +136,7 @@ export const ROLE_ALLOWED_ROUTES = {
   mospi_officer: [
     "/app",
     "/app/command-center",
+    "/app/reports",
     "/app/analytics",
     "/app/projects",
     "/app/risk",
@@ -147,6 +148,7 @@ export const ROLE_ALLOWED_ROUTES = {
   state_nodal_authority: [
     "/app",
     "/app/command-center",
+    "/app/reports",
     "/app/analytics",
     "/app/projects",
     "/app/risk",
@@ -156,18 +158,26 @@ export const ROLE_ALLOWED_ROUTES = {
   ],
   mp: [
     "/app",
+    "/app/command-center",
+    "/app/reports",
     "/app/projects",
+    "/app/analytics",
     "/app/copilot",
     "/app/data",
   ],
   implementing_agency: [
     "/app",
+    "/app/command-center",
+    "/app/reports",
     "/app/projects",
     "/app/evidence",
     "/app/copilot",
+    "/app/data",
   ],
   investigator: [
     "/app",
+    "/app/command-center",
+    "/app/reports",
     "/app/investigations",
     "/app/risk",
     "/app/projects",
@@ -177,16 +187,24 @@ export const ROLE_ALLOWED_ROUTES = {
   ],
   field_verification_officer: [
     "/app",
+    "/app/command-center",
+    "/app/reports",
     "/app/evidence",
     "/app/projects",
     "/app/copilot",
+    "/app/data",
   ],
   system_admin: [
     "/app",
     "/app/command-center",
+    "/app/reports",
     "/app/data",
     "/app/copilot",
     "/app/projects",
+    "/app/risk",
+    "/app/evidence",
+    "/app/investigations",
+    "/app/analytics",
   ],
 };
 

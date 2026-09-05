@@ -1,22 +1,14 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   ShieldAlert,
   ShieldCheck,
   Building2,
   BadgeIndianRupee,
-  Calendar,
-  Sparkles,
-  Camera,
-  CopyCheck,
-  FileText,
-  Clock,
-  MapPin,
   Landmark,
-  HardHat,
-  SearchCode,
-  ClipboardCheck,
+  FileText,
+  MapPin,
   Users,
   Settings,
   UserCheck,
@@ -27,18 +19,17 @@ import {
   CheckCircle2,
   Database,
   RefreshCw,
-  ExternalLink,
-  Layers,
   UploadCloud,
+  Layers,
+  Sparkles,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { MetricCard } from "@/components/common/MetricCard";
 import { RiskTrendChart } from "@/components/dashboard/RiskTrendChart";
 import { RiskDonutChart } from "@/components/dashboard/RiskDonutChart";
 import { PriorityQueueTable } from "@/components/dashboard/PriorityQueueTable";
-import { LiveInsightCard } from "@/components/dashboard/LiveInsightCard";
 import { api } from "@/lib/api";
-import { useAuth, ROLE_PERMISSIONS } from "@/lib/authContext";
+import { useAuth } from "@/lib/authContext";
 
 export default function CommandCenterPage() {
   const { profile, managedUsers, updateManagedUser, addManagedUser, toggleUserStatus } = useAuth();
@@ -50,6 +41,7 @@ export default function CommandCenterPage() {
   const [selectedRegion, setSelectedRegion] = useState("all");
   const [currentScope, setCurrentScope] = useState({ mode: "database", batchId: null, batch: null });
   const [restoreNotification, setRestoreNotification] = useState(null);
+  const [activeAdminTab, setActiveAdminTab] = useState("dashboard"); // "dashboard" | "stakeholders"
 
   // Admin User Edit State
   const [editingUser, setEditingUser] = useState(null);
@@ -74,7 +66,6 @@ export default function CommandCenterPage() {
       if (scope?.mode === "uploaded" && scope.batch) {
         const batch = scope.batch;
 
-        // Populate analytics exclusively from uploaded batch
         setAnalytics(batch.analytics || {
           totalWorksMonitored: batch.summary?.totalWorksCount || (batch.workReports?.length) || 10,
           totalSanctionedCr: batch.summary?.totalSanctionedCr || 12.5,
@@ -91,7 +82,6 @@ export default function CommandCenterPage() {
           monthlyTrends: batch.analytics?.monthlyTrends || [],
         });
 
-        // Populate dataset summary from uploaded batch
         setDatasetSummary(batch.datasetSummary || {
           totalRecordsMonitored: batch.summary?.totalRawRowsProcessed || batch.summary?.totalWorksCount || 10,
           totalSanctionedWorks: batch.summary?.totalWorksCount || 10,
@@ -111,7 +101,6 @@ export default function CommandCenterPage() {
           : (batch.flaggedCases || batch.workReports || []);
         setPriorityProjects(list);
       } else {
-        // Default Master Database view: All Works
         const [anData, sumData, projData] = await Promise.all([
           api.getNationalAnalytics(),
           api.getNationalDatasetSummary(),
@@ -135,8 +124,8 @@ export default function CommandCenterPage() {
     try {
       setRefreshing(true);
       await api.restoreMasterScope();
-      setRestoreNotification("Dashboard successfully restored to All Master Database Works (45,806+ official records).");
-      setTimeout(() => setRestoreNotification(null), 6000);
+      setRestoreNotification("Dashboard restored to Master Database (45,806+ official records).");
+      setTimeout(() => setRestoreNotification(null), 5000);
       await loadDashboardData();
     } catch (err) {
       console.error("Failed to restore master database:", err);
@@ -148,27 +137,6 @@ export default function CommandCenterPage() {
   useEffect(() => {
     loadDashboardData();
   }, []);
-
-  const getRoleIcon = () => {
-    switch (profile?.role) {
-      case "state_nodal_authority":
-        return Landmark;
-      case "mp":
-        return Landmark;
-      case "implementing_agency":
-        return HardHat;
-      case "investigator":
-        return SearchCode;
-      case "field_verification_officer":
-        return ClipboardCheck;
-      case "system_admin":
-        return Settings;
-      default:
-        return ShieldCheck;
-    }
-  };
-
-  const RoleIcon = getRoleIcon();
 
   const handleSaveUserEdit = (e) => {
     e.preventDefault();
@@ -202,233 +170,267 @@ export default function CommandCenterPage() {
     });
   };
 
+  // Needed Core Stats computed cleanly
+  const totalWorks = useMemo(() => {
+    if (currentScope?.mode === "uploaded") {
+      return (datasetSummary?.totalSanctionedWorks || datasetSummary?.totalRecordsMonitored || 0).toLocaleString();
+    }
+    return datasetSummary?.totalRecordsMonitored ? datasetSummary.totalRecordsMonitored.toLocaleString() : "45,806";
+  }, [currentScope, datasetSummary]);
+
+  const sanctionedCr = useMemo(() => {
+    return datasetSummary?.totalSanctionedCr || analytics?.totalSanctionedCr || "4,820.5";
+  }, [datasetSummary, analytics]);
+
+  const disbursedCr = useMemo(() => {
+    return datasetSummary?.totalDisbursedCr || analytics?.totalExpenditureCr || "3,410.2";
+  }, [datasetSummary, analytics]);
+
+  const highCriticalRiskCount = useMemo(() => {
+    if (datasetSummary?.activeRiskFlags) {
+      return (datasetSummary.activeRiskFlags.criticalCount || 0) + (datasetSummary.activeRiskFlags.highCount || 0);
+    }
+    return (analytics?.criticalRiskCount || 48) + (analytics?.highRiskCount || 113);
+  }, [datasetSummary, analytics]);
+
   return (
     <AppShell breadcrumbs={[{ label: "Command Center" }]}>
-      <div className="space-y-6">
-        {/* ROLE INSTITUTIONAL HEADER & JURISDICTION BANNER */}
-        {profile && (
-          <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-200 dark:border-blue-800 shadow-xs">
-                <RoleIcon className="w-5 h-5" />
-              </div>
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white truncate">
-                    {profile.full_name}
-                  </h3>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                    {profile.designation || profile.role_label}
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1.5 truncate">
-                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span className="truncate">
-                    Authorized Scope: <strong>{profile.jurisdiction || profile.department}</strong>
-                  </span>
-                </p>
-              </div>
+      <div className="space-y-6 max-w-7xl mx-auto">
+        {/* CLEAN INSTITUTIONAL HEADER */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200/80 dark:border-slate-800 pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded-md border border-blue-200 dark:border-blue-900">
+                MoSPI National Surveillance
+              </span>
+
+              {/* ACTIVE SCOPE PILL */}
+              {currentScope?.mode === "uploaded" ? (
+                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/90 dark:bg-amber-950/80 px-2.5 py-0.5 rounded-md border border-amber-300 dark:border-amber-800 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                  <span>Scoped to Uploaded Files ({currentScope.batchId})</span>
+                </span>
+              ) : (
+                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700 flex items-center gap-1">
+                  <Database className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                  <span>Master Database (All Works)</span>
+                </span>
+              )}
             </div>
 
-            <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap">
-              {currentScope?.mode === "uploaded" && (
-                <button
-                  type="button"
-                  onClick={handleRestoreMasterDatabase}
-                  disabled={refreshing}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs transition"
-                  title="Restore dashboard view to all database works"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
-                  <span>Restore Master Database</span>
-                </button>
-              )}
-              <Link
-                href="/app/reports"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 transition shadow-xs"
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white mt-1">
+              National Monitoring Command Center
+            </h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              {currentScope?.mode === "uploaded"
+                ? `Active Surveillance Scope: Showing data exclusively from ${totalWorks} works processed in your uploaded batch.`
+                : `Continuous AI risk intelligence screening across all 45,806 official MPLADS project records.`}
+            </p>
+          </div>
+
+          {/* RIGHT ACTION CONTROLS */}
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            {/* Region Filter */}
+            <select
+              value={selectedRegion}
+              onChange={(e) => setSelectedRegion(e.target.value)}
+              aria-label="Select State / UT Region"
+              className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 shadow-xs focus:outline-none"
+            >
+              <option value="all">All States & UTs</option>
+              <option value="delhi">Delhi (NCT)</option>
+              <option value="up">Uttar Pradesh</option>
+              <option value="maharashtra">Maharashtra</option>
+              <option value="karnataka">Karnataka</option>
+              <option value="rajasthan">Rajasthan</option>
+            </select>
+
+            {/* Ingest Button */}
+            <Link
+              href="/app/data"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition"
+            >
+              <UploadCloud className="w-3.5 h-3.5" />
+              <span>Ingest Files</span>
+            </Link>
+
+            {/* Reports Link */}
+            <Link
+              href="/app/reports"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 shadow-xs transition"
+            >
+              <FileText className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Reports</span>
+            </Link>
+
+            {/* Refresh / Restore Button */}
+            {currentScope?.mode === "uploaded" ? (
+              <button
+                type="button"
+                onClick={handleRestoreMasterDatabase}
+                disabled={refreshing}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition"
+                title="Restore dashboard to all database works"
               >
-                <FileText className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Uploaded Reports</span>
-              </Link>
-              <Link
-                href="/app/data"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition"
-              >
-                <UploadCloud className="w-3.5 h-3.5" />
-                <span>Ingest e-SAKSHI File</span>
-              </Link>
+                <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
+                <span>Restore All Works</span>
+              </button>
+            ) : (
               <button
                 type="button"
                 onClick={loadDashboardData}
                 disabled={refreshing}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                title="Sync and refresh datasets"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin text-blue-600" : ""}`} />
-                <span>Sync Datasets</span>
+                <span>Sync</span>
               </button>
-              <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Supabase CDN Live
-              </span>
-            </div>
+            )}
+
+            {/* Admin View Switcher (If System Admin) */}
+            {profile?.role === "system_admin" && (
+              <div className="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-200 dark:border-slate-700 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setActiveAdminTab("dashboard")}
+                  className={`px-2.5 py-1 rounded-lg font-bold transition ${
+                    activeAdminTab === "dashboard"
+                      ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900"
+                  }`}
+                >
+                  Overview
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveAdminTab("stakeholders")}
+                  className={`px-2.5 py-1 rounded-lg font-bold transition ${
+                    activeAdminTab === "stakeholders"
+                      ? "bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900"
+                  }`}
+                >
+                  Stakeholders ({managedUsers.length})
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
         {/* RESTORE NOTIFICATION BANNER */}
         {restoreNotification && (
-          <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 text-emerald-900 dark:text-emerald-200 flex items-center justify-between gap-3 text-xs animate-in fade-in duration-300 shadow-sm">
-            <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 text-emerald-900 dark:text-emerald-200 flex items-center justify-between text-xs animate-in fade-in duration-200">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span className="font-semibold">{restoreNotification}</span>
             </div>
-            <button
-              type="button"
-              onClick={() => setRestoreNotification(null)}
-              className="p-1 rounded-lg text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900"
-            >
-              <X className="w-4 h-4" />
+            <button type="button" onClick={() => setRestoreNotification(null)}>
+              <X className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
             </button>
           </div>
         )}
 
-        {/* ACTIVE SURVEILLANCE SCOPE BANNER */}
-        {currentScope?.mode === "uploaded" ? (
-          <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/10 via-blue-500/10 to-transparent border-2 border-amber-300 dark:border-amber-700/60 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-start gap-3.5 min-w-0">
-              <div className="w-11 h-11 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/20">
-                <UploadCloud className="w-6 h-6" />
+        {/* VIEW 1: CLEAN DASHBOARD OVERVIEW */}
+        {activeAdminTab === "dashboard" ? (
+          <>
+            {/* ONLY THE NEEDED STATS - 4 CORE HIGH-SIGNAL METRICS */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <MetricCard
+                title="Total Works Monitored"
+                value={totalWorks}
+                subtitle={currentScope?.mode === "uploaded" ? "Scoped to Uploaded Batch" : "Official Works Tracked"}
+                icon={Building2}
+                variant="default"
+              />
+              <MetricCard
+                title="Sanctioned Value"
+                value={`₹${sanctionedCr} Cr`}
+                subtitle="Approved Capital Allocation"
+                icon={BadgeIndianRupee}
+                variant="default"
+              />
+              <MetricCard
+                title="Disbursed Expenditure"
+                value={`₹${disbursedCr} Cr`}
+                subtitle="Verified Treasury Drawdowns"
+                icon={Landmark}
+                variant="default"
+              />
+              <MetricCard
+                title="Critical & High Risks"
+                value={`${highCriticalRiskCount}`}
+                subtitle="Prioritized for Auditor Inquiry"
+                icon={ShieldAlert}
+                variant="critical"
+              />
+            </div>
+
+            {/* CHARTS ROW: RISK TREND & RISK DISTRIBUTION */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-8">
+                {analytics ? (
+                  <RiskTrendChart data={analytics.monthlyTrends} />
+                ) : (
+                  <div className="h-80 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 animate-pulse" />
+                )}
               </div>
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 border border-amber-300 dark:border-amber-700">
-                    Uploaded Session Active
-                  </span>
-                  <span className="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400">
-                    Batch: {currentScope.batchId || "BATCH-CUSTOM"}
-                  </span>
-                </div>
-                <h4 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white mt-1">
-                  Showing Data Exclusively From Uploaded Files
-                </h4>
-                <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-                  The dashboard metrics, priority anomaly queue, and risk models are currently scoped to the{" "}
-                  <strong>{datasetSummary?.totalSanctionedWorks || datasetSummary?.totalRecordsMonitored || 10} works</strong>{" "}
-                  processed from your uploaded CSV files.
-                </p>
+              <div className="lg:col-span-4">
+                {analytics ? (
+                  <RiskDonutChart distribution={analytics.riskDistribution} />
+                ) : (
+                  <div className="h-80 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 animate-pulse" />
+                )}
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
-              <Link
-                href="/app/reports"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition"
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>View Uploaded Reports</span>
-              </Link>
-              <button
-                type="button"
-                onClick={handleRestoreMasterDatabase}
-                disabled={refreshing}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750 shadow-xs transition"
-                title="Restore dashboard view to show all works in official database"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin text-blue-600" : ""}`} />
-                <span>Restore Full Database View</span>
-              </button>
-            </div>
-          </div>
+            {/* PRIORITY INVESTIGATION QUEUE */}
+            <PriorityQueueTable projects={priorityProjects} />
+          </>
         ) : (
-          <div className="p-3.5 rounded-2xl bg-blue-50/60 dark:bg-slate-900/60 border border-blue-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
-            <div className="flex items-center gap-2.5">
-              <Database className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
-              <span>
-                Surveillance Scope: <strong>Complete Official Database</strong> — Monitoring all 45,806+ official records across Lok Sabha & Rajya Sabha.
-              </span>
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 bg-blue-100/80 dark:bg-blue-950 px-2 py-0.5 rounded-md border border-blue-200 dark:border-blue-800 shrink-0">
-              Master Registry Active
-            </span>
-          </div>
-        )}
-
-        {/* SYSTEM ADMINISTRATOR DEDICATED USER MANAGEMENT PANEL */}
-        {profile?.role === "system_admin" && (
-          <div id="admin-users" className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-900/60 shadow-lg space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          /* VIEW 2: SYSTEM ADMIN STAKEHOLDER MANAGEMENT (CLEAN TAB) */
+          <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                    System Admin Governance
-                  </span>
-                  <span className="text-xs text-slate-400 font-mono">RBAC Security Console</span>
-                </div>
-                <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white mt-1">
+                <h2 className="text-lg font-extrabold text-slate-900 dark:text-white">
                   Institutional Stakeholder & Access Management
                 </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Manage the 7 authorized operational accounts, update jurisdictions, configure roles, or toggle access.
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Manage authorized operational accounts, jurisdictions, roles, or database reset controls.
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsAddingUser(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-all self-start sm:self-auto"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Provision Stakeholder</span>
-              </button>
-            </div>
-
-            {/* SYSTEM ADMIN SURVEILLANCE SCOPE & RESTORE CONTROL CARD */}
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded">
-                    Surveillance Scope & Reset Controller
-                  </span>
-                  <span className="font-mono text-slate-500 dark:text-slate-400">
-                    Active: {currentScope?.mode === "uploaded" ? `Uploaded Batch (${currentScope.batchId})` : "Master Database (All Works)"}
-                  </span>
-                </div>
-                <p className="text-slate-600 dark:text-slate-300 text-[11px]">
-                  {currentScope?.mode === "uploaded"
-                    ? "The dashboard is currently filtered to uploaded custom files only. As System Admin, you can restore full institutional visibility across all database works at any time."
-                    : "The dashboard is currently displaying all official works from the master database. Uploading custom CSV files in the Ingestion Hub will scope the dashboard to those files."}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2">
                 {currentScope?.mode === "uploaded" && (
                   <button
                     type="button"
                     onClick={handleRestoreMasterDatabase}
                     disabled={refreshing}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-xs transition"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 shadow-xs transition"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
                     <span>Restore Full Database View</span>
                   </button>
                 )}
-                <Link
-                  href="/app/reports"
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 transition"
+                <button
+                  type="button"
+                  onClick={() => setIsAddingUser(true)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-xs transition"
                 >
-                  <FileText className="w-3.5 h-3.5" />
-                  <span>Audit Reports Hub</span>
-                </Link>
+                  <Plus className="w-4 h-4" />
+                  <span>Provision Stakeholder</span>
+                </button>
               </div>
             </div>
 
-            {/* Users Table */}
+            {/* Stakeholders Table */}
             <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
               <table className="w-full text-left text-xs min-w-[650px]">
                 <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-200 dark:border-slate-700">
                   <tr>
                     <th className="py-3 px-4">Stakeholder</th>
-                    <th className="py-3 px-4">Role & Hierarchy</th>
-                    <th className="py-3 px-4">Assigned Jurisdiction</th>
+                    <th className="py-3 px-4">Role</th>
+                    <th className="py-3 px-4">Jurisdiction</th>
                     <th className="py-3 px-4">Status</th>
                     <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
@@ -437,23 +439,12 @@ export default function CommandCenterPage() {
                   {managedUsers.map((u) => (
                     <tr key={u.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
                       <td className="py-3 px-4">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-lg bg-blue-600 dark:bg-blue-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                            {u.avatar_initials || "U"}
-                          </div>
-                          <div>
-                            <p className="font-bold text-slate-900 dark:text-white">{u.full_name}</p>
-                            <p className="text-[11px] text-slate-400 font-mono">{u.email}</p>
-                          </div>
-                        </div>
+                        <p className="font-bold text-slate-900 dark:text-white">{u.full_name}</p>
+                        <p className="text-[11px] text-slate-400 font-mono">{u.email}</p>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="font-semibold text-slate-800 dark:text-slate-200 block">
-                          {u.designation}
-                        </span>
-                        <span className="text-[10px] text-blue-600 dark:text-blue-400 font-mono">
-                          {u.role}
-                        </span>
+                        <span className="font-semibold text-slate-800 dark:text-slate-200 block">{u.designation}</span>
+                        <span className="text-[10px] text-blue-600 dark:text-blue-400 font-mono">{u.role}</span>
                       </td>
                       <td className="py-3 px-4 text-slate-600 dark:text-slate-300">
                         📍 {u.jurisdiction || u.department}
@@ -502,7 +493,7 @@ export default function CommandCenterPage() {
           </div>
         )}
 
-        {/* Modal: Edit User */}
+        {/* MODAL: EDIT USER */}
         {editingUser && (
           <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-4">
@@ -510,11 +501,7 @@ export default function CommandCenterPage() {
                 <h3 className="font-bold text-slate-900 dark:text-white">
                   Edit Stakeholder: {editingUser.full_name}
                 </h3>
-                <button
-                  type="button"
-                  onClick={() => setEditingUser(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600"
-                >
+                <button type="button" onClick={() => setEditingUser(null)} className="p-1 rounded-lg text-slate-400">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -522,7 +509,7 @@ export default function CommandCenterPage() {
               <form onSubmit={handleSaveUserEdit} className="space-y-3">
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Full Name & Title
+                    Full Name
                   </label>
                   <input
                     type="text"
@@ -533,10 +520,10 @@ export default function CommandCenterPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-                      Official Designation
+                      Designation
                     </label>
                     <input
                       type="text"
@@ -548,7 +535,7 @@ export default function CommandCenterPage() {
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-                      Role Matrix
+                      Role
                     </label>
                     <select
                       value={editingUser.role}
@@ -568,7 +555,7 @@ export default function CommandCenterPage() {
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Assigned Jurisdiction / Scope
+                    Jurisdiction / Scope
                   </label>
                   <input
                     type="text"
@@ -583,7 +570,7 @@ export default function CommandCenterPage() {
                   <button
                     type="button"
                     onClick={() => setEditingUser(null)}
-                    className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100"
+                    className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300"
                   >
                     Cancel
                   </button>
@@ -599,7 +586,7 @@ export default function CommandCenterPage() {
           </div>
         )}
 
-        {/* Modal: Add New Institutional User */}
+        {/* MODAL: ADD USER */}
         {isAddingUser && (
           <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-4">
@@ -607,11 +594,7 @@ export default function CommandCenterPage() {
                 <h3 className="font-bold text-slate-900 dark:text-white">
                   Provision Institutional Stakeholder
                 </h3>
-                <button
-                  type="button"
-                  onClick={() => setIsAddingUser(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600"
-                >
+                <button type="button" onClick={() => setIsAddingUser(false)} className="p-1 rounded-lg text-slate-400">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -626,7 +609,7 @@ export default function CommandCenterPage() {
                     required
                     value={newUserForm.email}
                     onChange={(e) => setNewUserForm({ ...newUserForm, email: e.target.value })}
-                    placeholder="e.g. officer.jaipur@mplads.gov.in"
+                    placeholder="officer@mplads.gov.in"
                     className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
                   />
                 </div>
@@ -645,10 +628,10 @@ export default function CommandCenterPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-                      Official Designation
+                      Designation
                     </label>
                     <input
                       type="text"
@@ -661,27 +644,27 @@ export default function CommandCenterPage() {
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-                      Role Matrix
+                      Role
                     </label>
                     <select
                       value={newUserForm.role}
                       onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value })}
                       className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
                     >
-                      <option value="field_verification_officer">6. Field Verification Officer</option>
-                      <option value="investigator">5. Vigilance Investigator</option>
-                      <option value="implementing_agency">4. Implementing Agency</option>
-                      <option value="mp">3. Member of Parliament</option>
-                      <option value="state_nodal_authority">2. State Nodal Authority</option>
-                      <option value="mospi_officer">1. MoSPI Central Officer</option>
-                      <option value="system_admin">7. System Administrator</option>
+                      <option value="field_verification_officer">Field Verification Officer</option>
+                      <option value="investigator">Vigilance Investigator</option>
+                      <option value="implementing_agency">Implementing Agency</option>
+                      <option value="mp">Member of Parliament</option>
+                      <option value="state_nodal_authority">State Nodal Authority</option>
+                      <option value="mospi_officer">MoSPI Central Officer</option>
+                      <option value="system_admin">System Administrator</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Assigned Jurisdiction / Scope
+                    Jurisdiction / Scope
                   </label>
                   <input
                     type="text"
@@ -697,7 +680,7 @@ export default function CommandCenterPage() {
                   <button
                     type="button"
                     onClick={() => setIsAddingUser(false)}
-                    className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100"
+                    className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300"
                   >
                     Cancel
                   </button>
@@ -712,266 +695,6 @@ export default function CommandCenterPage() {
             </div>
           </div>
         )}
-
-        {/* Page Header with Filters */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">
-                MoSPI National Risk Intelligence
-              </span>
-              <span className="text-xs text-slate-400">Continuous AI Surveillance (SIH26102)</span>
-            </div>
-            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-1">
-              National Monitoring Command Center
-            </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Live multi-source screening across {datasetSummary?.totalRecordsMonitored ? datasetSummary.totalRecordsMonitored.toLocaleString() : "45,806"} official MPLADS records, cloud datasets, and ground evidence.
-            </p>
-          </div>
-
-          {/* Region & Quick Launch Controls */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 shadow-xs">
-              <Calendar className="w-3.5 h-3.5 text-slate-400" />
-              <span>FY 2025–26 (YTD)</span>
-            </div>
-
-            <select
-              value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value)}
-              aria-label="Select State / UT Region"
-              className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 shadow-xs focus:outline-none"
-            >
-              <option value="all">All States & UTs (National)</option>
-              <option value="delhi">Delhi (NCT)</option>
-              <option value="up">Uttar Pradesh</option>
-              <option value="maharashtra">Maharashtra</option>
-              <option value="karnataka">Karnataka</option>
-              <option value="bihar">Bihar</option>
-              <option value="rajasthan">Rajasthan</option>
-              <option value="kerala">Kerala</option>
-            </select>
-
-            <Link
-              href="/app/risk/documents/compare"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 shadow-md shadow-blue-600/20 transition-all"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Layout Similarity Studio</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* Live Cloud Datasets Ingestion Strip */}
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-900/10 via-purple-900/10 to-transparent border border-blue-200/80 dark:border-blue-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
-              <Database className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <p className="font-bold text-slate-900 dark:text-white">
-                Live Supabase Cloud Storage Stream: 12 Official Datasets (45,806 Clean Records)
-              </p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                Lok Sabha & Rajya Sabha Sanctions, Expenditures, Allocations, and Calamity consents synchronized via CDN.
-              </p>
-            </div>
-          </div>
-          <Link
-            href="/app/data"
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-slate-750 transition self-start sm:self-auto shrink-0"
-          >
-            <span>Explore Raw Datasets</span>
-            <ExternalLink className="w-3 h-3" />
-          </Link>
-        </div>
-
-        {/* Top 4 KPI Metrics Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard
-            title="Total Records Monitored"
-            value={datasetSummary?.totalRecordsMonitored ? datasetSummary.totalRecordsMonitored.toLocaleString() : "45,806"}
-            subtitle="12 Official Cloud Datasets Ingested"
-            trend={{ value: "100% Cloud Synced", isPositive: true, isPositiveGood: true }}
-            icon={Building2}
-            variant="default"
-          />
-          <MetricCard
-            title="Sanctioned Works"
-            value={datasetSummary?.totalSanctionedWorks ? datasetSummary.totalSanctionedWorks.toLocaleString() : "24,190"}
-            subtitle={`₹${datasetSummary?.totalSanctionedCr || "4,820.5"} Cr total sanction value`}
-            trend={{ value: "LS & RS Portfolios", isPositive: true, isPositiveGood: true }}
-            icon={BadgeIndianRupee}
-            variant="default"
-          />
-          <MetricCard
-            title="High & Critical Risks"
-            value={datasetSummary?.activeRiskFlags ? `${datasetSummary.activeRiskFlags.criticalCount + datasetSummary.activeRiskFlags.highCount}` : "161"}
-            subtitle="Prioritized for nodal inquiry"
-            trend={{ value: "48 Urgent Dossiers", isPositive: false, isPositiveGood: false }}
-            icon={ShieldAlert}
-            variant="warning"
-          />
-          <MetricCard
-            title="Flagged Duplicate Rows"
-            value={datasetSummary?.activeRiskFlags?.duplicateLedgerRows ? `${datasetSummary.activeRiskFlags.duplicateLedgerRows}` : "526"}
-            subtitle="172 LS + 354 RS Duplicate ledgers"
-            trend={{ value: "Audited in Registry", isPositive: false, isPositiveGood: true }}
-            icon={CopyCheck}
-            variant="critical"
-          />
-        </div>
-
-        {/* Live Anomaly Insight Card */}
-        <LiveInsightCard />
-
-        {/* Main Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-8">
-            {analytics ? (
-              <RiskTrendChart data={analytics.monthlyTrends} />
-            ) : (
-              <div className="h-80 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 animate-pulse" />
-            )}
-          </div>
-          <div className="lg:col-span-4">
-            {analytics ? (
-              <RiskDonutChart distribution={analytics.riskDistribution} />
-            ) : (
-              <div className="h-80 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 animate-pulse" />
-            )}
-          </div>
-        </div>
-
-        {/* Priority Investigation Queue */}
-        <PriorityQueueTable projects={priorityProjects} />
-
-        {/* Top States Performance Summary Table */}
-        {datasetSummary?.topStates && datasetSummary.topStates.length > 0 && (
-          <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
-                  State-wise Execution & Surveillance Profile
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Aggregated from official Lok Sabha and Rajya Sabha sanctioned records.
-                </p>
-              </div>
-              <Link
-                href="/app/analytics"
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
-              >
-                <span>View National Heatmap</span>
-                <ExternalLink className="w-3 h-3" />
-              </Link>
-            </div>
-
-            <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
-              <table className="w-full text-left text-xs min-w-[550px]">
-                <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-200 dark:border-slate-700">
-                  <tr>
-                    <th className="py-3 px-4">State / UT</th>
-                    <th className="py-3 px-4 text-right">Sanctioned Works</th>
-                    <th className="py-3 px-4 text-right">Approved Value (₹ Cr)</th>
-                    <th className="py-3 px-4 text-right">Avg Completion</th>
-                    <th className="py-3 px-4 text-right">Active Flags</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {datasetSummary.topStates.map((st, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
-                      <td className="py-3 px-4 font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] flex items-center justify-center text-slate-500 font-mono">
-                          {idx + 1}
-                        </span>
-                        <span>{st.state}</span>
-                      </td>
-                      <td className="py-3 px-4 text-right font-mono font-medium text-slate-700 dark:text-slate-300">
-                        {st.totalWorks.toLocaleString()}
-                      </td>
-                      <td className="py-3 px-4 text-right font-mono font-bold text-blue-700 dark:text-blue-300">
-                        ₹{st.sanctionedCr} Cr
-                      </td>
-                      <td className="py-3 px-4 text-right font-mono text-emerald-600 dark:text-emerald-400 font-bold">
-                        {st.completionRate}%
-                      </td>
-                      <td className="py-3 px-4 text-right">
-                        <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300 border border-rose-200 dark:border-rose-900">
-                          {st.riskCount} flagged
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* Risk Suite Quick Launch Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link
-            href="/app/risk/financial"
-            className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-600 transition shadow-xs space-y-2 group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-              <BadgeIndianRupee className="w-4 h-4" />
-            </div>
-            <h4 className="font-bold text-xs text-slate-900 dark:text-white group-hover:text-blue-600 transition">
-              Financial Velocity & Split-Invoicing
-            </h4>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              Detects GFR Rule 157 structuring and 52-installment micro-voucher anomalies.
-            </p>
-          </Link>
-
-          <Link
-            href="/app/risk/visual"
-            className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-600 transition shadow-xs space-y-2 group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-              <Camera className="w-4 h-4" />
-            </div>
-            <h4 className="font-bold text-xs text-slate-900 dark:text-white group-hover:text-blue-600 transition">
-              Computer Vision & Photo Hashes
-            </h4>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              Perceptual pHash matching to catch recycled foundation and milestone images.
-            </p>
-          </Link>
-
-          <Link
-            href="/app/risk/duplicates"
-            className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-600 transition shadow-xs space-y-2 group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 flex items-center justify-center">
-              <CopyCheck className="w-4 h-4" />
-            </div>
-            <h4 className="font-bold text-xs text-slate-900 dark:text-white group-hover:text-blue-600 transition">
-              Duplicate Scope & Ghost Work
-            </h4>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              Cross-dataset matching detecting identical assets funded across Lok & Rajya Sabha.
-            </p>
-          </Link>
-
-          <Link
-            href="/app/risk/timeline"
-            className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-600 transition shadow-xs space-y-2 group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-              <Clock className="w-4 h-4" />
-            </div>
-            <h4 className="font-bold text-xs text-slate-900 dark:text-white group-hover:text-blue-600 transition">
-              Statutory SLA & Milestone Stall
-            </h4>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              Flags 45-day sanction delays, 0-day rubber-stamping, and chronic execution halts.
-            </p>
-          </Link>
-        </div>
       </div>
     </AppShell>
   );
