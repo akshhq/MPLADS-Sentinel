@@ -168,15 +168,15 @@ export const RiskMapPanel = ({ points = [], states = [], className = "" }) => {
       {/* Interactive Map & Inspector Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Visual Map Area */}
-        <div className="lg:col-span-8 relative aspect-[4/3] w-full rounded-2xl bg-slate-900 dark:bg-slate-950 border border-slate-800 overflow-hidden flex items-center justify-center p-3 shadow-inner group">
+        <div className="lg:col-span-8 relative aspect-[4/3] w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 overflow-hidden flex items-center justify-center p-3 shadow-inner group">
           {/* Subtle Radar Background Grid */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#334155_1px,transparent_1px),linear-gradient(to_bottom,#334155_1px,transparent_1px)] bg-[size:2.5rem_2.5rem] opacity-20 pointer-events-none" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#cbd5e1_1px,transparent_1px),linear-gradient(to_bottom,#cbd5e1_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#334155_1px,transparent_1px),linear-gradient(to_bottom,#334155_1px,transparent_1px)] bg-[size:2.5rem_2.5rem] opacity-30 dark:opacity-20 pointer-events-none" />
 
           {/* Calibrated India State Boundaries Map Image (from Vemaps) */}
           <img
             src="/maps/india-states.png"
             alt="National Geospatial Project Risk Map of India"
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] transition-opacity"
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none drop-shadow-[0_4px_16px_rgba(0,0,0,0.18)] dark:drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] transition-opacity"
           />
 
           {/* Interactive Geospatial Markers Overlay */}
@@ -267,12 +267,12 @@ export const RiskMapPanel = ({ points = [], states = [], className = "" }) => {
           )}
 
           {/* Map Footer Metadata & Attribution */}
-          <div className="absolute bottom-2.5 left-3 text-[10px] text-slate-400/80 font-mono flex items-center gap-2">
+          <div className="absolute bottom-2.5 left-3 text-[10px] text-slate-600 dark:text-slate-400 font-mono flex items-center gap-2">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
             <span>Projection: WGS84 Geodetic • Click any pin to inspect anomaly dossier</span>
           </div>
 
-          <div className="absolute bottom-2.5 right-3 text-[10px] text-slate-400/80 font-sans">
+          <div className="absolute bottom-2.5 right-3 text-[10px] text-slate-600 dark:text-slate-400 font-sans font-medium">
             <span>© Vemaps.com</span>
           </div>
         </div>

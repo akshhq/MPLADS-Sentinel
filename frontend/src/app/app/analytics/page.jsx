@@ -96,7 +96,7 @@ export default function AnalyticsPage() {
               isPositiveGood: false,
             }}
             icon={ShieldAlert}
-            variant={(national?.highRiskCount || 0) + (national?.criticalRiskCount || 0) > 0 ? "danger" : "default"}
+            variant={(national?.criticalRiskCount || 0) > 0 ? "critical" : (national?.highRiskCount || 0) > 0 ? "warning" : "default"}
           />
           <MetricCard
             title="Avg National Risk Score"
