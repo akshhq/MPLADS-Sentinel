@@ -544,8 +544,44 @@ const supabaseService = {
       }
     }
 
-    // Fallback in-memory
-    let list = [...FALLBACK_PROJECTS];
+    // Check if active uploaded batch exists in persistent reports database
+    const reportsDatabaseService = require("./reportsDatabaseService");
+    const activeScope = reportsDatabaseService.getActiveScope();
+    let list = [];
+
+    if (activeScope?.mode === "uploaded" && activeScope.batch) {
+      const works = activeScope.batch.workReports || activeScope.batch.priorityProjects || activeScope.batch.flaggedCases || [];
+      list = works.map((w) => ({
+        id: w.id || w.work_id,
+        title: w.title,
+        category: w.category || "Development Work",
+        state: w.state || "State",
+        district: w.district || "District",
+        constituency: w.constituency || w.district || "Constituency",
+        mpName: w.mpName || "Member of Parliament",
+        implementingAgency: w.implementing_agency || "State Agency",
+        status: w.status || "in_progress",
+        financials: {
+          recommendedAmount: w.sanction_amount || w.financials?.sanctionedAmount || 0,
+          sanctionedAmount: w.sanction_amount || w.financials?.sanctionedAmount || 0,
+          committedAmount: w.sanction_amount || w.financials?.sanctionedAmount || 0,
+          paidDisbursedAmount: w.disbursed_amount || w.financials?.disbursedAmount || 0,
+          verifiedExpenditureAmount: w.disbursed_amount || w.financials?.disbursedAmount || 0,
+          costDeviationPercent: 0,
+        },
+        risk: w.risk || {
+          score: w.composite_risk_score || 0,
+          level: (w.risk_band || "LOW").toLowerCase(),
+          primarySignal: w.risk?.primarySignal || "Routine automated monitoring",
+        },
+      }));
+    }
+
+    if (list.length === 0) {
+      // Zero Fake Data: If no files have been loaded yet, return clean empty list
+      return { projects: [], total: 0 };
+    }
+
     if (filters.search) {
       const q = filters.search.toLowerCase();
       list = list.filter((p) => p.id.toLowerCase().includes(q) || p.title.toLowerCase().includes(q) || p.district.toLowerCase().includes(q));
@@ -555,21 +591,6 @@ const supabaseService = {
     if (filters.category && filters.category !== "all") list = list.filter((p) => p.category === filters.category);
     if (filters.riskLevel && filters.riskLevel !== "all") list = list.filter((p) => p.risk?.level === filters.riskLevel);
     if (filters.status && filters.status !== "all") list = list.filter((p) => p.status === filters.status);
-
-    // Strict Role-Based Access Control (RBAC) & Jurisdictional Data Scoping
-    if (filters.userRole) {
-      if (filters.userRole === "field_verification_officer") {
-        list = list.filter((p) => (p.district || "").toLowerCase() === "new delhi" || p.id === "MPL-004821" || p.id === "MPL-004822");
-      } else if (filters.userRole === "implementing_agency") {
-        list = list.filter((p) => (p.implementingAgency || "").toLowerCase().includes("dsiidc") || p.id === "MPL-004821" || p.id === "MPL-004822");
-      } else if (filters.userRole === "mp") {
-        list = list.filter((p) => (p.district || "").toLowerCase() === "new delhi" || (p.constituency || "").toLowerCase().includes("new delhi"));
-      } else if (filters.userRole === "state_nodal_authority") {
-        list = list.filter((p) => (p.state || "").toLowerCase() === "rajasthan" || (p.state || "").toLowerCase() === (filters.state || "").toLowerCase());
-      } else if (filters.userRole === "investigator") {
-        list = list.filter((p) => (p.risk?.score ?? 0) >= 50 || p.investigationCaseId);
-      }
-    }
 
     return { projects: list.map(normalizeProject), total: list.length };
   },
@@ -583,8 +604,14 @@ const supabaseService = {
         console.warn("[SupabaseService getProjectById Warning]", err.message);
       }
     }
-    const item = FALLBACK_PROJECTS.find((p) => p.id === id);
-    return item ? normalizeProject(item) : null;
+    const reportsDatabaseService = require("./reportsDatabaseService");
+    const activeScope = reportsDatabaseService.getActiveScope();
+    if (activeScope?.mode === "uploaded" && activeScope.batch) {
+      const works = activeScope.batch.workReports || activeScope.batch.flaggedCases || [];
+      const match = works.find((w) => w.id === id || w.work_id === id);
+      if (match) return normalizeProject(match);
+    }
+    return null;
   },
 
   // --- INVESTIGATIONS ---
@@ -604,13 +631,36 @@ const supabaseService = {
         console.warn("[SupabaseService getInvestigations Warning]", err.message);
       }
     }
-    let list = [...FALLBACK_INVESTIGATIONS];
+    const reportsDatabaseService = require("./reportsDatabaseService");
+    const activeScope = reportsDatabaseService.getActiveScope();
+    let list = [];
+
+    if (activeScope?.mode === "uploaded" && activeScope.batch) {
+      const cases = activeScope.batch.flaggedCases || [];
+      list = cases.map((c) => ({
+        id: `INV-${c.id || c.work_id}`,
+        projectId: c.id || c.work_id,
+        projectTitle: c.title,
+        state: c.state,
+        district: c.district,
+        category: c.category || "General Work",
+        riskScore: c.composite_risk_score || 80,
+        primaryIssue: c.primary_flag || "Discrepancy identified in statutory returns",
+        priority: (c.risk_band === "CRITICAL") ? "urgent" : "high",
+        status: "open",
+        summary: `Automated vigilance inquiry generated for work ${c.title}. Flagged reason: ${c.primary_flag || "Data discrepancy"}.`,
+        assignedTo: { name: "Central Vigilance Cell", role: "investigator" },
+        openedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        notes: [],
+        activityLogs: [],
+        evidenceChain: [],
+      }));
+    }
+
     // RBAC: Implementing Agencies and MPs cannot view confidential vigilance inquiry dossiers
     if (filters.userRole === "mp" || filters.userRole === "implementing_agency") {
       return [];
-    }
-    if (filters.userRole === "field_verification_officer") {
-      list = list.filter((i) => i.status === "evidence_requested" || (i.district || "").toLowerCase() === "new delhi");
     }
     if (filters.status && filters.status !== "all") list = list.filter((i) => i.status === filters.status);
     if (filters.priority && filters.priority !== "all") list = list.filter((i) => i.priority === filters.priority);
@@ -627,8 +677,30 @@ const supabaseService = {
         console.warn("[SupabaseService getInvestigationById Warning]", err.message);
       }
     }
-    const item = FALLBACK_INVESTIGATIONS.find((i) => i.id === id);
-    return item ? normalizeInvestigation(item) : null;
+    const reportsDatabaseService = require("./reportsDatabaseService");
+    const activeScope = reportsDatabaseService.getActiveScope();
+    if (activeScope?.mode === "uploaded" && activeScope.batch?.flaggedCases) {
+      const match = activeScope.batch.flaggedCases.find((c) => `INV-${c.id || c.work_id}` === id || c.id === id);
+      if (match) {
+        return normalizeInvestigation({
+          id: `INV-${match.id || match.work_id}`,
+          projectId: match.id || match.work_id,
+          projectTitle: match.title,
+          state: match.state,
+          district: match.district,
+          category: match.category || "General Work",
+          riskScore: match.composite_risk_score || 80,
+          primaryIssue: match.primary_flag || "Discrepancy identified in statutory returns",
+          priority: "urgent",
+          status: "open",
+          summary: `Automated vigilance inquiry for ${match.title}`,
+          assignedTo: { name: "Central Vigilance Cell", role: "investigator" },
+          openedAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+      }
+    }
+    return null;
   },
 
   async createInvestigation(caseData) {
@@ -656,7 +728,6 @@ const supabaseService = {
 
         const { data, error } = await supabase.from("investigations").insert(row).select().single();
         if (!error && data) {
-          // Link to project
           await supabase.from("projects").update({ investigation_case_id: caseData.id }).eq("id", caseData.projectId);
           return normalizeInvestigation(data);
         }
@@ -665,8 +736,6 @@ const supabaseService = {
       }
     }
 
-    // In-memory create
-    FALLBACK_INVESTIGATIONS.unshift(caseData);
     return normalizeInvestigation(caseData);
   },
 
@@ -679,12 +748,6 @@ const supabaseService = {
       } catch (err) {
         console.warn("[SupabaseService updateInvestigation Warning]", err.message);
       }
-    }
-
-    const idx = FALLBACK_INVESTIGATIONS.findIndex((i) => i.id === id);
-    if (idx !== -1) {
-      FALLBACK_INVESTIGATIONS[idx] = { ...FALLBACK_INVESTIGATIONS[idx], ...updates, updatedAt: new Date().toISOString() };
-      return normalizeInvestigation(FALLBACK_INVESTIGATIONS[idx]);
     }
     return null;
   },
@@ -706,21 +769,8 @@ const supabaseService = {
         console.warn("[SupabaseService getEvidence Warning]", err.message);
       }
     }
-    let list = [...FALLBACK_EVIDENCE];
-    // RBAC: Data scoping for Evidence Repository
-    if (filters.userRole) {
-      if (filters.userRole === "field_verification_officer") {
-        list = list.filter((e) => e.type === "image");
-      } else if (filters.userRole === "implementing_agency") {
-        list = list.filter((e) => e.type === "document" || e.type === "invoice" || e.type === "payment");
-      } else if (filters.userRole === "investigator") {
-        list = list.filter((e) => e.status === "conflict" || e.status === "flagged" || (e.findings && e.findings.length > 0));
-      }
-    }
-    if (filters.projectId) list = list.filter((e) => e.projectId === filters.projectId);
-    if (filters.type && filters.type !== "all") list = list.filter((e) => e.type === filters.type);
-    if (filters.status && filters.status !== "all") list = list.filter((e) => e.status === filters.status);
-    return list.map(normalizeEvidence);
+    // Zero Fake Data: If no files have been loaded, evidence repository is clean empty
+    return [];
   },
 
   async getEvidenceById(id) {
@@ -732,8 +782,7 @@ const supabaseService = {
         console.warn("[SupabaseService getEvidenceById Warning]", err.message);
       }
     }
-    const item = FALLBACK_EVIDENCE.find((e) => e.id === id);
-    return item ? normalizeEvidence(item) : null;
+    return null;
   },
 
   // --- ANALYTICS ---
@@ -743,26 +792,49 @@ const supabaseService = {
         const { data, error } = await supabase.from("national_analytics").select("*").eq("id", "national_summary").single();
         if (!error && data) {
           return {
-            totalWorksMonitored: data.total_works_monitored || FALLBACK_NATIONAL_ANALYTICS.totalWorksMonitored,
-            totalSanctionedCr: data.total_sanctioned_cr || FALLBACK_NATIONAL_ANALYTICS.totalSanctionedCr,
-            totalExpenditureCr: data.total_expenditure_cr || data.total_disbursed_cr || FALLBACK_NATIONAL_ANALYTICS.totalExpenditureCr,
-            totalDisbursedCr: data.total_disbursed_cr || FALLBACK_NATIONAL_ANALYTICS.totalDisbursedCr,
-            totalFlaggedRiskValueCr: data.total_flagged_risk_value_cr || FALLBACK_NATIONAL_ANALYTICS.totalFlaggedRiskValueCr,
-            highRiskCount: data.high_risk_count || (data.risk_counts?.high) || FALLBACK_NATIONAL_ANALYTICS.highRiskCount,
-            criticalRiskCount: data.critical_risk_count || (data.risk_counts?.critical) || FALLBACK_NATIONAL_ANALYTICS.criticalRiskCount,
-            flaggedValueCr: data.total_flagged_risk_value_cr || FALLBACK_NATIONAL_ANALYTICS.flaggedValueCr,
-            riskCounts: data.risk_counts || FALLBACK_NATIONAL_ANALYTICS.riskCounts,
-            riskDistribution: data.risk_distribution && !Array.isArray(data.risk_distribution) ? data.risk_distribution : FALLBACK_NATIONAL_ANALYTICS.riskDistribution,
-            monthlyTrends: data.monthly_trends || data.monthlyTrends || FALLBACK_NATIONAL_ANALYTICS.monthlyTrends,
-            riskTrend7D: data.risk_trend_7d || FALLBACK_NATIONAL_ANALYTICS.riskTrend7D,
-            categoryBreakdown: data.category_breakdown || FALLBACK_NATIONAL_ANALYTICS.categoryBreakdown,
+            totalWorksMonitored: data.total_works_monitored || 0,
+            totalSanctionedCr: data.total_sanctioned_cr || 0,
+            totalExpenditureCr: data.total_expenditure_cr || data.total_disbursed_cr || 0,
+            totalDisbursedCr: data.total_disbursed_cr || 0,
+            totalFlaggedRiskValueCr: data.total_flagged_risk_value_cr || 0,
+            highRiskCount: data.high_risk_count || (data.risk_counts?.high) || 0,
+            criticalRiskCount: data.critical_risk_count || (data.risk_counts?.critical) || 0,
+            flaggedValueCr: data.total_flagged_risk_value_cr || 0,
+            riskCounts: data.risk_counts || { critical: 0, high: 0, medium: 0, low: 0 },
+            riskDistribution: data.risk_distribution && !Array.isArray(data.risk_distribution) ? data.risk_distribution : { critical: 0, high: 0, medium: 0, low: 0 },
+            monthlyTrends: data.monthly_trends || data.monthlyTrends || [],
+            riskTrend7D: data.risk_trend_7d || [],
+            categoryBreakdown: data.category_breakdown || [],
           };
         }
       } catch (err) {
         console.warn("[SupabaseService getNationalAnalytics Warning]", err.message);
       }
     }
-    return FALLBACK_NATIONAL_ANALYTICS;
+
+    // Check active uploaded batch in persistent database
+    const reportsDatabaseService = require("./reportsDatabaseService");
+    const activeScope = reportsDatabaseService.getActiveScope();
+    if (activeScope?.mode === "uploaded" && activeScope.batch?.analytics) {
+      return activeScope.batch.analytics;
+    }
+
+    // Zero Fake Data: Clean unloaded state with 0 works, 0 Cr, 0 risk
+    return {
+      totalWorksMonitored: 0,
+      totalSanctionedCr: 0,
+      totalExpenditureCr: 0,
+      totalDisbursedCr: 0,
+      totalFlaggedRiskValueCr: 0,
+      highRiskCount: 0,
+      criticalRiskCount: 0,
+      flaggedValueCr: 0,
+      riskCounts: { critical: 0, high: 0, medium: 0, low: 0 },
+      riskDistribution: { critical: 0, high: 0, medium: 0, low: 0 },
+      monthlyTrends: [],
+      riskTrend7D: [],
+      categoryBreakdown: [],
+    };
   },
 
   async getStateMetrics() {
@@ -785,7 +857,13 @@ const supabaseService = {
         console.warn("[SupabaseService getStateMetrics Warning]", err.message);
       }
     }
-    return FALLBACK_STATE_METRICS;
+
+    const reportsDatabaseService = require("./reportsDatabaseService");
+    const activeScope = reportsDatabaseService.getActiveScope();
+    if (activeScope?.mode === "uploaded" && activeScope.batch?.analytics?.stateMetrics) {
+      return activeScope.batch.analytics.stateMetrics;
+    }
+    return [];
   },
 
   async getGeographicRiskPoints() {
@@ -812,7 +890,13 @@ const supabaseService = {
         console.warn("[SupabaseService getGeographicRiskPoints Warning]", err.message);
       }
     }
-    return FALLBACK_GEO_POINTS;
+
+    const reportsDatabaseService = require("./reportsDatabaseService");
+    const activeScope = reportsDatabaseService.getActiveScope();
+    if (activeScope?.mode === "uploaded" && activeScope.batch?.analytics?.geoPoints) {
+      return activeScope.batch.analytics.geoPoints;
+    }
+    return [];
   },
 
   // --- PROFILES & AUTH ---

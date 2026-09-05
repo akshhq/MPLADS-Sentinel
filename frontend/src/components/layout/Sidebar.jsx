@@ -19,14 +19,39 @@ import {
   Users,
   HardHat,
   ClipboardCheck,
+  Server,
+  Activity,
+  ChevronUp,
 } from "lucide-react";
 import { APP_NAME, APP_HINDI_NAME, SIH_PROBLEM_ID } from "@/lib/constants";
 import { useAuth } from "@/lib/authContext";
+import { api } from "@/lib/api";
 
 export const Sidebar = ({ onCloseMobile }) => {
   const pathname = usePathname();
   const { profile } = useAuth();
   const role = profile?.role || "mospi_officer";
+
+  const [activity, setActivity] = React.useState(null);
+  const [showDetails, setShowDetails] = React.useState(false);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    const loadStats = async () => {
+      try {
+        const stats = await api.getSystemActivity();
+        if (isMounted && stats) {
+          setActivity(stats);
+        }
+      } catch {}
+    };
+    loadStats();
+    const timer = setInterval(loadStats, 10000);
+    return () => {
+      isMounted = false;
+      clearInterval(timer);
+    };
+  }, []);
 
   // Build role-specific navigation menu
   const getNavItems = () => {
@@ -190,21 +215,65 @@ export const Sidebar = ({ onCloseMobile }) => {
         })}
       </div>
 
-      {/* Sleek Institutional Footer */}
-      <div className="p-3 border-t border-slate-200/60 dark:border-slate-800">
-        <div className="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-850 flex items-center justify-between text-[11px]">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="font-medium text-slate-600 dark:text-slate-400">MoSPI Sentinel Active</span>
+      {/* Real-time System Activity Stats (Bottom Left) */}
+      <div className="p-3 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40">
+        <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 shadow-sm">
+          {/* Activity Header */}
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/60 mb-2">
+            <div className="flex items-center gap-1.5">
+              <Activity className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
+                System Activity
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                Live
+              </span>
+            </div>
           </div>
-          <Link
-            href="/"
-            target="_blank"
-            className="text-slate-400 hover:text-blue-600 dark:hover:text-white transition-colors"
-            title="Open Public Portal"
-          >
-            <ExternalLink className="w-3.5 h-3.5" />
-          </Link>
+
+          {/* Activity Stats Rows */}
+          <div className="space-y-1.5 text-[11px]">
+            {/* 1. Database Stat */}
+            <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
+              <div className="flex items-center gap-1.5 truncate">
+                <Database className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
+                <span className="font-semibold text-slate-700 dark:text-slate-200 truncate">Database</span>
+              </div>
+              <span className="font-mono text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-200/60 dark:border-emerald-800/60 shrink-0">
+                {activity?.database?.mode === "uploaded"
+                  ? `${activity.database.activeWorksCount || 0} Works`
+                  : activity?.database?.status === "online" ? "Connected (0)" : "Connecting"}
+              </span>
+            </div>
+
+            {/* 2. Backend Stat */}
+            <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
+              <div className="flex items-center gap-1.5 truncate">
+                <Server className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
+                <span className="font-semibold text-slate-700 dark:text-slate-200 truncate">Backend</span>
+              </div>
+              <span className="font-mono text-[10px] font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.5 rounded border border-blue-200/60 dark:border-blue-800/60 shrink-0">
+                Port {activity?.backend?.port || 5000} : {activity?.backend?.uptimeSeconds ? `${Math.floor(activity.backend.uptimeSeconds / 60)}m` : "Online"}
+              </span>
+            </div>
+
+            {/* 3. AI Modules Stat */}
+            <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
+              <div className="flex items-center gap-1.5 truncate">
+                <Sparkles className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400 shrink-0" />
+                <span className="font-semibold text-slate-700 dark:text-slate-200 truncate">AI Modules</span>
+              </div>
+              <span className="font-mono text-[10px] font-medium text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/60 px-1.5 py-0.5 rounded border border-purple-200/60 dark:border-purple-800/60 shrink-0">
+                {activity?.aiModules?.activeEnginesCount || 21}/21 Ready
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </aside>

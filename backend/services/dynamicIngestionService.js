@@ -9,6 +9,7 @@ const path = require("path");
 const csv = require("csv-parser");
 const crypto = require("crypto");
 const { normalizeDatasetRows } = require("../utils/columnNormalizer");
+const reportsDatabaseService = require("./reportsDatabaseService");
 
 const OFFICIAL_DATASETS_DIR = path.resolve(__dirname, "../data/official_datasets");
 
@@ -169,7 +170,14 @@ class DynamicIngestionService {
         }
       } else if (usePreset) {
         // Presentation preset mode: load matching official files
-        if (usePreset === "presentation_partial") {
+        if (usePreset === "presentation_all_12" || usePreset === "all_12_files") {
+          // Batch ingest ALL 12 official datasets across both houses
+          const lsRows = slot.officialFileLs ? await loadOfficialCsv(slot.officialFileLs, 10000) : [];
+          const rsRows = slot.officialFileRs ? await loadOfficialCsv(slot.officialFileRs, 10000) : [];
+          rawRows = [...lsRows, ...rsRows];
+          sourceFilename = `${slot.label} (All 12 Datasets: LS & RS)`;
+          isUploaded = rawRows && rawRows.length > 0;
+        } else if (usePreset === "presentation_partial") {
           // Partial 3-stream demonstration: only provide recommended, sanctioned, completed
           if (["recommended", "sanctioned", "completed"].includes(slotKey)) {
             sourceFilename = slot.officialFileLs;
@@ -497,12 +505,14 @@ class DynamicIngestionService {
     };
 
     const executionTimeMs = Date.now() - startTime;
-    const batchId = `BATCH-${house.toUpperCase()}-${Date.now().toString().slice(-6)}`;
+    const batchId = (usePreset === "presentation_all_12" || usePreset === "all_12_files")
+      ? `BATCH-ALL-12-OFFICIAL-${Date.now().toString().slice(-6)}`
+      : `BATCH-${house.toUpperCase()}-${Date.now().toString().slice(-6)}`;
 
     const batchResult = {
       success: true,
       batchId,
-      house,
+      house: (usePreset === "presentation_all_12" || usePreset === "all_12_files") ? "both" : house,
       userRole,
       timestamp: new Date().toISOString(),
       executionTimeMs,
@@ -533,61 +543,45 @@ class DynamicIngestionService {
       priorityProjects: flaggedCases.slice(0, 10),
     };
 
-    // Store into memory registry and activate uploaded scope
-    activeScope = {
-      mode: "uploaded",
-      batchId: batchResult.batchId,
-      timestamp: batchResult.timestamp,
-      batch: batchResult,
-    };
-    uploadedBatches.unshift(batchResult);
-    if (uploadedBatches.length > 25) {
-      uploadedBatches.pop();
-    }
+    // Durably persist into reports database (survives restarts) and activate uploaded scope
+    reportsDatabaseService.saveReportBatch(batchResult);
 
     return batchResult;
   }
 
   /**
-   * Scope Management Methods
+   * System Admin 1-Click Action: Process all 12 official CSV datasets at once
+   */
+  static async processAll12OfficialFiles({ userRole = "system_admin" } = {}) {
+    return await this.processDynamicIngestion({
+      house: "both",
+      userRole,
+      usePreset: "presentation_all_12",
+    });
+  }
+
+  /**
+   * Scope Management Methods (Synced with Persistent Reports Database)
    */
   static getActiveScope() {
-    return activeScope;
+    return reportsDatabaseService.getActiveScope();
   }
 
   static setActiveScope(scope) {
-    activeScope = scope;
-    return activeScope;
+    return reportsDatabaseService.setActiveScope(scope);
   }
 
   static restoreScope() {
-    activeScope = {
-      mode: "database",
-      batchId: null,
-      timestamp: new Date().toISOString(),
-      batch: null,
-    };
-    return activeScope;
+    return reportsDatabaseService.restoreScope();
   }
 
   static getUploadedReports() {
-    return uploadedBatches;
+    return reportsDatabaseService.getAllReportBatches();
   }
 
   static getUploadedBatchById(batchId) {
-    return uploadedBatches.find((b) => b.batchId === batchId) || null;
+    return reportsDatabaseService.getReportBatchById(batchId);
   }
 }
-
-// In-memory surveillance scope state
-let activeScope = {
-  mode: "database", // "database" | "uploaded"
-  batchId: null,
-  timestamp: new Date().toISOString(),
-  batch: null,
-};
-
-// Historical uploaded batches registry
-let uploadedBatches = [];
 
 module.exports = DynamicIngestionService;

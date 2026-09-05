@@ -337,6 +337,36 @@ export default function DynamicIngestionPage() {
     }
   };
 
+  // System Admin 1-Click: Ingest All 12 Official Datasets At Once (Lok Sabha + Rajya Sabha across all 6 slots)
+  const handleAdminIngestAll12 = async () => {
+    setIsProcessing(true);
+    setDynamicResult(null);
+    setSelectedHouse("both");
+
+    setPipelineStep(1); // Column Schema Normalization
+    await new Promise((r) => setTimeout(r, 650));
+    setPipelineStep(2); // Cross-Entity Record Linking
+    await new Promise((r) => setTimeout(r, 700));
+    setPipelineStep(3); // Multi-Signal Risk Fusion
+    await new Promise((r) => setTimeout(r, 750));
+    setPipelineStep(4); // Data Completeness & Degradation Assembly
+    await new Promise((r) => setTimeout(r, 600));
+
+    try {
+      const res = await api.adminIngestAllFiles();
+      if (res) {
+        setDynamicResult(res);
+        setAuditError(null);
+      }
+    } catch (err) {
+      console.error("Batch All 12 Ingestion Error:", err);
+      setAuditError(err?.message || "Failed to batch ingest all 12 official datasets.");
+    } finally {
+      setIsProcessing(false);
+      setPipelineStep(0);
+    }
+  };
+
   return (
     <AppShell breadcrumbs={[{ label: "Dynamic e-SAKSHI Multi-Slot Ingestion Hub" }]}>
       <div className="space-y-6 max-w-7xl mx-auto">
@@ -509,6 +539,19 @@ export default function DynamicIngestionPage() {
                   <AlertTriangle className="w-3.5 h-3.5" />
                   Partial 3-Stream Demo
                 </button>
+                {/* System Admin 1-Click Batch Ingestion: All 12 Official Files */}
+                {(role === "system_admin" || role === "mospi_officer") && (
+                  <button
+                    type="button"
+                    onClick={handleAdminIngestAll12}
+                    disabled={isProcessing}
+                    className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 text-white shadow-sm shadow-blue-500/20 transition-all flex items-center gap-1.5"
+                    title="System Admin: Ingest all 12 official CSV datasets (Lok Sabha + Rajya Sabha across all 6 slots) simultaneously"
+                  >
+                    <Sparkles className={`w-3.5 h-3.5 ${isProcessing ? "animate-spin" : ""}`} />
+                    <span>{isProcessing ? "Ingesting All 12 Files..." : "⚡ Add All 12 Files at Once"}</span>
+                  </button>
+                )}
                 {stagedSlotsCount > 0 && (
                   <button
                     type="button"

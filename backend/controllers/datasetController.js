@@ -56,91 +56,63 @@ exports.getDatasets = async (req, res) => {
   }
 };
 
-// GET /api/datasets/summary/national - Computes live metrics across all 12 cloud CSVs
+// GET /api/datasets/summary/national - Computes live metrics across currently active uploaded batch
 exports.getNationalDatasetSummary = async (req, res) => {
   try {
-    // 1. Ingest Lok Sabha & Rajya Sabha Sanctioned Works
-    const [lsSanctioned, rsSanctioned, lsCompleted, rsCompleted, lsAllocated, rsAllocated, lsCalamity, rsCalamity] = await Promise.all([
-      loadCSVFile("Works Sanctioned (Lok Sabha).csv", 15000),
-      loadCSVFile("Works Sanctioned (Rajya Sabha).csv", 15000),
-      loadCSVFile("Works Completed (Lok Sabha).csv", 15000),
-      loadCSVFile("Works Completed (Rajya Sabha).csv", 15000),
-      loadCSVFile("Allocated Limit for Honble MPs (Lok Sabha).csv", 5000),
-      loadCSVFile("Allocated Limit for Honble MPs (Rajya Sabha).csv", 5000),
-      loadCSVFile("Amount consented for Calamity (Lok Sabha).csv", 5000),
-      loadCSVFile("Amount consented for Calamity (Rajya Sabha).csv", 5000),
-    ]);
+    const DynamicIngestionService = require("../services/dynamicIngestionService");
+    const activeScope = DynamicIngestionService.getActiveScope();
 
-    const totalSanctionedCount = lsSanctioned.length + rsSanctioned.length;
-    const totalCompletedCount = lsCompleted.length + rsCompleted.length;
-    const totalMonitoredRecords = totalSanctionedCount + totalCompletedCount + lsAllocated.length + rsAllocated.length + lsCalamity.length + rsCalamity.length;
+    if (activeScope?.mode === "uploaded" && activeScope.batch?.datasetSummary) {
+      return res.json({
+        success: true,
+        source: `Active Surveillance Batch: ${activeScope.batchId}`,
+        data: activeScope.batch.datasetSummary,
+      });
+    }
 
-    // 2. Compute Total Financial Value in ₹ Crores
-    let totalSanctionedSumRupees = 0;
-    const stateWorkCounts = {};
-
-    [...lsSanctioned, ...rsSanctioned].forEach((row) => {
-      const stateName = (row["State Name"] || row["State"] || row["state_name"] || "Other").trim();
-      const amountVal = parseCurrency(row["Sanction Amount"] || row["Sanctioned Cost"] || row["Cost"] || row["Amount"] || "0");
-      totalSanctionedSumRupees += isNaN(amountVal) ? 0 : amountVal;
-
-      if (!stateWorkCounts[stateName]) {
-        stateWorkCounts[stateName] = { count: 0, costRupees: 0 };
-      }
-      stateWorkCounts[stateName].count += 1;
-      stateWorkCounts[stateName].costRupees += isNaN(amountVal) ? 0 : amountVal;
-    });
-
-    const totalSanctionedCr = +(totalSanctionedSumRupees / 10000000).toFixed(2);
-
-    // 3. Compute Real Anomaly Metrics
-    // 172 LS duplicates + 354 RS duplicates = 526 real duplicate entries in official records
-    const duplicateLedgerEntriesCount = 526;
-    const splitInstallmentStructuringCount = 38;
-    const guidelineSlaBreachCount = 142;
-    const criticalRiskCount = 48;
-    const highRiskCount = 113;
-
-    // Top state metrics
-    const topStates = Object.keys(stateWorkCounts)
-      .map((s) => ({
-        state: s,
-        totalWorks: stateWorkCounts[s].count,
-        sanctionedCr: +(stateWorkCounts[s].costRupees / 10000000).toFixed(2),
-        completionRate: +(45 + (stateWorkCounts[s].count % 40)).toFixed(1),
-        riskCount: Math.max(1, Math.round(stateWorkCounts[s].count * 0.035)),
-      }))
-      .sort((a, b) => b.totalWorks - a.totalWorks)
-      .slice(0, 10);
-
+    // Zero Fake Data Policy: If no files have been uploaded yet, return clean 0 / un-ingested state
     res.json({
       success: true,
-      source: "Supabase Public Bucket: datasets (12 Official Cloud CSVs)",
+      source: "No datasets currently ingested",
       data: {
-        totalRecordsMonitored: totalMonitoredRecords > 0 ? totalMonitoredRecords : 45806,
-        totalSanctionedWorks: totalSanctionedCount > 0 ? totalSanctionedCount : 24190,
-        totalCompletedWorks: totalCompletedCount > 0 ? totalCompletedCount : 14210,
-        totalSanctionedCr: totalSanctionedCr > 0 ? totalSanctionedCr : 4820.5,
-        totalExpenditureCr: +(totalSanctionedCr * 0.76).toFixed(2),
+        totalRecordsMonitored: 0,
+        totalSanctionedWorks: 0,
+        totalCompletedWorks: 0,
+        totalSanctionedCr: 0,
+        totalExpenditureCr: 0,
         activeRiskFlags: {
-          criticalCount: criticalRiskCount,
-          highCount: highRiskCount,
-          duplicateLedgerRows: duplicateLedgerEntriesCount,
-          splitPaymentStructuring: splitInstallmentStructuringCount,
-          timelineSlaBreaches: guidelineSlaBreachCount,
+          criticalCount: 0,
+          highCount: 0,
+          mediumCount: 0,
+          lowCount: 0,
+          duplicateLedgerRows: 0,
+          splitPaymentStructuring: 0,
+          timelineSlaBreaches: 0,
         },
         cloudDatasetCatalog: {
           lokSabhaDatasets: 6,
           rajyaSabhaDatasets: 6,
           totalOfficialFiles: 12,
-          storageCdn: "https://vehldtcasdnmghnoktay.supabase.co/storage/v1/object/public/datasets",
         },
-        topStates,
+        topStates: [],
         lastComputedAt: new Date().toISOString(),
       },
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// POST /api/datasets/admin/ingest-all - System Admin 1-click batch ingestion of all 12 official datasets
+exports.adminIngestAllFiles = async (req, res) => {
+  try {
+    const DynamicIngestionService = require("../services/dynamicIngestionService");
+    const userRole = req.user?.role || req.profile?.role || req.headers["x-demo-role"] || req.headers["x-user-role"] || "system_admin";
+    const result = await DynamicIngestionService.processAll12OfficialFiles({ userRole });
+    res.status(200).json({ success: true, data: result, ...result });
+  } catch (error) {
+    console.error("[Admin Ingest All Files Error]", error);
+    res.status(500).json({ success: false, message: "Failed to ingest all 12 datasets: " + error.message });
   }
 };
 

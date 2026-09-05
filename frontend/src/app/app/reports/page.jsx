@@ -45,6 +45,28 @@ export default function UploadedReportsPage() {
   const [stateFilter, setStateFilter] = useState("all");
   const [selectedWorkModal, setSelectedWorkModal] = useState(null);
   const [notification, setNotification] = useState(null);
+  const [ingestingAll, setIngestingAll] = useState(false);
+
+  async function handleAdminIngestAll() {
+    try {
+      setIngestingAll(true);
+      const res = await api.adminIngestAllFiles();
+      if (res && res.success) {
+        setNotification(`Successfully ingested all 12 official datasets (${res.summary?.totalWorksCount || 0} works). Final report saved to database.`);
+        setTimeout(() => setNotification(null), 8000);
+        await loadReportsData();
+        if (res.batchId) setSelectedBatchId(res.batchId);
+      } else {
+        setNotification("Failed to batch ingest official datasets. Please check server logs.");
+        setTimeout(() => setNotification(null), 5000);
+      }
+    } catch (err) {
+      setNotification(`Batch ingestion error: ${err.message}`);
+      setTimeout(() => setNotification(null), 5000);
+    } finally {
+      setIngestingAll(false);
+    }
+  }
 
   async function loadReportsData() {
     try {
@@ -231,6 +253,17 @@ export default function UploadedReportsPage() {
           </div>
 
           <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            {profile?.role === "system_admin" && (
+              <button
+                type="button"
+                onClick={handleAdminIngestAll}
+                disabled={ingestingAll || refreshing}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 shadow-sm shadow-blue-500/20 transition"
+              >
+                <Sparkles className={`w-3.5 h-3.5 ${ingestingAll ? "animate-spin" : ""}`} />
+                <span>{ingestingAll ? "Ingesting All 12 Files..." : "Add All 12 Files at Once"}</span>
+              </button>
+            )}
             <Link
               href="/app/data"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition"
@@ -552,12 +585,23 @@ export default function UploadedReportsPage() {
                   : "Try clearing your search query or selecting 'All Risk Bands' to see the full list of audited works."}
               </p>
               {workReports.length === 0 && (
-                <div className="pt-2 flex justify-center gap-2">
+                <div className="pt-2 flex justify-center gap-2 flex-wrap">
+                  {profile?.role === "system_admin" && (
+                    <button
+                      type="button"
+                      onClick={handleAdminIngestAll}
+                      disabled={ingestingAll}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 shadow-md shadow-blue-500/25 transition"
+                    >
+                      <Sparkles className={`w-4 h-4 ${ingestingAll ? "animate-spin" : ""}`} />
+                      <span>{ingestingAll ? "Processing All 12 Files..." : "⚡ Add All 12 Files at Once"}</span>
+                    </button>
+                  )}
                   <Link
                     href="/app/data"
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-xs transition"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-xs transition"
                   >
-                    <UploadCloud className="w-4 h-4" />
+                    <UploadCloud className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     <span>Go to Ingestion Hub</span>
                   </Link>
                 </div>

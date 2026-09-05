@@ -10,6 +10,7 @@ const {
   ingestESakshiFile,
   getDynamicSlots,
   dynamicIngestFiles,
+  adminIngestAllFiles,
   getActiveScope,
   restoreScope,
   getUploadedReports,
@@ -44,6 +45,7 @@ const multiSlotUpload = upload.fields([
 
 router.get("/slots", getDynamicSlots);
 router.post("/dynamic-ingest", multiSlotUpload, dynamicIngestFiles);
+router.post("/admin/ingest-all", adminIngestAllFiles);
 router.get("/scope", getActiveScope);
 router.post("/scope/restore", restoreScope);
 router.get("/reports", getUploadedReports);

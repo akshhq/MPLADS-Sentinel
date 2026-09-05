@@ -38,8 +38,9 @@ export default function CommandCenterPage() {
   const [priorityProjects, setPriorityProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [ingestingAll, setIngestingAll] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState("all");
-  const [currentScope, setCurrentScope] = useState({ mode: "database", batchId: null, batch: null });
+  const [currentScope, setCurrentScope] = useState({ mode: "unloaded", batchId: null, batch: null });
   const [restoreNotification, setRestoreNotification] = useState(null);
   const [activeAdminTab, setActiveAdminTab] = useState("dashboard"); // "dashboard" | "stakeholders"
 
@@ -61,38 +62,38 @@ export default function CommandCenterPage() {
     try {
       setRefreshing(true);
       const scope = await api.getActiveScope();
-      setCurrentScope(scope || { mode: "database", batchId: null, batch: null });
+      setCurrentScope(scope || { mode: "unloaded", batchId: null, batch: null });
 
       if (scope?.mode === "uploaded" && scope.batch) {
         const batch = scope.batch;
 
         setAnalytics(batch.analytics || {
-          totalWorksMonitored: batch.summary?.totalWorksCount || (batch.workReports?.length) || 10,
-          totalSanctionedCr: batch.summary?.totalSanctionedCr || 12.5,
-          totalExpenditureCr: batch.summary?.totalExpenditureCr || 9.8,
-          highRiskCount: batch.summary?.highCount || 2,
-          criticalRiskCount: batch.summary?.criticalCount || 1,
-          flaggedValueCr: +( (batch.summary?.totalSanctionedCr || 12.5) * 0.28 ).toFixed(2),
+          totalWorksMonitored: batch.summary?.totalWorksCount ?? (batch.workReports?.length) ?? 0,
+          totalSanctionedCr: batch.summary?.totalSanctionedCr ?? 0,
+          totalExpenditureCr: batch.summary?.totalExpenditureCr ?? 0,
+          highRiskCount: batch.summary?.highCount ?? 0,
+          criticalRiskCount: batch.summary?.criticalCount ?? 0,
+          flaggedValueCr: +( (batch.summary?.totalSanctionedCr || 0) * 0.28 ).toFixed(2),
           riskDistribution: batch.analytics?.riskDistribution || {
-            critical: batch.summary?.criticalCount || 1,
-            high: batch.summary?.highCount || 2,
-            medium: batch.summary?.mediumCount || 3,
-            low: batch.summary?.lowCount || 4,
+            critical: batch.summary?.criticalCount ?? 0,
+            high: batch.summary?.highCount ?? 0,
+            medium: batch.summary?.mediumCount ?? 0,
+            low: batch.summary?.lowCount ?? 0,
           },
           monthlyTrends: batch.analytics?.monthlyTrends || [],
         });
 
         setDatasetSummary(batch.datasetSummary || {
-          totalRecordsMonitored: batch.summary?.totalRawRowsProcessed || batch.summary?.totalWorksCount || 10,
-          totalSanctionedWorks: batch.summary?.totalWorksCount || 10,
-          totalSanctionedCr: batch.summary?.totalSanctionedCr || 12.5,
-          totalDisbursedCr: batch.summary?.totalExpenditureCr || 9.8,
+          totalRecordsMonitored: batch.summary?.totalRawRowsProcessed ?? batch.summary?.totalWorksCount ?? 0,
+          totalSanctionedWorks: batch.summary?.totalWorksCount ?? 0,
+          totalSanctionedCr: batch.summary?.totalSanctionedCr ?? 0,
+          totalDisbursedCr: batch.summary?.totalExpenditureCr ?? 0,
           activeRiskFlags: {
-            criticalCount: batch.summary?.criticalCount || 1,
-            highCount: batch.summary?.highCount || 2,
-            mediumCount: batch.summary?.mediumCount || 0,
-            lowCount: batch.summary?.lowCount || 1,
-            duplicateLedgerRows: batch.summary?.flaggedCasesCount || 2,
+            criticalCount: batch.summary?.criticalCount ?? 0,
+            highCount: batch.summary?.highCount ?? 0,
+            mediumCount: batch.summary?.mediumCount ?? 0,
+            lowCount: batch.summary?.lowCount ?? 0,
+            duplicateLedgerRows: batch.summary?.flaggedCasesCount ?? 0,
           },
         });
 
@@ -120,11 +121,31 @@ export default function CommandCenterPage() {
     }
   }
 
+  async function handleAdminIngestAll() {
+    try {
+      setIngestingAll(true);
+      const res = await api.adminIngestAllFiles();
+      if (res && res.success) {
+        setRestoreNotification(`Successfully ingested and audited all 12 official datasets (${res.summary?.totalWorksCount || 0} works monitored). Final report saved to database.`);
+        setTimeout(() => setRestoreNotification(null), 8000);
+        await loadDashboardData();
+      } else {
+        setRestoreNotification("Failed to batch ingest official datasets. Please check server logs.");
+        setTimeout(() => setRestoreNotification(null), 5000);
+      }
+    } catch (err) {
+      setRestoreNotification(`Batch ingestion error: ${err.message}`);
+      setTimeout(() => setRestoreNotification(null), 5000);
+    } finally {
+      setIngestingAll(false);
+    }
+  }
+
   async function handleRestoreMasterDatabase() {
     try {
       setRefreshing(true);
       await api.restoreMasterScope();
-      setRestoreNotification("Dashboard restored to Master Database (45,806+ official records).");
+      setRestoreNotification("Surveillance scope reset to un-ingested state. All fake data cleared.");
       setTimeout(() => setRestoreNotification(null), 5000);
       await loadDashboardData();
     } catch (err) {
@@ -170,55 +191,50 @@ export default function CommandCenterPage() {
     });
   };
 
-  // Needed Core Stats computed cleanly
+  // Core Stats computed strictly from real data (Zero Fake Data)
   const totalWorks = useMemo(() => {
     if (currentScope?.mode === "uploaded") {
-      const count = datasetSummary?.totalSanctionedWorks || datasetSummary?.totalRecordsMonitored || 0;
+      const count = datasetSummary?.totalSanctionedWorks ?? datasetSummary?.totalRecordsMonitored ?? 0;
       return typeof count === "number" ? count.toLocaleString("en-IN") : String(count);
     }
-    const count = datasetSummary?.totalRecordsMonitored || 45806;
-    return typeof count === "number" ? count.toLocaleString("en-IN") : "45,806";
-  }, [currentScope, datasetSummary]);
+    const count = datasetSummary?.totalRecordsMonitored ?? analytics?.totalWorksMonitored ?? 0;
+    return typeof count === "number" ? count.toLocaleString("en-IN") : "0";
+  }, [currentScope, datasetSummary, analytics]);
 
   const sanctionedCr = useMemo(() => {
-    const val = datasetSummary?.totalSanctionedCr ?? analytics?.totalSanctionedCr ?? 4820.5;
+    const val = datasetSummary?.totalSanctionedCr ?? analytics?.totalSanctionedCr ?? 0;
     const num = Number(val);
-    return !isNaN(num) ? num.toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : String(val);
+    return !isNaN(num) ? num.toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "0.0";
   }, [datasetSummary, analytics]);
 
   const disbursedCr = useMemo(() => {
-    const val = datasetSummary?.totalDisbursedCr ?? analytics?.totalExpenditureCr ?? 3714.8;
+    const val = datasetSummary?.totalDisbursedCr ?? analytics?.totalExpenditureCr ?? 0;
     const num = Number(val);
-    return !isNaN(num) ? num.toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : String(val);
+    return !isNaN(num) ? num.toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "0.0";
   }, [datasetSummary, analytics]);
 
   const highCriticalRiskCount = useMemo(() => {
     if (datasetSummary?.activeRiskFlags) {
       return (datasetSummary.activeRiskFlags.criticalCount || 0) + (datasetSummary.activeRiskFlags.highCount || 0);
     }
-    return (analytics?.criticalRiskCount || 34) + (analytics?.highRiskCount || 127);
+    return (analytics?.criticalRiskCount || 0) + (analytics?.highRiskCount || 0);
   }, [datasetSummary, analytics]);
 
   // Synchronized distribution matching active surveillance scope
   const riskDistribution = useMemo(() => {
     if (currentScope?.mode === "uploaded" && currentScope.batch) {
       return currentScope.batch.analytics?.riskDistribution || {
-        critical: currentScope.batch.summary?.criticalCount || 1,
-        high: currentScope.batch.summary?.highCount || 2,
-        medium: currentScope.batch.summary?.mediumCount || 3,
-        low: currentScope.batch.summary?.lowCount || 4,
+        critical: currentScope.batch.summary?.criticalCount || 0,
+        high: currentScope.batch.summary?.highCount || 0,
+        medium: currentScope.batch.summary?.mediumCount || 0,
+        low: currentScope.batch.summary?.lowCount || 0,
       };
     }
-    const critical = datasetSummary?.activeRiskFlags?.criticalCount ?? analytics?.criticalRiskCount ?? 34;
-    const high = datasetSummary?.activeRiskFlags?.highCount ?? analytics?.highRiskCount ?? 127;
-    const medium = 1842;
-    const total = datasetSummary?.totalRecordsMonitored ?? 45806;
-    const low = Math.max(0, total - (critical + high + medium));
     return {
-      critical,
-      high,
-      medium,
-      low,
+      critical: datasetSummary?.activeRiskFlags?.criticalCount ?? analytics?.criticalRiskCount ?? 0,
+      high: datasetSummary?.activeRiskFlags?.highCount ?? analytics?.highRiskCount ?? 0,
+      medium: datasetSummary?.activeRiskFlags?.mediumCount ?? 0,
+      low: datasetSummary?.activeRiskFlags?.lowCount ?? 0,
     };
   }, [currentScope, datasetSummary, analytics]);
 
@@ -237,12 +253,12 @@ export default function CommandCenterPage() {
               {currentScope?.mode === "uploaded" ? (
                 <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/90 dark:bg-amber-950/80 px-2.5 py-0.5 rounded-md border border-amber-300 dark:border-amber-800 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                  <span>Scoped to Uploaded Files ({currentScope.batchId})</span>
+                  <span>Scoped to Uploaded Batch ({currentScope.batchId})</span>
                 </span>
               ) : (
                 <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700 flex items-center gap-1">
-                  <Database className="w-3 h-3 text-blue-600 dark:text-blue-400" />
-                  <span>Master Database (45,806 Works)</span>
+                  <Database className="w-3 h-3 text-slate-500" />
+                  <span>Surveillance Standing By (0 Works Ingested)</span>
                 </span>
               )}
             </div>
@@ -252,27 +268,26 @@ export default function CommandCenterPage() {
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               {currentScope?.mode === "uploaded"
-                ? `Active Surveillance Scope: Showing data exclusively from ${totalWorks} works processed in your uploaded batch.`
-                : `Continuous AI risk intelligence screening across all 45,806 official MPLADS project records.`}
+                ? `Active Surveillance Scope: Showing verified intelligence strictly from ${totalWorks} works processed in your uploaded batch.`
+                : `Zero-synthetic baseline: Ingest official e-SAKSHI CSV datasets or run System Admin 1-click batch ingestion to activate AI surveillance.`}
             </p>
           </div>
 
           {/* RIGHT ACTION CONTROLS */}
           <div className="flex items-center gap-2 shrink-0 flex-wrap">
-            {/* Region Filter */}
-            <select
-              value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value)}
-              aria-label="Select State / UT Region"
-              className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 shadow-xs focus:outline-none"
-            >
-              <option value="all">All States & UTs</option>
-              <option value="delhi">Delhi (NCT)</option>
-              <option value="up">Uttar Pradesh</option>
-              <option value="maharashtra">Maharashtra</option>
-              <option value="karnataka">Karnataka</option>
-              <option value="rajasthan">Rajasthan</option>
-            </select>
+            {/* System Admin 1-Click Action: Add All 12 Files at Once */}
+            {profile?.role === "system_admin" && (
+              <button
+                type="button"
+                onClick={handleAdminIngestAll}
+                disabled={ingestingAll || refreshing}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 shadow-sm shadow-blue-500/20 transition hover:scale-102"
+                title="Batch process and audit all 12 official CSV datasets simultaneously"
+              >
+                <Sparkles className={`w-3.5 h-3.5 ${ingestingAll ? "animate-spin" : ""}`} />
+                <span>{ingestingAll ? "Ingesting All 12 Datasets..." : "Add All 12 Files at Once"}</span>
+              </button>
+            )}
 
             {/* Scope Action: Restore or Ingest */}
             {currentScope?.mode === "uploaded" ? (
@@ -282,17 +297,17 @@ export default function CommandCenterPage() {
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 shadow-xs transition"
                 >
                   <FileText className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>View Reports</span>
+                  <span>View Saved Reports</span>
                 </Link>
                 <button
                   type="button"
                   onClick={handleRestoreMasterDatabase}
                   disabled={refreshing}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition"
-                  title="Restore dashboard to all database works"
+                  title="Clear uploaded scope and return to clean baseline"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
-                  <span>Restore All Works</span>
+                  <span>Reset Scope</span>
                 </button>
               </>
             ) : (
@@ -302,7 +317,7 @@ export default function CommandCenterPage() {
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition"
                 >
                   <UploadCloud className="w-3.5 h-3.5" />
-                  <span>Ingest Data</span>
+                  <span>Ingest Hub</span>
                 </Link>
                 <button
                   type="button"
@@ -394,6 +409,44 @@ export default function CommandCenterPage() {
                 variant="critical"
               />
             </div>
+
+            {/* UN-INGESTED EMPTY STATE CALLOUT */}
+            {totalWorks === "0" && (
+              <div className="p-6 rounded-3xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/60 shadow-sm flex flex-col md:flex-row items-center justify-between gap-5 text-center md:text-left">
+                <div className="space-y-1 max-w-xl">
+                  <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-300 text-[10px] font-bold uppercase tracking-wider">
+                    <Database className="w-3 h-3" />
+                    Zero-Fake-Data Baseline Active
+                  </div>
+                  <h3 className="text-base font-black text-slate-900 dark:text-white">
+                    No Surveillance Datasets Currently Loaded
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                    MPLADS Sentinel strictly presents authentic audit intelligence once data is loaded. All mock data has been cleared. Ingest your CSV files or use the System Admin 1-click batch ingestion to audit all 12 official datasets simultaneously.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 shrink-0 flex-wrap justify-center">
+                  {profile?.role === "system_admin" && (
+                    <button
+                      type="button"
+                      onClick={handleAdminIngestAll}
+                      disabled={ingestingAll || refreshing}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 shadow-md shadow-blue-500/25 transition hover:scale-102"
+                    >
+                      <Sparkles className={`w-4 h-4 ${ingestingAll ? "animate-spin" : ""}`} />
+                      <span>{ingestingAll ? "Processing All 12 Files..." : "⚡ Add All 12 Files at Once"}</span>
+                    </button>
+                  )}
+                  <Link
+                    href="/app/data"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-xs transition"
+                  >
+                    <UploadCloud className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    <span>Open Ingestion Hub</span>
+                  </Link>
+                </div>
+              </div>
+            )}
 
             {/* CHARTS ROW: RISK TREND & RISK DISTRIBUTION */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
