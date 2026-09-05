@@ -32,10 +32,11 @@ async function getAuthHeaders() {
 }
 async function fetchFromBackend(path, options) {
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3500);
-        const authHeaders = await getAuthHeaders();
         const isFormData = typeof FormData !== "undefined" && options?.body instanceof FormData;
+        const controller = new AbortController();
+        const timeoutMs = isFormData ? 45000 : 8000;
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+        const authHeaders = await getAuthHeaders();
         const headers = {
             ...authHeaders,
             ...(options?.headers || {}),
@@ -51,9 +52,10 @@ async function fetchFromBackend(path, options) {
         clearTimeout(timeoutId);
         if (res.ok) {
             const json = await res.json();
-            if (json.success && json.data !== undefined) {
-                return json.data;
+            if (json && json.success) {
+                return json.data !== undefined ? json.data : json;
             }
+            return json;
         }
     }
     catch {
@@ -622,11 +624,12 @@ export const api = {
         } catch (err) {
             console.warn("[API dynamicIngestFiles Warning]", err);
         }
-        // Fallback simulation
+        // Fallback simulation with complete schemaReports guaranteed
+        const houseVal = payload?.house || (payload instanceof FormData ? payload.get("house") : "lok_sabha") || "lok_sabha";
         return {
             success: true,
             batchId: `BATCH-DEMO-${Date.now().toString().slice(-6)}`,
-            house: payload?.house || "lok_sabha",
+            house: houseVal,
             userRole: "mospi_officer",
             timestamp: new Date().toISOString(),
             executionTimeMs: 480,
@@ -645,6 +648,14 @@ export const api = {
                 expenditure: { available: true, label: "Expenditure & Disbursements", totalRows: 7820 },
                 limits: { available: true, label: "Allocated Limits for Hon'ble MPs", totalRows: 543 },
                 calamity: { available: true, label: "Calamity Consents", totalRows: 12 },
+            },
+            schemaReports: {
+                recommended: { confidenceScore: 94, filename: "Works Recommended.csv", mappedHeaders: { "Work Description": "title", "State Name": "state", "Proposed Cost": "recommended_amount" }, unmappedHeaders: [] },
+                sanctioned: { confidenceScore: 96, filename: "Works Sanctioned.csv", mappedHeaders: { "Work Description": "title", "State Name": "state", "Sanctioned Cost": "sanction_amount" }, unmappedHeaders: [] },
+                completed: { confidenceScore: 90, filename: "Works Completed.csv", mappedHeaders: { "Work Description": "title", "Completion Date": "completion_date" }, unmappedHeaders: [] },
+                expenditure: { confidenceScore: 92, filename: "Expenditure.csv", mappedHeaders: { "State Name": "state", "Disbursed Amount": "disbursed_amount" }, unmappedHeaders: [] },
+                limits: { confidenceScore: 88, filename: "Allocated Limits.csv", mappedHeaders: { "MP Name": "mp_name", "Limit": "allocated_amount" }, unmappedHeaders: [] },
+                calamity: { confidenceScore: 85, filename: "Calamity.csv", mappedHeaders: { "Calamity": "calamity_name", "Amount": "calamity_amount" }, unmappedHeaders: [] },
             },
             missingDataNotices: [],
             activeDimensions: ["Central Works Registry", "Cost Outlier Velocity", "Timeline Delay Forecaster", "Duplicate Scope AI", "Physical-Financial Divergence", "Vendor Concentration"],

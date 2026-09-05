@@ -21,7 +21,7 @@ exports.getDatasets = async (req, res) => {
       filteredMetaList.map(async (meta) => {
         const sampleRows = await loadCSVFile(meta.filename, 5);
         const columns =
-          sampleRows.length > 0
+          sampleRows.length > 0 && sampleRows[0] && typeof sampleRows[0] === "object"
             ? Object.keys(sampleRows[0]).map((colKey) => ({
                 key: colKey,
                 label: colKey,
@@ -162,7 +162,7 @@ exports.getDatasetById = async (req, res) => {
     let filtered = allRows;
     if (search) {
       const q = search.toLowerCase();
-      filtered = allRows.filter((r) => Object.values(r).some((val) => String(val).toLowerCase().includes(q)));
+      filtered = allRows.filter((r) => r && typeof r === "object" && Object.values(r).some((val) => String(val).toLowerCase().includes(q)));
     }
 
     const pageNum = parseInt(page, 10) || 1;
@@ -171,7 +171,7 @@ exports.getDatasetById = async (req, res) => {
     const pagedRows = filtered.slice(startIndex, startIndex + limitNum);
 
     const columns =
-      allRows.length > 0
+      allRows.length > 0 && allRows[0] && typeof allRows[0] === "object"
         ? Object.keys(allRows[0]).map((k) => ({
             key: k,
             label: k,
@@ -424,8 +424,9 @@ exports.dynamicIngestFiles = async (req, res) => {
       usePreset,
     });
 
-    res.status(200).json(result);
+    res.status(200).json({ success: true, data: result, ...result });
   } catch (error) {
+    console.error("[Dynamic Ingestion Error]", error);
     res.status(500).json({ success: false, message: "Dynamic Ingestion Failed: " + error.message });
   }
 };

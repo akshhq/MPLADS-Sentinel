@@ -188,4 +188,4 @@ npm run test:ai
 ---
 
 ## 📄 License & Attribution
-Developed for the **Ministry of Statistics and Programme Implementation (MoSPI)** under **SIH26102** by Team MPLADS Sentinel.
+Developed for the **Ministry of Statistics and Programme Implementation (MoSPI)** under project MPLADS Sentinel - **SIH26102** by Team WebShastra.

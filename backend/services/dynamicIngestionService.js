@@ -149,12 +149,21 @@ class DynamicIngestionService {
       let sourceFilename = null;
       let isUploaded = false;
 
-      // Check if user uploaded a file for this slot
-      if (uploadedSlots[slotKey] && uploadedSlots[slotKey].buffer) {
+      // Check if user uploaded a file for this slot (support both multer buffer and disk path)
+      if (uploadedSlots[slotKey]) {
         try {
-          rawRows = await parseCsvBuffer(uploadedSlots[slotKey].buffer, 15000);
-          sourceFilename = uploadedSlots[slotKey].originalname || `Uploaded_${slotKey}.csv`;
-          isUploaded = true;
+          let buffer = null;
+          if (uploadedSlots[slotKey].buffer) {
+            buffer = uploadedSlots[slotKey].buffer;
+          } else if (uploadedSlots[slotKey].path && fs.existsSync(uploadedSlots[slotKey].path)) {
+            buffer = fs.readFileSync(uploadedSlots[slotKey].path);
+          }
+
+          if (buffer && buffer.length > 0) {
+            rawRows = await parseCsvBuffer(buffer, 15000);
+            sourceFilename = uploadedSlots[slotKey].originalname || `Uploaded_${slotKey}.csv`;
+            isUploaded = rawRows && rawRows.length > 0;
+          }
         } catch (err) {
           console.warn(`[DynamicIngest] Failed parsing uploaded slot '${slotKey}':`, err.message);
         }
@@ -165,20 +174,20 @@ class DynamicIngestionService {
           if (["recommended", "sanctioned", "completed"].includes(slotKey)) {
             sourceFilename = slot.officialFileLs;
             rawRows = await loadOfficialCsv(slot.officialFileLs, 10000);
-            isUploaded = rawRows.length > 0;
+            isUploaded = rawRows && rawRows.length > 0;
           }
         } else if (usePreset === "presentation_rajya_sabha" || house === "rajya_sabha") {
           sourceFilename = slot.officialFileRs;
           rawRows = await loadOfficialCsv(slot.officialFileRs, 10000);
-          isUploaded = rawRows.length > 0;
+          isUploaded = rawRows && rawRows.length > 0;
         } else if (usePreset === "presentation_lok_sabha" || house === "lok_sabha") {
           sourceFilename = slot.officialFileLs;
           rawRows = await loadOfficialCsv(slot.officialFileLs, 10000);
-          isUploaded = rawRows.length > 0;
+          isUploaded = rawRows && rawRows.length > 0;
         }
       }
 
-      // Record availability
+      // Record availability and schema info
       if (isUploaded && rawRows.length > 0) {
         const { normalizedRows, schemaInfo } = normalizeDatasetRows(rawRows, slotKey);
         normalizedDatasets[slotKey] = normalizedRows;
@@ -196,6 +205,15 @@ class DynamicIngestionService {
         };
         totalRawRowsProcessed += normalizedRows.length;
       } else {
+        schemaReports[slotKey] = {
+          totalRows: 0,
+          detectedHeaders: [],
+          mappedHeaders: {},
+          unmappedHeaders: [],
+          missingCrucial: slot.criticalFor || [],
+          confidenceScore: 0,
+          filename: "Stream Not Uploaded",
+        };
         availabilityMatrix[slotKey] = {
           available: false,
           label: slot.label,
@@ -210,7 +228,7 @@ class DynamicIngestionService {
     }
 
     // 2. Compute Data Completeness Score
-    const availableSlotsCount = Object.values(availabilityMatrix).filter((s) => s.available).length;
+    const availableSlotsCount = Object.values(availabilityMatrix || {}).filter((s) => s?.available).length;
     const completenessPercent = Math.round((availableSlotsCount / SLOT_DEFINITIONS.length) * 100);
 
     // 3. Assemble Missing Data Notices & Impact on AI
@@ -218,7 +236,7 @@ class DynamicIngestionService {
     const activeDimensions = [];
     const degradedDimensions = [];
 
-    if (availabilityMatrix.sanctioned.available) {
+    if (availabilityMatrix.sanctioned?.available) {
       activeDimensions.push("Central Works Registry (Mod 02)");
       activeDimensions.push("Cost Outlier Velocity AI (Mod 05)");
       activeDimensions.push("Timeline Delay Forecaster (Mod 06)");
@@ -231,7 +249,7 @@ class DynamicIngestionService {
       degradedDimensions.push("Core Sanction Registry (Mod 02)");
     }
 
-    if (availabilityMatrix.recommended.available && availabilityMatrix.sanctioned.available) {
+    if (availabilityMatrix.recommended?.available && availabilityMatrix.sanctioned?.available) {
       activeDimensions.push("Duplicate Scope & Ghost Work Detection (Mod 09)");
     } else {
       missingDataNotices.push({
@@ -242,7 +260,7 @@ class DynamicIngestionService {
       degradedDimensions.push("Duplicate Scope AI (Mod 09)");
     }
 
-    if (availabilityMatrix.expenditure.available && availabilityMatrix.sanctioned.available) {
+    if (availabilityMatrix.expenditure?.available && availabilityMatrix.sanctioned?.available) {
       activeDimensions.push("Physical-Financial Progress Divergence AI (Mod 08)");
       activeDimensions.push("Vendor Concentration & Cartel Modularity (Mod 10, 15)");
     } else {
@@ -255,7 +273,7 @@ class DynamicIngestionService {
       degradedDimensions.push("Vendor Cartels & Collusion (Mod 15)");
     }
 
-    if (availabilityMatrix.limits.available) {
+    if (availabilityMatrix.limits?.available) {
       activeDimensions.push("MP Annual Quota Statutory Ceiling (Mod 04)");
     } else {
       missingDataNotices.push({
@@ -266,7 +284,7 @@ class DynamicIngestionService {
       degradedDimensions.push("MP Entitlement Ceiling (Mod 04)");
     }
 
-    if (availabilityMatrix.calamity.available) {
+    if (availabilityMatrix.calamity?.available) {
       activeDimensions.push("Disaster Calamity Relief Tracking (Mod 04)");
     } else {
       missingDataNotices.push({
@@ -278,30 +296,36 @@ class DynamicIngestionService {
     }
 
     // 4. Synthesize Flagged Works from Available Data
-    // We prioritize Sanctioned works, enriched with Recommended, Expenditure, and Completed data
-    const sanctionedWorks = normalizedDatasets.sanctioned || normalizedDatasets.recommended || [];
+    // Prioritize Sanctioned works, enriched with Recommended, Expenditure, and Completed data
+    const candidateWorks =
+      normalizedDatasets.sanctioned ||
+      normalizedDatasets.recommended ||
+      normalizedDatasets.completed ||
+      normalizedDatasets.expenditure ||
+      [];
     const expenditureWorks = normalizedDatasets.expenditure || [];
 
     const flaggedCases = [];
-    const highRiskWorkSample = sanctionedWorks.slice(0, 15);
+    const highRiskWorkSample = candidateWorks.slice(0, 15);
 
     highRiskWorkSample.forEach((work, idx) => {
+      if (!work || typeof work !== "object") return;
       const workId = work.work_id || `WORK-${idx + 1}`;
       const title = work.title || "MPLADS Developmental Infrastructure Work";
       const state = work.state || "National";
       const district = work.district || "Nodal District";
       const agency = work.implementing_agency || "District Implementing Authority";
-      const sanctionAmount = work.sanction_amount || work.recommended_amount || 3500000;
+      const sanctionAmount = Number(work.sanction_amount || work.recommended_amount || 3500000) || 3500000;
 
       // Find matching expenditure if available
-      const matchingExp = expenditureWorks.find((e) => e.work_id === workId || (e.title && e.title === work.title));
-      const disbursedAmount = matchingExp ? matchingExp.disbursed_amount : Math.round(sanctionAmount * 0.85);
+      const matchingExp = expenditureWorks.find((e) => e && (e.work_id === workId || (e.title && e.title === work.title)));
+      const disbursedAmount = matchingExp ? Number(matchingExp.disbursed_amount) || Math.round(sanctionAmount * 0.85) : Math.round(sanctionAmount * 0.85);
 
       // Simulate multi-modal findings adapted to available streams
       let compositeScore = 72;
       const triggeredSignals = [];
 
-      if (availabilityMatrix.expenditure.available) {
+      if (availabilityMatrix.expenditure?.available) {
         const gapPct = Math.round(((disbursedAmount / Math.max(1, sanctionAmount)) - 0.50) * 100);
         if (gapPct > 20) {
           compositeScore = Math.min(94, compositeScore + 15);
@@ -315,7 +339,7 @@ class DynamicIngestionService {
         }
       }
 
-      if (availabilityMatrix.recommended.available) {
+      if (availabilityMatrix.recommended?.available) {
         triggeredSignals.push({
           code: "SCOPE_DUP_02",
           module: "Mod 09: Duplicate Work AI (SBERT)",
@@ -335,7 +359,7 @@ class DynamicIngestionService {
         disbursed_amount: disbursedAmount,
         composite_risk_score: compositeScore,
         risk_band: compositeScore >= 80 ? "CRITICAL" : "HIGH",
-        confidence: availabilityMatrix.expenditure.available && availabilityMatrix.sanctioned.available ? 0.94 : 0.72,
+        confidence: availabilityMatrix.expenditure?.available && availabilityMatrix.sanctioned?.available ? 0.94 : 0.72,
         triggered_signals: triggeredSignals,
       });
     });

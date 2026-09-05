@@ -182,8 +182,13 @@ function mapHeaders(headers) {
   const unmapped = [];
   const assignedCanonical = new Set();
 
+  if (!headers || !Array.isArray(headers)) {
+    return { mapping, unmapped };
+  }
+
   // Phase 1: Try exact rule matches in priority order
   headers.forEach((rawHeader) => {
+    if (!rawHeader) return;
     const cleaned = cleanHeader(rawHeader);
     let matchedKey = null;
 
@@ -218,7 +223,7 @@ function mapHeaders(headers) {
  * Normalizes an array of raw CSV rows into standardized objects
  */
 function normalizeDatasetRows(rows, slotType = "generic") {
-  if (!rows || rows.length === 0) {
+  if (!rows || !Array.isArray(rows) || rows.length === 0) {
     return {
       normalizedRows: [],
       schemaInfo: {
@@ -232,10 +237,26 @@ function normalizeDatasetRows(rows, slotType = "generic") {
     };
   }
 
-  const rawHeaders = Object.keys(rows[0]);
+  // Filter out any non-object, null, or undefined rows
+  const cleanRows = rows.filter((r) => r && typeof r === "object" && Object.keys(r).length > 0);
+  if (cleanRows.length === 0) {
+    return {
+      normalizedRows: [],
+      schemaInfo: {
+        totalRows: 0,
+        detectedHeaders: [],
+        mappedHeaders: {},
+        unmappedHeaders: [],
+        missingCrucial: [],
+        confidenceScore: 0,
+      },
+    };
+  }
+
+  const rawHeaders = Object.keys(cleanRows[0] || {});
   const { mapping, unmapped } = mapHeaders(rawHeaders);
 
-  const mappedCanonicalFields = new Set(Object.values(mapping));
+  const mappedCanonicalFields = new Set(Object.values(mapping || {}));
   const crucialFieldsBySlot = {
     recommended: ["title", "state", "mp_name", "recommended_amount"],
     sanctioned: ["title", "state", "sanction_amount", "implementing_agency"],
@@ -252,7 +273,7 @@ function normalizeDatasetRows(rows, slotType = "generic") {
     ((expectedCrucial.length - missingCrucial.length) / Math.max(1, expectedCrucial.length)) * 100
   );
 
-  const normalizedRows = rows.map((row, index) => {
+  const normalizedRows = cleanRows.map((row, index) => {
     const norm = {
       _sourceRowIndex: index + 1,
       _customFields: {},
@@ -261,25 +282,28 @@ function normalizeDatasetRows(rows, slotType = "generic") {
     let extractedId = null;
     let extractedTitle = null;
 
-    Object.entries(row).forEach(([rawCol, val]) => {
-      const canonicalKey = mapping[rawCol];
-      if (canonicalKey) {
-        if (canonicalKey.includes("amount") || canonicalKey === "cost") {
-          norm[canonicalKey] = parseCurrency(val);
-        } else {
-          norm[canonicalKey] = val ? String(val).trim() : "";
-        }
+    if (row && typeof row === "object") {
+      Object.entries(row).forEach(([rawCol, val]) => {
+        if (!rawCol) return;
+        const canonicalKey = mapping ? mapping[rawCol] : null;
+        if (canonicalKey) {
+          if (canonicalKey.includes("amount") || canonicalKey === "cost") {
+            norm[canonicalKey] = parseCurrency(val);
+          } else {
+            norm[canonicalKey] = val !== null && val !== undefined ? String(val).trim() : "";
+          }
 
-        // Check if rawCol was the composite "Work" column
-        if (rawCol.toLowerCase() === "work" && val) {
-          const { id, title } = extractWorkIdAndTitle(val);
-          if (id) extractedId = id;
-          if (title) extractedTitle = title;
+          // Check if rawCol was the composite "Work" column
+          if (rawCol.toLowerCase() === "work" && val) {
+            const { id, title } = extractWorkIdAndTitle(val);
+            if (id) extractedId = id;
+            if (title) extractedTitle = title;
+          }
+        } else {
+          norm._customFields[rawCol] = val;
         }
-      } else {
-        norm._customFields[rawCol] = val;
-      }
-    });
+      });
+    }
 
     // If explicit work_id wasn't in its own column, use the one extracted from composite Work string
     if (!norm.work_id || norm.work_id === "") {
@@ -300,10 +324,10 @@ function normalizeDatasetRows(rows, slotType = "generic") {
     schemaInfo: {
       totalRows: normalizedRows.length,
       detectedHeaders: rawHeaders,
-      mappedHeaders: mapping,
-      unmappedHeaders: unmapped,
-      missingCrucial,
-      confidenceScore,
+      mappedHeaders: mapping || {},
+      unmappedHeaders: unmapped || [],
+      missingCrucial: missingCrucial || [],
+      confidenceScore: isNaN(confidenceScore) ? 0 : confidenceScore,
     },
   };
 }
