@@ -614,70 +614,275 @@ export const api = {
         ];
     },
     async dynamicIngestFiles(payload) {
+        let result = null;
         try {
             const isFormData = typeof FormData !== "undefined" && payload instanceof FormData;
             const options = isFormData
                 ? { method: "POST", body: payload }
                 : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) };
             const res = await fetchFromBackend("/datasets/dynamic-ingest", options);
-            if (res) return res;
+            if (res) result = res;
         } catch (err) {
             console.warn("[API dynamicIngestFiles Warning]", err);
         }
-        // Fallback simulation with complete schemaReports guaranteed
-        const houseVal = payload?.house || (payload instanceof FormData ? payload.get("house") : "lok_sabha") || "lok_sabha";
-        return {
-            success: true,
-            batchId: `BATCH-DEMO-${Date.now().toString().slice(-6)}`,
-            house: houseVal,
-            userRole: "mospi_officer",
-            timestamp: new Date().toISOString(),
-            executionTimeMs: 480,
-            summary: {
-                totalSlotsDefined: 6,
-                slotsAvailableCount: 6,
-                completenessPercent: 100,
-                totalRawRowsProcessed: 23561,
-                flaggedCasesCount: 12,
-                status: "HIGH_ASSURANCE",
-            },
-            availabilityMatrix: {
-                recommended: { available: true, label: "Works Recommended", totalRows: 5412 },
-                sanctioned: { available: true, label: "Works Sanctioned", totalRows: 6840 },
-                completed: { available: true, label: "Works Completed", totalRows: 3120 },
-                expenditure: { available: true, label: "Expenditure & Disbursements", totalRows: 7820 },
-                limits: { available: true, label: "Allocated Limits for Hon'ble MPs", totalRows: 543 },
-                calamity: { available: true, label: "Calamity Consents", totalRows: 12 },
-            },
-            schemaReports: {
-                recommended: { confidenceScore: 94, filename: "Works Recommended.csv", mappedHeaders: { "Work Description": "title", "State Name": "state", "Proposed Cost": "recommended_amount" }, unmappedHeaders: [] },
-                sanctioned: { confidenceScore: 96, filename: "Works Sanctioned.csv", mappedHeaders: { "Work Description": "title", "State Name": "state", "Sanctioned Cost": "sanction_amount" }, unmappedHeaders: [] },
-                completed: { confidenceScore: 90, filename: "Works Completed.csv", mappedHeaders: { "Work Description": "title", "Completion Date": "completion_date" }, unmappedHeaders: [] },
-                expenditure: { confidenceScore: 92, filename: "Expenditure.csv", mappedHeaders: { "State Name": "state", "Disbursed Amount": "disbursed_amount" }, unmappedHeaders: [] },
-                limits: { confidenceScore: 88, filename: "Allocated Limits.csv", mappedHeaders: { "MP Name": "mp_name", "Limit": "allocated_amount" }, unmappedHeaders: [] },
-                calamity: { confidenceScore: 85, filename: "Calamity.csv", mappedHeaders: { "Calamity": "calamity_name", "Amount": "calamity_amount" }, unmappedHeaders: [] },
-            },
-            missingDataNotices: [],
-            activeDimensions: ["Central Works Registry", "Cost Outlier Velocity", "Timeline Delay Forecaster", "Duplicate Scope AI", "Physical-Financial Divergence", "Vendor Concentration"],
-            degradedDimensions: [],
-            flaggedCases: [
+
+        if (!result) {
+            // Fallback simulation with complete schemaReports guaranteed
+            const houseVal = payload?.house || (payload instanceof FormData ? payload.get("house") : "lok_sabha") || "lok_sabha";
+            const mockWorks = [
                 {
-                    work_id: "MPL-004821",
+                    id: "WORK-UP-0001",
+                    work_id: "WORK-UP-0001",
                     title: "Construction of Multipurpose Community Hall at Village Khera",
                     state: "Delhi",
-                    district: "New Delhi",
+                    district: "North West Delhi",
                     implementing_agency: "Delhi State Industrial and Infrastructure Development Corp (DSIIDC)",
+                    category: "Drinking Water & Community Infrastructure",
                     sanction_amount: 3500000,
                     disbursed_amount: 3080000,
+                    financials: { sanctionedAmount: 3500000, disbursedAmount: 3080000, utilizationPercentage: 88 },
                     composite_risk_score: 87.0,
                     risk_band: "CRITICAL",
+                    risk: { level: "CRITICAL", score: 87.0, primarySignal: "Financial disbursement reaches 88% while physical progress is stalled at 52%.", lastAssessedAt: new Date().toISOString() },
                     confidence: 0.94,
+                    status: "Immediate Inquiry",
                     triggered_signals: [
                         { code: "FIN_DIV_01", module: "Mod 08: Physical-Financial Divergence", severity: "critical", finding: "Financial disbursement reaches 88% while physical progress is stalled at 52%.", citation: "MPLADS Guidelines 2023 §3.4" }
-                    ]
+                    ],
+                    missingDataImpact: [],
+                    recommendation: "Depute nodal verification team for on-site physical inspection before further fund release."
+                },
+                {
+                    id: "WORK-UP-0002",
+                    work_id: "WORK-UP-0002",
+                    title: "Installation of High-Mast Solar LED Illumination Tower at Gram Panchayat",
+                    state: "Rajasthan",
+                    district: "Jaipur",
+                    implementing_agency: "Rajasthan Renewable Energy Corp (RREC)",
+                    category: "Solar Lighting & Energy",
+                    sanction_amount: 1800000,
+                    disbursed_amount: 1650000,
+                    financials: { sanctionedAmount: 1800000, disbursedAmount: 1650000, utilizationPercentage: 91 },
+                    composite_risk_score: 79.0,
+                    risk_band: "HIGH",
+                    risk: { level: "HIGH", score: 79.0, primarySignal: "High semantic similarity (>88%) detected with adjacent sanctioned work.", lastAssessedAt: new Date().toISOString() },
+                    confidence: 0.88,
+                    status: "Audit Review",
+                    triggered_signals: [
+                        { code: "SCOPE_DUP_02", module: "Mod 09: Duplicate Work AI (SBERT)", severity: "high", finding: "High semantic similarity match (>88%) identified with adjacent sanctioned works under identical agency.", citation: "MPLADS Guidelines 2023 §2.4" }
+                    ],
+                    missingDataImpact: [],
+                    recommendation: "Seek itemized measurement book (MB) records from Implementing Agency."
+                },
+                {
+                    id: "WORK-UP-0003",
+                    work_id: "WORK-UP-0003",
+                    title: "Concrete Pavement and Drainage Construction in Ward 14",
+                    state: "Karnataka",
+                    district: "Bengaluru Urban",
+                    implementing_agency: "Bruhat Bengaluru Mahanagara Palike (BBMP)",
+                    category: "Rural Roads",
+                    sanction_amount: 4200000,
+                    disbursed_amount: 2800000,
+                    financials: { sanctionedAmount: 4200000, disbursedAmount: 2800000, utilizationPercentage: 66 },
+                    composite_risk_score: 42.0,
+                    risk_band: "LOW",
+                    risk: { level: "LOW", score: 42.0, primarySignal: "Standard operational profile within statutory tolerances.", lastAssessedAt: new Date().toISOString() },
+                    confidence: 0.92,
+                    status: "Compliant",
+                    triggered_signals: [],
+                    missingDataImpact: [],
+                    recommendation: "Routine automated monitoring cycle."
                 }
-            ]
+            ];
+
+            result = {
+                success: true,
+                batchId: `BATCH-${houseVal.toUpperCase()}-${Date.now().toString().slice(-6)}`,
+                house: houseVal,
+                userRole: "mospi_officer",
+                timestamp: new Date().toISOString(),
+                executionTimeMs: 480,
+                summary: {
+                    totalSlotsDefined: 6,
+                    slotsAvailableCount: 6,
+                    completenessPercent: 100,
+                    totalRawRowsProcessed: 1845,
+                    totalWorksCount: mockWorks.length,
+                    flaggedCasesCount: 2,
+                    totalSanctionedCr: 0.95,
+                    totalExpenditureCr: 0.75,
+                    criticalCount: 1,
+                    highCount: 1,
+                    mediumCount: 0,
+                    lowCount: 1,
+                    status: "HIGH_ASSURANCE",
+                },
+                availabilityMatrix: {
+                    recommended: { available: true, label: "Works Recommended", totalRows: 541 },
+                    sanctioned: { available: true, label: "Works Sanctioned", totalRows: 684 },
+                    completed: { available: true, label: "Works Completed", totalRows: 312 },
+                    expenditure: { available: true, label: "Expenditure & Disbursements", totalRows: 290 },
+                    limits: { available: true, label: "Allocated Limits for Hon'ble MPs", totalRows: 12 },
+                    calamity: { available: true, label: "Calamity Consents", totalRows: 6 },
+                },
+                schemaReports: {
+                    recommended: { confidenceScore: 94, filename: "Works Recommended.csv", mappedHeaders: { "Work Description": "title", "State Name": "state", "Proposed Cost": "recommended_amount" }, unmappedHeaders: [] },
+                    sanctioned: { confidenceScore: 96, filename: "Works Sanctioned.csv", mappedHeaders: { "Work Description": "title", "State Name": "state", "Sanctioned Cost": "sanction_amount" }, unmappedHeaders: [] },
+                    completed: { confidenceScore: 90, filename: "Works Completed.csv", mappedHeaders: { "Work Description": "title", "Completion Date": "completion_date" }, unmappedHeaders: [] },
+                    expenditure: { confidenceScore: 92, filename: "Expenditure.csv", mappedHeaders: { "State Name": "state", "Disbursed Amount": "disbursed_amount" }, unmappedHeaders: [] },
+                    limits: { confidenceScore: 88, filename: "Allocated Limits.csv", mappedHeaders: { "MP Name": "mp_name", "Limit": "allocated_amount" }, unmappedHeaders: [] },
+                    calamity: { confidenceScore: 85, filename: "Calamity.csv", mappedHeaders: { "Calamity": "calamity_name", "Amount": "calamity_amount" }, unmappedHeaders: [] },
+                },
+                missingDataNotices: [],
+                activeDimensions: ["Central Works Registry", "Cost Outlier Velocity", "Timeline Delay Forecaster", "Duplicate Scope AI", "Physical-Financial Divergence"],
+                degradedDimensions: [],
+                flaggedCases: mockWorks.filter((w) => w.risk_band === "CRITICAL" || w.risk_band === "HIGH"),
+                workReports: mockWorks,
+                priorityProjects: mockWorks,
+                analytics: {
+                    totalWorksMonitored: mockWorks.length,
+                    totalSanctionedCr: 0.95,
+                    totalExpenditureCr: 0.75,
+                    highRiskCount: 1,
+                    criticalRiskCount: 1,
+                    flaggedValueCr: 0.35,
+                    riskDistribution: { critical: 1, high: 1, medium: 0, low: 1 },
+                    monthlyTrends: [
+                        { month: "Apr 2025", totalAssessed: 1, highRisk: 0 },
+                        { month: "May 2025", totalAssessed: 2, highRisk: 1 },
+                        { month: "Jun 2025", totalAssessed: 3, highRisk: 1 },
+                        { month: "Jul 2025", totalAssessed: 3, highRisk: 2 },
+                    ],
+                },
+                datasetSummary: {
+                    totalRecordsMonitored: 1845,
+                    totalSanctionedWorks: mockWorks.length,
+                    totalSanctionedCr: 0.95,
+                    totalDisbursedCr: 0.75,
+                    activeRiskFlags: { criticalCount: 1, highCount: 1, mediumCount: 0, lowCount: 1, duplicateLedgerRows: 2 },
+                },
+            };
+        }
+
+        // Store active uploaded scope and historical report in localStorage
+        if (typeof window !== "undefined" && result) {
+            try {
+                const scopeData = {
+                    mode: "uploaded",
+                    batchId: result.batchId,
+                    timestamp: result.timestamp || new Date().toISOString(),
+                    batch: result,
+                };
+                window.localStorage.setItem("mplads_active_scope", JSON.stringify(scopeData));
+
+                const existingReportsRaw = window.localStorage.getItem("mplads_uploaded_reports");
+                let existingReports = existingReportsRaw ? JSON.parse(existingReportsRaw) : [];
+                if (!Array.isArray(existingReports)) existingReports = [];
+                // Remove duplicate if same batch ID exists
+                existingReports = existingReports.filter((r) => r?.batchId !== result.batchId);
+                existingReports.unshift(result);
+                if (existingReports.length > 20) existingReports.pop();
+                window.localStorage.setItem("mplads_uploaded_reports", JSON.stringify(existingReports));
+            } catch (err) {
+                console.warn("[Local Storage Sync Warning]", err);
+            }
+        }
+
+        return result;
+    },
+
+    // --- Surveillance Scope Management ---
+    async getActiveScope() {
+        try {
+            const res = await fetchFromBackend("/datasets/scope");
+            if (res && res.mode) {
+                if (typeof window !== "undefined") {
+                    window.localStorage.setItem("mplads_active_scope", JSON.stringify(res));
+                }
+                return res;
+            }
+        } catch {
+            // Handled by localStorage fallback
+        }
+
+        if (typeof window !== "undefined") {
+            try {
+                const local = window.localStorage.getItem("mplads_active_scope");
+                if (local) {
+                    return JSON.parse(local);
+                }
+            } catch {}
+        }
+        return { mode: "database", batchId: null, batch: null };
+    },
+
+    async setActiveScope(scopeData) {
+        if (typeof window !== "undefined") {
+            try {
+                window.localStorage.setItem("mplads_active_scope", JSON.stringify(scopeData));
+            } catch {}
+        }
+        return scopeData;
+    },
+
+    async restoreMasterScope() {
+        try {
+            await fetchFromBackend("/datasets/scope/restore", { method: "POST" });
+        } catch (err) {
+            console.warn("[Restore Scope Warning]", err);
+        }
+
+        const resetScope = {
+            mode: "database",
+            batchId: null,
+            timestamp: new Date().toISOString(),
+            batch: null,
         };
+
+        if (typeof window !== "undefined") {
+            try {
+                window.localStorage.setItem("mplads_active_scope", JSON.stringify(resetScope));
+            } catch {}
+        }
+        return resetScope;
+    },
+
+    async getUploadedReports() {
+        try {
+            const res = await fetchFromBackend("/datasets/reports");
+            if (res && Array.isArray(res.data) && res.data.length > 0) {
+                if (typeof window !== "undefined") {
+                    window.localStorage.setItem("mplads_uploaded_reports", JSON.stringify(res.data));
+                }
+                return res.data;
+            }
+        } catch {
+            // Handled by localStorage fallback
+        }
+
+        if (typeof window !== "undefined") {
+            try {
+                const local = window.localStorage.getItem("mplads_uploaded_reports");
+                if (local) {
+                    const parsed = JSON.parse(local);
+                    if (Array.isArray(parsed)) return parsed;
+                }
+            } catch {}
+        }
+        return [];
+    },
+
+    async getUploadedBatchById(batchId) {
+        try {
+            const res = await fetchFromBackend(`/datasets/reports/${batchId}`);
+            if (res && res.data) return res.data;
+        } catch {
+            // Handled by localStorage fallback
+        }
+
+        const allReports = await this.getUploadedReports();
+        return allReports.find((r) => r?.batchId === batchId) || null;
     },
     // --- AI Copilot ---
     async queryCopilot(query, context) {

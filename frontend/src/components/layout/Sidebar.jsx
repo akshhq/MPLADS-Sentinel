@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   FolderKanban,
   ShieldAlert,
+  FileText,
   FileCheck,
   SearchCode,
   BarChart3,
@@ -36,6 +37,7 @@ export const Sidebar = ({ onCloseMobile }) => {
           { label: "User & RBAC Manager", href: "/app/command-center#admin-users", icon: Users, badge: "Admin", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
           { label: "Master Projects", href: "/app/projects", icon: FolderKanban },
           { label: "Risk Intelligence", href: "/app/risk", icon: ShieldAlert, badge: "161", badgeColor: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300" },
+          { label: "Uploaded Reports", href: "/app/reports", icon: FileText, badge: "Reports", badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
           { label: "Evidence Repository", href: "/app/evidence", icon: FileCheck },
           { label: "Investigations", href: "/app/investigations", icon: SearchCode, badge: "3 Urgent", badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300" },
           { label: "Analytics & Maps", href: "/app/analytics", icon: BarChart3 },
@@ -47,6 +49,7 @@ export const Sidebar = ({ onCloseMobile }) => {
         return [
           { label: "Field Command Center", href: "/app/command-center", icon: LayoutDashboard },
           { label: "Assigned Field Inspections", href: "/app/projects", icon: ClipboardCheck, badge: "9 Tasks", badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
+          { label: "Uploaded Reports", href: "/app/reports", icon: FileText, badge: "Reports", badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
           { label: "Site Evidence & Geotag", href: "/app/evidence", icon: FileCheck, badge: "Upload", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
           { label: "e-SAKSHI Ingestion Hub", href: "/app/data", icon: UploadCloud },
           { label: "Field Inquiry Notes", href: "/app/investigations", icon: SearchCode },
@@ -56,6 +59,7 @@ export const Sidebar = ({ onCloseMobile }) => {
         return [
           { label: "Agency Command Center", href: "/app/command-center", icon: LayoutDashboard },
           { label: "Executed Works", href: "/app/projects", icon: HardHat, badge: "26 Works", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
+          { label: "Uploaded Reports", href: "/app/reports", icon: FileText, badge: "Reports", badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
           { label: "Contractor Invoices & Evidence", href: "/app/evidence", icon: FileCheck, badge: "Upload", badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300" },
           { label: "e-SAKSHI Ingestion Hub", href: "/app/data", icon: UploadCloud, badge: "Upload", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
         ];
@@ -64,6 +68,7 @@ export const Sidebar = ({ onCloseMobile }) => {
         return [
           { label: "Constituency Command Center", href: "/app/command-center", icon: LayoutDashboard },
           { label: "Constituency Works", href: "/app/projects", icon: FolderKanban },
+          { label: "Uploaded Reports", href: "/app/reports", icon: FileText, badge: "Reports", badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
           { label: "Constituency Analytics", href: "/app/analytics", icon: BarChart3 },
           { label: "e-SAKSHI Ingestion Hub", href: "/app/data", icon: UploadCloud },
           { label: "AI Project Copilot", href: "/app/copilot", icon: Sparkles, badge: "AI", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
@@ -73,6 +78,7 @@ export const Sidebar = ({ onCloseMobile }) => {
         return [
           { label: "State Command Center", href: "/app/command-center", icon: LayoutDashboard },
           { label: "Statewide Projects", href: "/app/projects", icon: FolderKanban },
+          { label: "Uploaded Reports", href: "/app/reports", icon: FileText, badge: "Reports", badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
           { label: "State Risk Alerts", href: "/app/risk", icon: ShieldAlert, badge: "State", badgeColor: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300" },
           { label: "Evidence Repository", href: "/app/evidence", icon: FileCheck },
           { label: "Audit Investigations", href: "/app/investigations", icon: SearchCode },
@@ -85,6 +91,7 @@ export const Sidebar = ({ onCloseMobile }) => {
         return [
           { label: "Vigilance Command Center", href: "/app/command-center", icon: LayoutDashboard },
           { label: "Investigation Dossiers", href: "/app/investigations", icon: SearchCode, badge: "Active Cases", badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300" },
+          { label: "Uploaded Reports", href: "/app/reports", icon: FileText, badge: "Reports", badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
           { label: "Risk Anomaly Signals", href: "/app/risk", icon: ShieldAlert, badge: "161 Flags", badgeColor: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300" },
           { label: "Layout Similarity Studio", href: "/app/risk/documents/compare", icon: ScanLine, badge: "OCR", badgeColor: "bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300" },
           { label: "Evidence Chain Repository", href: "/app/evidence", icon: FileCheck },
@@ -97,6 +104,7 @@ export const Sidebar = ({ onCloseMobile }) => {
         return [
           { label: "Command Center", href: "/app/command-center", icon: LayoutDashboard },
           { label: "Master Projects", href: "/app/projects", icon: FolderKanban },
+          { label: "Uploaded Reports", href: "/app/reports", icon: FileText, badge: "Reports", badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
           { label: "Risk Intelligence", href: "/app/risk", icon: ShieldAlert, badge: "161", badgeColor: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300" },
           { label: "Layout Similarity Studio", href: "/app/risk/documents/compare", icon: ScanLine, badge: "OCR", badgeColor: "bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300" },
           { label: "Evidence Repository", href: "/app/evidence", icon: FileCheck },

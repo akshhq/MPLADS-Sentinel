@@ -10,6 +10,10 @@ const {
   ingestESakshiFile,
   getDynamicSlots,
   dynamicIngestFiles,
+  getActiveScope,
+  restoreScope,
+  getUploadedReports,
+  getUploadedBatchById,
 } = require("../controllers/datasetController");
 
 const uploadsDir = path.join(__dirname, "../uploads");
@@ -40,6 +44,10 @@ const multiSlotUpload = upload.fields([
 
 router.get("/slots", getDynamicSlots);
 router.post("/dynamic-ingest", multiSlotUpload, dynamicIngestFiles);
+router.get("/scope", getActiveScope);
+router.post("/scope/restore", restoreScope);
+router.get("/reports", getUploadedReports);
+router.get("/reports/:batchId", getUploadedBatchById);
 router.get("/summary/national", getNationalDatasetSummary);
 router.get("/", getDatasets);
 router.post("/ingest-esakshi", upload.single("file"), ingestESakshiFile);

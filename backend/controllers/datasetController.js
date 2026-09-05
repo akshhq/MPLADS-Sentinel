@@ -430,3 +430,55 @@ exports.dynamicIngestFiles = async (req, res) => {
     res.status(500).json({ success: false, message: "Dynamic Ingestion Failed: " + error.message });
   }
 };
+
+// GET /api/datasets/scope - Retrieve current surveillance scope (database or uploaded batch)
+exports.getActiveScope = async (req, res) => {
+  try {
+    const DynamicIngestionService = require("../services/dynamicIngestionService");
+    const scope = DynamicIngestionService.getActiveScope();
+    res.json({ success: true, ...scope });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// POST /api/datasets/scope/restore - Restore surveillance scope to complete database
+exports.restoreScope = async (req, res) => {
+  try {
+    const DynamicIngestionService = require("../services/dynamicIngestionService");
+    const restored = DynamicIngestionService.restoreScope();
+    res.json({
+      success: true,
+      message: "Surveillance scope successfully restored to complete official database.",
+      ...restored,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// GET /api/datasets/reports - Retrieve all uploaded work reports batches
+exports.getUploadedReports = async (req, res) => {
+  try {
+    const DynamicIngestionService = require("../services/dynamicIngestionService");
+    const reports = DynamicIngestionService.getUploadedReports();
+    res.json({ success: true, count: reports.length, data: reports });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// GET /api/datasets/reports/:batchId - Retrieve report for specific uploaded batch
+exports.getUploadedBatchById = async (req, res) => {
+  try {
+    const DynamicIngestionService = require("../services/dynamicIngestionService");
+    const batch = DynamicIngestionService.getUploadedBatchById(req.params.batchId);
+    if (!batch) {
+      return res.status(404).json({ success: false, message: `Batch ${req.params.batchId} not found.` });
+    }
+    res.json({ success: true, data: batch });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+

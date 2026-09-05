@@ -49,6 +49,12 @@ export const NAV_LINKS = [
         badge: "AI",
     },
     {
+        label: "Uploaded Reports",
+        href: "/app/reports",
+        icon: "FileText",
+        badge: "Reports",
+    },
+    {
         label: "Data Explorer",
         href: "/app/data",
         icon: "Database",

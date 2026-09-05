@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
+  LayoutDashboard,
   Database,
   Search,
   UploadCloud,
@@ -734,9 +735,25 @@ export default function DynamicIngestionPage() {
                       <h2 className="text-xl font-extrabold text-slate-900 dark:text-white mt-1">
                         Dynamic Multi-Source Surveillance Audit Report
                       </h2>
+                      <div className="flex flex-wrap items-center gap-2 pt-2">
+                        <Link
+                          href="/app/command-center"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition"
+                        >
+                          <LayoutDashboard className="w-3.5 h-3.5" />
+                          <span>View Scoped Dashboard</span>
+                        </Link>
+                        <Link
+                          href="/app/reports"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition shadow-xs"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>View All Uploaded Reports</span>
+                        </Link>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 self-start sm:self-auto">
                       <div className="text-right">
                         <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
                           Data Completeness Score
