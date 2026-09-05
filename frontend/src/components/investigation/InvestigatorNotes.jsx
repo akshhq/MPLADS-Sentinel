@@ -62,7 +62,7 @@ export const InvestigatorNotes = ({ notes, onAddNote, className = "", }) => {
       {/* Note Composer Form */}
       <form onSubmit={handleSubmit} className="pt-2 border-t border-slate-100 dark:border-slate-800 flex gap-2">
         <input type="text" placeholder="Add auditor observation, request for clarification, or site findings..." value={newNote} onChange={(e) => setNewNote(e.target.value)} className="flex-1 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"/>
-        <button type="submit" disabled={!newNote.trim()} className="px-4 py-2 rounded-xl bg-slate-900 text-white dark:bg-blue-600 dark:text-white hover:bg-slate-800 disabled:opacity-50 text-xs font-bold transition-all flex items-center gap-1.5">
+        <button type="submit" disabled={!newNote.trim()} className="px-4 py-2 rounded-xl bg-blue-600 text-white dark:bg-blue-600 dark:text-white hover:bg-blue-700 disabled:opacity-50 text-xs font-bold transition-all flex items-center gap-1.5">
           <span>Post Remark</span>
           <Send className="w-3 h-3"/>
         </button>

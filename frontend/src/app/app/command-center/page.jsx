@@ -240,7 +240,7 @@ export default function CommandCenterPage() {
                     <tr key={u.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-lg bg-slate-900 dark:bg-blue-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-blue-600 dark:bg-blue-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
                             {u.avatar_initials || "U"}
                           </div>
                           <div>
@@ -557,7 +557,7 @@ export default function CommandCenterPage() {
 
             <Link
               href="/app/risk/documents/compare"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-700 shadow-xs transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 shadow-md shadow-blue-600/20 transition-all"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Layout Similarity Studio</span>

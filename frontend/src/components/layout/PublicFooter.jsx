@@ -9,7 +9,7 @@ export const PublicFooter = () => {
           {/* Brand Col */}
           <div className="space-y-3 md:col-span-1">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-slate-900 dark:bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+              <div className="w-7 h-7 rounded-lg bg-blue-600 dark:bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
                 <ShieldCheck className="w-4 h-4"/>
               </div>
               <span className="font-extrabold text-sm text-slate-900 dark:text-white">

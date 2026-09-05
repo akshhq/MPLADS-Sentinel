@@ -188,7 +188,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased font-sans">
+    <div className="min-h-screen flex flex-col bg-slate-50/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased font-sans">
       <PublicHeader />
 
       <main className="flex-1 space-y-20 pb-20">
@@ -217,7 +217,7 @@ export default function LandingPage() {
           <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
             <Link
               href="/app/command-center"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl text-sm font-bold text-white bg-slate-900 dark:bg-blue-600 hover:bg-slate-800 dark:hover:bg-blue-700 shadow-lg shadow-blue-950/20 transition-all active:scale-[0.98]"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl text-sm font-bold text-white bg-blue-600 dark:bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-700 shadow-lg shadow-blue-600/25 transition-all active:scale-[0.98]"
             >
               <span>Launch Command Center</span>
               <ArrowRight className="w-4 h-4" />

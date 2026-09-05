@@ -78,7 +78,7 @@ export const TopNav = ({ breadcrumbs, onOpenMobileMenu, contextProjectId, contex
           {/* User Profile Pill & Dropdown */}
           <div className="relative" ref={menuRef}>
             <button onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800 text-left hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+              <div className="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
                 {profile?.avatar_initials || profile?.full_name?.substring(0, 2).toUpperCase() || "AS"}
               </div>
               <div className="hidden xl:block text-left text-xs">

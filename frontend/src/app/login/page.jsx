@@ -85,8 +85,8 @@ export default function LoginPage() {
       {/* Top Bar */}
       <header className="w-full px-6 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-slate-900 dark:bg-blue-600 text-white flex items-center justify-center shadow-md">
-            <ShieldCheck className="w-5 h-5 text-blue-300 dark:text-white" />
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-500 dark:bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/25">
+            <ShieldCheck className="w-5 h-5 text-blue-200 dark:text-white" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">

@@ -23,7 +23,7 @@ export const InvestigationBriefModal = ({ isOpen, onClose, caseItem, project, })
           </div>
 
           <div className="flex items-center gap-2">
-            <button onClick={handlePrint} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 text-white dark:bg-blue-600 text-xs font-bold hover:bg-slate-800 transition-colors shadow-xs">
+            <button onClick={handlePrint} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 text-white dark:bg-blue-600 text-xs font-bold hover:bg-blue-700 transition-colors shadow-xs">
               <Printer className="w-3.5 h-3.5"/>
               <span>Print / Export PDF</span>
             </button>

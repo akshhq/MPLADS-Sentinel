@@ -160,7 +160,7 @@ export const ProjectTable = ({ projects, total }) => {
 
                 {/* Action */}
                 <td className="px-4 py-3.5 text-right whitespace-nowrap">
-                  <Link href={`/app/projects/${project.id}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-900 hover:text-white dark:hover:bg-blue-600 transition-all shadow-xs">
+                  <Link href={`/app/projects/${project.id}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 transition-all shadow-xs">
                     <span>Digital Twin</span>
                     <ArrowRight className="w-3.5 h-3.5"/>
                   </Link>

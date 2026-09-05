@@ -27,7 +27,7 @@ export const LiveInsightCard = () => {
         </div>
 
         <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
-          <Link href="/app/risk/financial" className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-700 transition-all shadow-xs">
+          <Link href="/app/risk/financial" className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 transition-all shadow-md shadow-blue-600/20">
             <span>Explore Risk Pattern</span>
             <ArrowRight className="w-3.5 h-3.5"/>
           </Link>

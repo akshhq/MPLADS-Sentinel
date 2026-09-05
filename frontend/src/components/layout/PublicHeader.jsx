@@ -14,8 +14,8 @@ export const PublicHeader = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-xl bg-slate-900 dark:bg-blue-600 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-            <ShieldCheck className="w-5 h-5 text-blue-300 dark:text-white"/>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-500 dark:bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/25 group-hover:scale-105 transition-transform">
+            <ShieldCheck className="w-5 h-5 text-blue-200 dark:text-white"/>
           </div>
           <div>
             <div className="flex items-center gap-1.5">
@@ -53,7 +53,7 @@ export const PublicHeader = () => {
             <span>{profile ? profile.full_name.split(" ")[0] : "Sign In"}</span>
           </Link>
 
-          <Link href="/app/command-center" className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-slate-900 dark:bg-blue-600 hover:bg-slate-800 dark:hover:bg-blue-700 shadow-sm transition-all active:scale-[0.98]">
+          <Link href="/app/command-center" className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 dark:bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-700 shadow-md shadow-blue-600/20 transition-all active:scale-[0.98]">
             <span>Command Center</span>
             <ArrowRight className="w-3.5 h-3.5"/>
           </Link>
