@@ -455,7 +455,24 @@ function normalizeProject(p) {
     physicalProgress: p.physical_progress !== undefined ? p.physical_progress : p.physicalProgress || 0,
     dates: p.dates || {},
     gpsCoordinates: p.gps_coordinates || p.gpsCoordinates || {},
-    risk: p.risk || { score: 0, level: "low", primarySignal: "", breakdown: {}, reasons: [] },
+    risk: (() => {
+      const isDup = p.risk_band === "DUPLICATE" || p.risk?.level === "duplicate";
+      const score = isDup ? null : (p.risk?.score ?? p.composite_risk_score ?? 0);
+      let level = isDup ? "duplicate" : (p.risk?.level || p.risk_band || "low").toLowerCase();
+      if (!isDup && typeof score === "number") {
+        if (score >= 80) level = "critical";
+        else if (score >= 60) level = "high";
+        else if (score >= 35) level = "medium";
+        else level = "low";
+      }
+      return {
+        score,
+        level,
+        primarySignal: p.risk?.primarySignal || "",
+        breakdown: p.risk?.breakdown || {},
+        reasons: p.risk?.reasons || [],
+      };
+    })(),
     milestones: p.milestones || [],
     investigationCaseId: p.investigation_case_id || p.investigationCaseId || null,
     createdAt: p.created_at || p.createdAt,
@@ -569,11 +586,24 @@ const supabaseService = {
           verifiedExpenditureAmount: w.disbursed_amount || w.financials?.disbursedAmount || 0,
           costDeviationPercent: 0,
         },
-        risk: w.risk || {
-          score: (w.risk_band === "DUPLICATE" || w.risk?.level === "duplicate") ? null : (w.composite_risk_score ?? 0),
-          level: (w.risk_band === "DUPLICATE" || w.risk?.level === "duplicate") ? "duplicate" : (w.risk_band || "LOW").toLowerCase(),
-          primarySignal: w.risk?.primarySignal || "Routine automated monitoring",
-        },
+        risk: (() => {
+          const isDup = (w.risk_band === "DUPLICATE" || w.risk?.level === "duplicate");
+          const score = isDup ? null : (w.composite_risk_score ?? w.risk?.score ?? 0);
+          let level = isDup ? "duplicate" : (w.risk?.level || w.risk_band || "low").toLowerCase();
+          if (!isDup && typeof score === "number") {
+            if (score >= 80) level = "critical";
+            else if (score >= 60) level = "high";
+            else if (score >= 35) level = "medium";
+            else level = "low";
+          }
+          return {
+            score,
+            level,
+            primarySignal: w.risk?.primarySignal || "Routine automated monitoring",
+            breakdown: w.risk?.breakdown || {},
+            reasons: w.risk?.reasons || [],
+          };
+        })(),
       }));
     }
 

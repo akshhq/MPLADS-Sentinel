@@ -98,11 +98,14 @@ export function formatRelativeTime(dateStr) {
     }
 }
 export function getRiskLevelFromScore(score) {
-    if (score >= 80)
+    if (score === null || score === undefined || isNaN(score))
+        return "low";
+    const num = Number(score);
+    if (num >= 80)
         return "critical";
-    if (score >= 60)
+    if (num >= 60)
         return "high";
-    if (score >= 30)
+    if (num >= 35)
         return "medium";
     return "low";
 }

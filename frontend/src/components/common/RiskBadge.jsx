@@ -1,5 +1,5 @@
 import React from "react";
-import { getRiskBadgeStyles } from "@/lib/formatters";
+import { getRiskBadgeStyles, getRiskLevelFromScore } from "@/lib/formatters";
 import { ShieldAlert, ShieldCheck, AlertTriangle, AlertOctagon, CopyCheck } from "lucide-react";
 
 export const RiskBadge = ({
@@ -9,12 +9,20 @@ export const RiskBadge = ({
   size = "md",
   className = "",
 }) => {
-  const norm = (level || "").toLowerCase();
-  const isDuplicate = norm === "duplicate";
-  const styles = getRiskBadgeStyles(isDuplicate ? "duplicate" : level);
+  const rawNorm = (level || "").toLowerCase();
+  const isDuplicate = rawNorm === "duplicate" || level === "DUPLICATE";
+
+  // Calibrate effective level from score when a valid numeric score is present
+  const effectiveLevel = isDuplicate
+    ? "duplicate"
+    : typeof score === "number" && !isNaN(score)
+    ? getRiskLevelFromScore(score)
+    : rawNorm || "low";
+
+  const styles = getRiskBadgeStyles(effectiveLevel);
 
   const getIcon = () => {
-    switch (norm) {
+    switch (effectiveLevel) {
       case "duplicate":
         return <CopyCheck className="w-3.5 h-3.5" />;
       case "critical":

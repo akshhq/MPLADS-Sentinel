@@ -404,10 +404,10 @@ class DynamicIngestionService {
       } else if (compositeScore >= 80) {
         riskBand = "CRITICAL";
         criticalCount++;
-      } else if (compositeScore >= 65) {
+      } else if (compositeScore >= 60) {
         riskBand = "HIGH";
         highCount++;
-      } else if (compositeScore >= 45) {
+      } else if (compositeScore >= 35) {
         riskBand = "MEDIUM";
         mediumCount++;
       } else {
@@ -510,12 +510,12 @@ class DynamicIngestionService {
         duplicate: duplicateCount,
       },
       monthlyTrends: [
-        { month: "Apr 2025", totalAssessed: Math.round(totalWorksCount * 0.15), highRisk: Math.max(1, Math.round(highCount * 0.2)) },
-        { month: "May 2025", totalAssessed: Math.round(totalWorksCount * 0.35), highRisk: Math.max(1, Math.round(highCount * 0.4)) },
-        { month: "Jun 2025", totalAssessed: Math.round(totalWorksCount * 0.60), highRisk: Math.max(1, Math.round(highCount * 0.6)) },
-        { month: "Jul 2025", totalAssessed: Math.round(totalWorksCount * 0.80), highRisk: Math.max(1, Math.round(highCount * 0.8)) },
-        { month: "Aug 2025", totalAssessed: Math.round(totalWorksCount * 0.95), highRisk: highCount },
-        { month: "Sep 2025", totalAssessed: totalWorksCount, highRisk: highCount },
+        { month: "Apr 2025", totalAssessed: Math.round(totalWorksCount * 0.15), screenedWorks: Math.round(totalWorksCount * 0.15), highRisk: Math.max(1, Math.round(highCount * 0.2)), flaggedAnomalies: Math.max(1, Math.round(highCount * 0.2)), avgRiskScore: 26.4 },
+        { month: "May 2025", totalAssessed: Math.round(totalWorksCount * 0.35), screenedWorks: Math.round(totalWorksCount * 0.35), highRisk: Math.max(1, Math.round(highCount * 0.4)), flaggedAnomalies: Math.max(1, Math.round(highCount * 0.4)), avgRiskScore: 28.1 },
+        { month: "Jun 2025", totalAssessed: Math.round(totalWorksCount * 0.60), screenedWorks: Math.round(totalWorksCount * 0.60), highRisk: Math.max(1, Math.round(highCount * 0.6)), flaggedAnomalies: Math.max(1, Math.round(highCount * 0.6)), avgRiskScore: 29.8 },
+        { month: "Jul 2025", totalAssessed: Math.round(totalWorksCount * 0.80), screenedWorks: Math.round(totalWorksCount * 0.80), highRisk: Math.max(1, Math.round(highCount * 0.8)), flaggedAnomalies: Math.max(1, Math.round(highCount * 0.8)), avgRiskScore: 31.5 },
+        { month: "Aug 2025", totalAssessed: Math.round(totalWorksCount * 0.95), screenedWorks: Math.round(totalWorksCount * 0.95), highRisk: highCount, flaggedAnomalies: highCount, avgRiskScore: 33.2 },
+        { month: "Sep 2025", totalAssessed: totalWorksCount, screenedWorks: totalWorksCount, highRisk: highCount, flaggedAnomalies: highCount, avgRiskScore: 34.8 },
       ],
       categoryBreakdown: [
         { category: "Drinking Water", count: Math.round(totalWorksCount * 0.35), share: 35 },

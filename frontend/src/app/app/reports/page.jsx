@@ -35,7 +35,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { MetricCard } from "@/components/common/MetricCard";
 import { RiskBadge } from "@/components/common/RiskBadge";
 import { api } from "@/lib/api";
-import { formatIndianCurrency, formatRelativeTime } from "@/lib/formatters";
+import { formatIndianCurrency, formatRelativeTime, getRiskLevelFromScore } from "@/lib/formatters";
 import { useAuth } from "@/lib/authContext";
 
 export default function ReportsPage() {
@@ -211,7 +211,11 @@ export default function ReportsPage() {
           agency: work.implementing_agency,
           sanction: work.sanction_amount || work.financials?.sanctionedAmount || 2500000,
           disbursed: work.disbursed_amount || work.financials?.disbursedAmount || 1800000,
-          riskLevel: isDup ? "duplicate" : (work.risk_band || work.risk?.level || "low").toLowerCase(),
+          riskLevel: isDup
+            ? "duplicate"
+            : typeof (work.composite_risk_score ?? work.risk?.score) === "number"
+            ? getRiskLevelFromScore(work.composite_risk_score ?? work.risk?.score)
+            : (work.risk_band || work.risk?.level || "low").toLowerCase(),
           riskScore: isDup ? null : (work.composite_risk_score ?? work.risk?.score ?? null),
           isDuplicate: isDup,
         },
@@ -288,7 +292,7 @@ export default function ReportsPage() {
         w.sanction_amount || w.financials?.sanctionedAmount || 0,
         w.disbursed_amount || w.financials?.disbursedAmount || 0,
         isDup ? "Not Rated (Duplicate)" : (w.composite_risk_score ?? w.risk?.score ?? "N/A"),
-        isDup ? "Duplicate" : (w.risk_band || w.risk?.level || "LOW"),
+        isDup ? "Duplicate" : (typeof (w.composite_risk_score ?? w.risk?.score) === "number" ? getRiskLevelFromScore(w.composite_risk_score ?? w.risk?.score).toUpperCase() : (w.risk_band || w.risk?.level || "LOW")),
         `"${(w.risk?.primarySignal || "").replace(/"/g, '""')}"`,
         `"${isDup ? "Duplicate" : (w.status || "")}"`,
       ];
@@ -733,7 +737,11 @@ export default function ReportsPage() {
                           (work.triggered_signals || []).some((s) => s.code === "SCOPE_DUP_02");
 
                         const score = isDup ? null : (work.composite_risk_score ?? work.risk?.score ?? null);
-                        const level = isDup ? "duplicate" : (work.risk_band || work.risk?.level || "LOW");
+                        const level = isDup
+                          ? "duplicate"
+                          : typeof score === "number"
+                          ? getRiskLevelFromScore(score)
+                          : (work.risk_band || work.risk?.level || "LOW");
 
                         return (
                           <tr
