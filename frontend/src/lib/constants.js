@@ -49,7 +49,7 @@ export const NAV_LINKS = [
         badge: "AI",
     },
     {
-        label: "Uploaded Reports",
+        label: "Reports",
         href: "/app/reports",
         icon: "FileText",
         badge: "Reports",

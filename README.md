@@ -45,7 +45,7 @@
 2. **Persistent Reports Database (`reports_db.json`)**:
    - Backed by `backend/services/reportsDatabaseService.js` and durably stored in `backend/data/reports_db.json` (with Supabase cloud sync).
    - Every processed audit run, canonical work ledger, and itemized risk dossier is automatically saved and survives server restarts.
-   - Fully retrievable from the frontend at **Uploaded Reports** (`/app/reports`) and via REST API (`GET /api/datasets/reports`).
+   - Fully retrievable from the frontend at **Reports Panel** (`/app/reports`) and via REST API (`GET /api/datasets/reports`).
    - Supports active surveillance scoping (`mode: "unloaded" | "uploaded"`) with 1-click administrative scope reset.
 
 3. **1-Click Batch Ingestion for System Administrators**:

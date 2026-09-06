@@ -149,7 +149,7 @@ export default function DuplicateIntelligencePage() {
                 <span className="px-2 py-0.5 rounded text-xs font-mono font-bold bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">
                   PROJECT B (MPL-004822)
                 </span>
-                <RiskBadge level="critical" score={82} size="sm"/>
+                <RiskBadge level="duplicate" size="sm"/>
               </div>
 
               <div>

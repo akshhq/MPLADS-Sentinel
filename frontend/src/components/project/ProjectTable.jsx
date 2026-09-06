@@ -47,7 +47,7 @@ export const ProjectTable = ({ projects, total }) => {
     const exportCSV = () => {
         const headers = "Project ID,Title,Category,State,District,Sanctioned (INR),Financial Progress (%),Physical Progress (%),Risk Score,Risk Level\n";
         const rows = projects
-            .map((p) => `"${p.id}","${p.title.replace(/"/g, '""')}","${p.category}","${p.state}","${p.district}",${p.financials.sanctionedAmount},${p.financialProgress},${p.physicalProgress},${p.risk.score},"${p.risk.level}"`)
+            .map((p) => `"${p.id}","${p.title.replace(/"/g, '""')}","${p.category}","${p.state}","${p.district}",${p.financials?.sanctionedAmount || 0},${p.financialProgress || 0},${p.physicalProgress || 0},${p.risk?.level === "duplicate" ? "Not Rated (Duplicate)" : (p.risk?.score ?? "")},"${p.risk?.level === "duplicate" ? "Duplicate" : (p.risk?.level || "Low")}"`)
             .join("\n");
         const blob = new Blob([headers + rows], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);

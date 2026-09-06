@@ -109,7 +109,15 @@ export const api = {
                 if (local) {
                     const parsed = JSON.parse(local);
                     if (parsed?.mode === "uploaded" && parsed.batch) {
-                        const works = parsed.batch.workReports || parsed.batch.priorityProjects || [];
+                        let works = parsed.batch.workReports || parsed.batch.priorityProjects || [];
+                        if (params?.riskLevel && params.riskLevel !== "all") {
+                            const req = params.riskLevel.toLowerCase();
+                            works = works.filter((w) => {
+                                const isDup = w.risk_band === "DUPLICATE" || w.risk?.level === "duplicate";
+                                if (req === "duplicate") return isDup;
+                                return !isDup && ((w.risk_band && w.risk_band.toLowerCase() === req) || (w.risk?.level && w.risk.level.toLowerCase() === req));
+                            });
+                        }
                         return { projects: works, total: works.length };
                     }
                 }

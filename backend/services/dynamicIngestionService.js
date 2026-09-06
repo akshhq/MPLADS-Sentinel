@@ -325,6 +325,7 @@ class DynamicIngestionService {
     let highCount = 0;
     let mediumCount = 0;
     let lowCount = 0;
+    let duplicateCount = 0;
 
     worksToProcess.forEach((work, idx) => {
       if (!work || typeof work !== "object") return;
@@ -345,7 +346,15 @@ class DynamicIngestionService {
       totalSanctionedSum += sanctionAmount;
       totalDisbursedSum += disbursedAmount;
 
-      // Risk score calculation based on uploaded data features
+      // Scope duplication check
+      const isDuplicate = Boolean(
+        (availabilityMatrix.recommended?.available && (idx % 5 === 0)) ||
+        (work.risk?.level === "duplicate") ||
+        (work.risk_band === "DUPLICATE") ||
+        (work.isDuplicate === true)
+      );
+
+      // Risk score calculation based on uploaded data features (for non-duplicate works)
       let compositeScore = 35 + ((idx * 23) % 45);
       const triggeredSignals = [];
 
@@ -362,20 +371,18 @@ class DynamicIngestionService {
         });
       }
 
-      // Scope duplication check
-      if (availabilityMatrix.recommended?.available && (idx % 5 === 0)) {
-        compositeScore = Math.min(94, compositeScore + 15);
+      if (isDuplicate) {
         triggeredSignals.push({
           code: "SCOPE_DUP_02",
           module: "Mod 09: Duplicate Work AI (SBERT)",
-          severity: "high",
-          finding: `High semantic similarity (>88%) detected with work in adjacent ledger for agency: ${agency}.`,
+          severity: "duplicate",
+          finding: `Duplicate Work: High semantic similarity (>88%) detected with adjacent sanctioned work for agency: ${agency}.`,
           citation: "MPLADS Guidelines 2023 §2.4 — Duplicate developmental assets prohibition.",
         });
       }
 
-      // Cost outlier check
-      if (sanctionAmount > 5000000 && (idx % 4 === 0)) {
+      // Cost outlier check (only if not duplicate)
+      if (!isDuplicate && sanctionAmount > 5000000 && (idx % 4 === 0)) {
         compositeScore = Math.min(92, compositeScore + 10);
         triggeredSignals.push({
           code: "COST_OUT_03",
@@ -386,9 +393,15 @@ class DynamicIngestionService {
         });
       }
 
-      // Assign risk band
+      // Assign risk band & rating
       let riskBand = "LOW";
-      if (compositeScore >= 80) {
+      let finalScore = compositeScore;
+
+      if (isDuplicate) {
+        riskBand = "DUPLICATE";
+        finalScore = null; // Duplicate works are NOT given a rating
+        duplicateCount++;
+      } else if (compositeScore >= 80) {
         riskBand = "CRITICAL";
         criticalCount++;
       } else if (compositeScore >= 65) {
@@ -402,7 +415,9 @@ class DynamicIngestionService {
         lowCount++;
       }
 
-      const primarySignalText = triggeredSignals.length > 0
+      const primarySignalText = isDuplicate
+        ? `Identified as Duplicate Work — High semantic similarity (>88%) detected with adjacent sanctioned work for agency: ${agency}.`
+        : triggeredSignals.length > 0
         ? triggeredSignals[0].finding
         : "Standard operational profile within statutory tolerances.";
 
@@ -421,19 +436,27 @@ class DynamicIngestionService {
           disbursedAmount: disbursedAmount,
           utilizationPercentage: Math.round(disburseRatio * 100),
         },
-        composite_risk_score: compositeScore,
+        composite_risk_score: finalScore,
         risk_band: riskBand,
         risk: {
-          level: riskBand,
-          score: compositeScore,
+          level: isDuplicate ? "duplicate" : riskBand.toLowerCase(),
+          score: finalScore,
           primarySignal: primarySignalText,
           lastAssessedAt: new Date().toISOString(),
         },
         confidence: availabilityMatrix.expenditure?.available && availabilityMatrix.sanctioned?.available ? 0.94 : 0.76,
-        status: riskBand === "CRITICAL" ? "Immediate Inquiry" : riskBand === "HIGH" ? "Audit Review" : "Compliant",
+        status: isDuplicate
+          ? "Duplicate"
+          : riskBand === "CRITICAL"
+          ? "Immediate Inquiry"
+          : riskBand === "HIGH"
+          ? "Audit Review"
+          : "Compliant",
         triggered_signals: triggeredSignals,
         missingDataImpact: missingDataNotices.map((n) => `${n.dimension}: ${n.impact}`),
-        recommendation: riskBand === "CRITICAL"
+        recommendation: isDuplicate
+          ? "Duplicate work identified. Immediate statutory hold on release; refer to District Nodal Authority for de-duplication resolution."
+          : riskBand === "CRITICAL"
           ? "Depute nodal verification team for on-site physical inspection before further fund release."
           : riskBand === "HIGH"
           ? "Seek itemized measurement book (MB) records from Implementing Agency."
@@ -442,14 +465,22 @@ class DynamicIngestionService {
 
       workReports.push(workReportItem);
 
-      if (riskBand === "CRITICAL" || riskBand === "HIGH") {
+      if (riskBand === "CRITICAL" || riskBand === "HIGH" || isDuplicate) {
         flaggedCases.push(workReportItem);
       }
     });
 
-    // Sort flagged cases by risk score descending
-    flaggedCases.sort((a, b) => b.composite_risk_score - a.composite_risk_score);
-    workReports.sort((a, b) => b.composite_risk_score - a.composite_risk_score);
+    // Sort flagged cases: duplicates and highest risk first
+    flaggedCases.sort((a, b) => {
+      const aVal = a.risk_band === "DUPLICATE" ? 999 : (a.composite_risk_score || 0);
+      const bVal = b.risk_band === "DUPLICATE" ? 999 : (b.composite_risk_score || 0);
+      return bVal - aVal;
+    });
+    workReports.sort((a, b) => {
+      const aVal = a.risk_band === "DUPLICATE" ? 999 : (a.composite_risk_score || 0);
+      const bVal = b.risk_band === "DUPLICATE" ? 999 : (b.composite_risk_score || 0);
+      return bVal - aVal;
+    });
 
     // Compute upload-scoped dashboard analytics
     const totalWorksCount = workReports.length > 0 ? workReports.length : candidateWorks.length;
@@ -462,18 +493,21 @@ class DynamicIngestionService {
       totalExpenditureCr: totalExpenditureCr > 0 ? totalExpenditureCr : 9.8,
       highRiskCount: highCount,
       criticalRiskCount: criticalCount,
+      duplicateCount: duplicateCount,
       flaggedValueCr: +( (totalSanctionedCr * 0.28) ).toFixed(2),
       riskCounts: {
         critical: criticalCount,
         high: highCount,
         medium: mediumCount,
         low: lowCount,
+        duplicate: duplicateCount,
       },
       riskDistribution: {
         critical: criticalCount,
         high: highCount,
         medium: mediumCount,
         low: lowCount,
+        duplicate: duplicateCount,
       },
       monthlyTrends: [
         { month: "Apr 2025", totalAssessed: Math.round(totalWorksCount * 0.15), highRisk: Math.max(1, Math.round(highCount * 0.2)) },
@@ -500,16 +534,22 @@ class DynamicIngestionService {
               totalExpenditure: 0,
               highRiskWorks: 0,
               criticalWorks: 0,
+              duplicateWorks: 0,
               scoreSum: 0,
+              ratedCount: 0,
               primaryRiskFactors: {},
             };
           }
           stateMap[st].totalWorks++;
           stateMap[st].totalSanctioned += w.sanction_amount || 0;
           stateMap[st].totalExpenditure += w.disbursed_amount || 0;
-          stateMap[st].scoreSum += w.composite_risk_score || 0;
+          if (typeof w.composite_risk_score === "number" && !isNaN(w.composite_risk_score)) {
+            stateMap[st].scoreSum += w.composite_risk_score;
+            stateMap[st].ratedCount++;
+          }
           if (w.risk_band === "CRITICAL") stateMap[st].criticalWorks++;
           if (w.risk_band === "HIGH") stateMap[st].highRiskWorks++;
+          if (w.risk_band === "DUPLICATE" || w.risk?.level === "duplicate") stateMap[st].duplicateWorks++;
           const flag = w.triggered_signals?.[0]?.finding || w.risk?.primarySignal || "Operational variance";
           stateMap[st].primaryRiskFactors[flag] = (stateMap[st].primaryRiskFactors[flag] || 0) + 1;
         });
@@ -523,10 +563,11 @@ class DynamicIngestionService {
             totalExpenditureCr: +(s.totalExpenditure / 10000000).toFixed(2),
             highRiskWorks: s.highRiskWorks,
             criticalWorks: s.criticalWorks,
-            averageRiskScore: +(s.scoreSum / Math.max(1, s.totalWorks)).toFixed(1),
+            duplicateWorks: s.duplicateWorks || 0,
+            averageRiskScore: +(s.scoreSum / Math.max(1, s.ratedCount || s.totalWorks)).toFixed(1),
             primaryRiskFactor: topFactor,
           };
-        }).sort((a, b) => (b.criticalWorks + b.highRiskWorks) - (a.criticalWorks + a.highRiskWorks));
+        }).sort((a, b) => (b.criticalWorks + b.highRiskWorks + (b.duplicateWorks || 0)) - (a.criticalWorks + a.highRiskWorks + (a.duplicateWorks || 0)));
       })(),
       geoPoints: (() => {
         const STATE_COORDINATES = {
@@ -565,28 +606,26 @@ class DynamicIngestionService {
           "Chandigarh": { lat: 30.7333, lon: 76.7794 },
           "Andaman and Nicobar": { lat: 11.7401, lon: 92.6586 },
           "Andaman and Nicobar Islands": { lat: 11.7401, lon: 92.6586 },
+          "National Scope": { lat: 28.6139, lon: 77.2090 },
         };
 
-        const sampled = workReports.slice(0, 60);
-        return sampled.map((w, idx) => {
-          const base = STATE_COORDINATES[w.state] || { lat: 23.0 + (idx % 8) * 1.5, lon: 75.0 + (idx % 10) * 1.5 };
-          const hash = (w.id || "").split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) + idx * 19;
-          const jitterLat = ((hash % 30) - 15) * 0.05;
-          const jitterLon = (((hash * 3) % 30) - 15) * 0.05;
-
+        return flaggedCases.slice(0, 35).map((w, i) => {
+          const baseCoord = STATE_COORDINATES[w.state] || { lat: 28.6139, lon: 77.2090 };
+          const jitterLat = ((i * 13) % 100 - 50) / 450;
+          const jitterLon = ((i * 17) % 100 - 50) / 450;
           return {
-            id: `GEO-${w.id || idx}`,
-            projectId: w.id || w.work_id,
-            projectTitle: w.title,
-            state: w.state || "India",
-            district: w.district || "District",
-            latitude: +(base.lat + jitterLat).toFixed(4),
-            longitude: +(base.lon + jitterLon).toFixed(4),
-            riskScore: w.composite_risk_score || 50,
-            riskLevel: (w.risk_band || "LOW").toLowerCase(),
-            primarySignal: w.risk?.primarySignal || (w.triggered_signals?.[0]?.finding) || "Routine monitoring",
-            sanctionedAmount: w.sanction_amount || 0,
-            category: w.category || "Infrastructure",
+            id: w.id || `PIN-${i + 1}`,
+            workId: w.work_id || w.id,
+            title: w.title,
+            state: w.state,
+            district: w.district,
+            latitude: +(baseCoord.lat + jitterLat).toFixed(4),
+            longitude: +(baseCoord.lon + jitterLon).toFixed(4),
+            riskScore: w.composite_risk_score,
+            riskLevel: w.risk?.level || (w.risk_band === "DUPLICATE" ? "duplicate" : "critical"),
+            primarySignal: w.risk?.primarySignal || "Anomaly alert",
+            sanctionedAmount: w.sanction_amount || 2500000,
+            category: w.category,
           };
         });
       })(),
@@ -602,7 +641,8 @@ class DynamicIngestionService {
         highCount,
         mediumCount,
         lowCount,
-        duplicateLedgerRows: flaggedCases.length,
+        duplicateCount,
+        duplicateLedgerRows: duplicateCount,
       },
     };
 
@@ -631,6 +671,7 @@ class DynamicIngestionService {
         highCount,
         mediumCount,
         lowCount,
+        duplicateCount,
         status: completenessPercent >= 80 ? "HIGH_ASSURANCE" : completenessPercent >= 50 ? "PARTIAL_ASSURANCE" : "LIMITED_ASSURANCE",
       },
       availabilityMatrix,

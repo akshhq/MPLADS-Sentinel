@@ -20,7 +20,8 @@
         "highCount": 167,
         "mediumCount": 187,
         "lowCount": 76,
-        "status": "HIGH_ASSURANCE"
+        "status": "HIGH_ASSURANCE",
+        "duplicateCount": 100
       },
       "availabilityMatrix": {
         "recommended": {
@@ -747,16 +748,16 @@
             "disbursedAmount": 212500,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 94,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 94,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.434Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -828,16 +829,16 @@
             "disbursedAmount": 249468,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 94,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 94,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.489Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -872,16 +873,16 @@
             "disbursedAmount": 425000,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 94,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 94,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.514Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -916,16 +917,16 @@
             "disbursedAmount": 346104,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 94,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 94,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.565Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -997,16 +998,16 @@
             "disbursedAmount": 410678,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 94,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 94,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.615Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -1189,16 +1190,16 @@
             "disbursedAmount": 221127,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.416Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1226,16 +1227,16 @@
             "disbursedAmount": 137500,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.440Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1263,16 +1264,16 @@
             "disbursedAmount": 1233350,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.461Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -1307,16 +1308,16 @@
             "disbursedAmount": 1015700,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: MADHUBANI(DISTRICT PLANNING OFFICER MADHUBANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.464Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1344,16 +1345,16 @@
             "disbursedAmount": 440598,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: SAKTI(COLLECTOR SAKTI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.512Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1381,16 +1382,16 @@
             "disbursedAmount": 649581,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: PARBHANI(DISTRICT COLLECTOR PARBHANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.538Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1418,16 +1419,16 @@
             "disbursedAmount": 407184,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: PURBA BARDHAMAN(DISTRICT MAGISTRATE PURBA BARDHAMAN_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.559Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1455,16 +1456,16 @@
             "disbursedAmount": 106650,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Kushinagar(DISTRICT MAGISTRATE KUSHINAGAR PADRAUNA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.581Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1492,16 +1493,16 @@
             "disbursedAmount": 300000,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.605Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1529,16 +1530,16 @@
             "disbursedAmount": 375000,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.625Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1566,16 +1567,16 @@
             "disbursedAmount": 900000,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.645Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1825,16 +1826,16 @@
             "disbursedAmount": 212500,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.410Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -1869,16 +1870,16 @@
             "disbursedAmount": 171988,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.412Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1906,16 +1907,16 @@
             "disbursedAmount": 250000,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: BARWANI(DISTRICT COLLECTOR BADWANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.458Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1943,16 +1944,16 @@
             "disbursedAmount": 162500,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KOTTAYAM(DISTRICT COLLECTOR KOTTAYAM_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.485Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -1980,16 +1981,16 @@
             "disbursedAmount": 800000,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: SAKTI(COLLECTOR SAKTI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.504Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2017,16 +2018,16 @@
             "disbursedAmount": 102361,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: South 24 Parganas(DISTRICT MAGISTRATE SOUTH TWENTY FOUR PARGANAS_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.533Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2054,16 +2055,16 @@
             "disbursedAmount": 595800,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: JANJGIR-CHAMPA(DISTRICT COLLECTOR JANJGIR CHAMPA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.555Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2091,16 +2092,16 @@
             "disbursedAmount": 440037,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Cooch Behar(DISTRICT MAGISTRATE COOCHBEHAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.577Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2128,16 +2129,16 @@
             "disbursedAmount": 212611,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Kushinagar(DISTRICT MAGISTRATE KUSHINAGAR PADRAUNA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.600Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2165,16 +2166,16 @@
             "disbursedAmount": 222941,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.620Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2202,16 +2203,16 @@
             "disbursedAmount": 425000,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.638Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -2246,16 +2247,16 @@
             "disbursedAmount": 700000,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.641Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2542,16 +2543,16 @@
             "disbursedAmount": 224064,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: ARARIA(DISTRICT PLANNING OFFICER ARARIA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.408Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2579,16 +2580,16 @@
             "disbursedAmount": 227500,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.430Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2616,16 +2617,16 @@
             "disbursedAmount": 800000,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Khargone (West Nimar)(DISTRICT COLLECTOR KHARGONE_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.451Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2653,16 +2654,16 @@
             "disbursedAmount": 446212,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KAIMUR (BHABUA)(DISTRICT PLANNING OFFICER KAIMUR BHABUA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.480Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2690,16 +2691,16 @@
             "disbursedAmount": 289836,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: BIRBHUM(DISTRICT MAGISTRATE BIRBHUM_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.500Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2727,16 +2728,16 @@
             "disbursedAmount": 375000,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: JHAJJAR(DEPUTY COMMISSIONER cum NODAL OFFICER MPLADS JHAJJAR).",
             "lastAssessedAt": "2026-09-05T16:39:53.528Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2764,16 +2765,16 @@
             "disbursedAmount": 2250000,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KOLLAM(DISTRICT COLLECTOR KOLLAM_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.549Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2801,16 +2802,16 @@
             "disbursedAmount": 127828,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: FEROZEPUR(DEPUTY COMMISSIONER FIROZEPUR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.570Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2838,16 +2839,16 @@
             "disbursedAmount": 200799,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.591Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -2882,16 +2883,16 @@
             "disbursedAmount": 165364,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Kushinagar(DISTRICT MAGISTRATE KUSHINAGAR PADRAUNA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.594Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -2919,16 +2920,16 @@
             "disbursedAmount": 174982,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: South 24 Parganas(DISTRICT MAGISTRATE SOUTH TWENTY FOUR PARGANAS_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.635Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -4354,16 +4355,16 @@
             "disbursedAmount": 319283,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DHARWAD(DEPUTY COMMISSIONER DHARWAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.403Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -4391,16 +4392,16 @@
             "disbursedAmount": 112500,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.423Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -4428,16 +4429,16 @@
             "disbursedAmount": 50700,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: FARIDKOT(DEPUTY COMMISSIONER FARIDKOT_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.447Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -4465,16 +4466,16 @@
             "disbursedAmount": 745500,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: MADHUBANI(DISTRICT PLANNING OFFICER MADHUBANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.474Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -4502,16 +4503,16 @@
             "disbursedAmount": 449712,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: South 24 Parganas(DISTRICT MAGISTRATE SOUTH TWENTY FOUR PARGANAS_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.496Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -4539,16 +4540,16 @@
             "disbursedAmount": 820281,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: PURBI CHAMPARAN(DISTRICT PLANNING OFFICER MOTHIHARI EAST CHAMPARAN_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.521Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -4576,16 +4577,16 @@
             "disbursedAmount": 193329,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.542Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -4620,16 +4621,16 @@
             "disbursedAmount": 410701,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Cooch Behar(DISTRICT MAGISTRATE COOCHBEHAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.545Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -4657,16 +4658,16 @@
             "disbursedAmount": 118117,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Kushinagar(DISTRICT MAGISTRATE KUSHINAGAR PADRAUNA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.588Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -4694,16 +4695,16 @@
             "disbursedAmount": 324977,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KALIMPONG(District Magistrate Kalimpong_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.611Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -4731,16 +4732,16 @@
             "disbursedAmount": 400000,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: CHITTOOR(DISTRICT COLLECTOR CHITTOOR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.631Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -6129,16 +6130,16 @@
             "disbursedAmount": 184273,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.418Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -6166,16 +6167,16 @@
             "disbursedAmount": 270000,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: FARIDKOT(DEPUTY COMMISSIONER FARIDKOT_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.443Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -6203,16 +6204,16 @@
             "disbursedAmount": 798050,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: MADHUBANI(DISTRICT PLANNING OFFICER MADHUBANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.468Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -6240,16 +6241,16 @@
             "disbursedAmount": 1745311,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: TENKASI(DISTRICT COLLECTOR TENKASI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.492Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -6277,16 +6278,16 @@
             "disbursedAmount": 499948,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: PARBHANI(DISTRICT COLLECTOR PARBHANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.540Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -6314,16 +6315,16 @@
             "disbursedAmount": 381365,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Cooch Behar(DISTRICT MAGISTRATE COOCHBEHAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.561Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -6351,16 +6352,16 @@
             "disbursedAmount": 188987,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Kushinagar(DISTRICT MAGISTRATE KUSHINAGAR PADRAUNA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.583Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -6388,16 +6389,16 @@
             "disbursedAmount": 224925,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KALIMPONG(District Magistrate Kalimpong_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.607Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -6425,16 +6426,16 @@
             "disbursedAmount": 300000,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.627Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -6462,16 +6463,16 @@
             "disbursedAmount": 346346,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.647Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -7860,16 +7861,16 @@
             "disbursedAmount": 135133,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.414Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -7897,16 +7898,16 @@
             "disbursedAmount": 175000,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.438Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -7934,16 +7935,16 @@
             "disbursedAmount": 143440,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KOTTAYAM(DISTRICT COLLECTOR KOTTAYAM_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.487Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -7971,16 +7972,16 @@
             "disbursedAmount": 649266,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: SAKTI(COLLECTOR SAKTI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.508Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -8008,16 +8009,16 @@
             "disbursedAmount": 181975,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: South 24 Parganas(DISTRICT MAGISTRATE SOUTH TWENTY FOUR PARGANAS_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.536Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -8045,16 +8046,16 @@
             "disbursedAmount": 264022,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Cooch Behar(DISTRICT MAGISTRATE COOCHBEHAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.557Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -8082,16 +8083,16 @@
             "disbursedAmount": 1052535,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: BIRBHUM(DISTRICT MAGISTRATE BIRBHUM_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.579Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -8119,16 +8120,16 @@
             "disbursedAmount": 750000,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: RAIPUR(DISTRICT COLLECTOR RAIPUR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.602Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -8156,16 +8157,16 @@
             "disbursedAmount": 449783,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.623Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -8193,16 +8194,16 @@
             "disbursedAmount": 275000,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.643Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -8676,16 +8677,16 @@
             "disbursedAmount": 212500,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 94,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 94,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.434Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -8757,16 +8758,16 @@
             "disbursedAmount": 249468,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 94,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 94,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.489Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -8801,16 +8802,16 @@
             "disbursedAmount": 425000,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 94,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 94,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.514Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -8845,16 +8846,16 @@
             "disbursedAmount": 346104,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 94,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 94,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.565Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -8926,16 +8927,16 @@
             "disbursedAmount": 410678,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 94,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 94,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.615Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -9118,16 +9119,16 @@
             "disbursedAmount": 221127,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.416Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9155,16 +9156,16 @@
             "disbursedAmount": 137500,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.440Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9192,16 +9193,16 @@
             "disbursedAmount": 1233350,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.461Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -9236,16 +9237,16 @@
             "disbursedAmount": 1015700,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: MADHUBANI(DISTRICT PLANNING OFFICER MADHUBANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.464Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9273,16 +9274,16 @@
             "disbursedAmount": 440598,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: SAKTI(COLLECTOR SAKTI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.512Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9310,16 +9311,16 @@
             "disbursedAmount": 649581,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: PARBHANI(DISTRICT COLLECTOR PARBHANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.538Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9347,16 +9348,16 @@
             "disbursedAmount": 407184,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: PURBA BARDHAMAN(DISTRICT MAGISTRATE PURBA BARDHAMAN_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.559Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9384,16 +9385,16 @@
             "disbursedAmount": 106650,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Kushinagar(DISTRICT MAGISTRATE KUSHINAGAR PADRAUNA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.581Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9421,16 +9422,16 @@
             "disbursedAmount": 300000,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.605Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9458,16 +9459,16 @@
             "disbursedAmount": 375000,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.625Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9495,16 +9496,16 @@
             "disbursedAmount": 900000,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 90,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 90,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.645Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9754,16 +9755,16 @@
             "disbursedAmount": 212500,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.410Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -9798,16 +9799,16 @@
             "disbursedAmount": 171988,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.412Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9835,16 +9836,16 @@
             "disbursedAmount": 250000,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: BARWANI(DISTRICT COLLECTOR BADWANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.458Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9872,16 +9873,16 @@
             "disbursedAmount": 162500,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KOTTAYAM(DISTRICT COLLECTOR KOTTAYAM_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.485Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9909,16 +9910,16 @@
             "disbursedAmount": 800000,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: SAKTI(COLLECTOR SAKTI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.504Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9946,16 +9947,16 @@
             "disbursedAmount": 102361,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: South 24 Parganas(DISTRICT MAGISTRATE SOUTH TWENTY FOUR PARGANAS_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.533Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -9983,16 +9984,16 @@
             "disbursedAmount": 595800,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: JANJGIR-CHAMPA(DISTRICT COLLECTOR JANJGIR CHAMPA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.555Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10020,16 +10021,16 @@
             "disbursedAmount": 440037,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Cooch Behar(DISTRICT MAGISTRATE COOCHBEHAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.577Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10057,16 +10058,16 @@
             "disbursedAmount": 212611,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Kushinagar(DISTRICT MAGISTRATE KUSHINAGAR PADRAUNA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.600Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10094,16 +10095,16 @@
             "disbursedAmount": 222941,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.620Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10131,16 +10132,16 @@
             "disbursedAmount": 425000,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.638Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -10175,16 +10176,16 @@
             "disbursedAmount": 700000,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 85,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 85,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.641Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10471,16 +10472,16 @@
             "disbursedAmount": 224064,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: ARARIA(DISTRICT PLANNING OFFICER ARARIA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.408Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10508,16 +10509,16 @@
             "disbursedAmount": 227500,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.430Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10545,16 +10546,16 @@
             "disbursedAmount": 800000,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Khargone (West Nimar)(DISTRICT COLLECTOR KHARGONE_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.451Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10582,16 +10583,16 @@
             "disbursedAmount": 446212,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KAIMUR (BHABUA)(DISTRICT PLANNING OFFICER KAIMUR BHABUA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.480Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10619,16 +10620,16 @@
             "disbursedAmount": 289836,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: BIRBHUM(DISTRICT MAGISTRATE BIRBHUM_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.500Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10656,16 +10657,16 @@
             "disbursedAmount": 375000,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: JHAJJAR(DEPUTY COMMISSIONER cum NODAL OFFICER MPLADS JHAJJAR).",
             "lastAssessedAt": "2026-09-05T16:39:53.528Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10693,16 +10694,16 @@
             "disbursedAmount": 2250000,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KOLLAM(DISTRICT COLLECTOR KOLLAM_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.549Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10730,16 +10731,16 @@
             "disbursedAmount": 127828,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: FEROZEPUR(DEPUTY COMMISSIONER FIROZEPUR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.570Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10767,16 +10768,16 @@
             "disbursedAmount": 200799,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.591Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -10811,16 +10812,16 @@
             "disbursedAmount": 165364,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Kushinagar(DISTRICT MAGISTRATE KUSHINAGAR PADRAUNA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.594Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -10848,16 +10849,16 @@
             "disbursedAmount": 174982,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 80,
-          "risk_band": "CRITICAL",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "CRITICAL",
-            "score": 80,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: South 24 Parganas(DISTRICT MAGISTRATE SOUTH TWENTY FOUR PARGANAS_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.635Z"
           },
           "confidence": 0.94,
-          "status": "Immediate Inquiry",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -12283,16 +12284,16 @@
             "disbursedAmount": 319283,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DHARWAD(DEPUTY COMMISSIONER DHARWAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.403Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -12320,16 +12321,16 @@
             "disbursedAmount": 112500,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.423Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -12357,16 +12358,16 @@
             "disbursedAmount": 50700,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: FARIDKOT(DEPUTY COMMISSIONER FARIDKOT_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.447Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -12394,16 +12395,16 @@
             "disbursedAmount": 745500,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: MADHUBANI(DISTRICT PLANNING OFFICER MADHUBANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.474Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -12431,16 +12432,16 @@
             "disbursedAmount": 449712,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: South 24 Parganas(DISTRICT MAGISTRATE SOUTH TWENTY FOUR PARGANAS_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.496Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -12468,16 +12469,16 @@
             "disbursedAmount": 820281,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: PURBI CHAMPARAN(DISTRICT PLANNING OFFICER MOTHIHARI EAST CHAMPARAN_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.521Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -12505,16 +12506,16 @@
             "disbursedAmount": 193329,
             "utilizationPercentage": 85
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "Disbursement is high (85%) while physical inspection reports indicate milestone lags.",
             "lastAssessedAt": "2026-09-05T16:39:53.542Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "FIN_DIV_01",
@@ -12549,16 +12550,16 @@
             "disbursedAmount": 410701,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Cooch Behar(DISTRICT MAGISTRATE COOCHBEHAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.545Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -12586,16 +12587,16 @@
             "disbursedAmount": 118117,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Kushinagar(DISTRICT MAGISTRATE KUSHINAGAR PADRAUNA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.588Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -12623,16 +12624,16 @@
             "disbursedAmount": 324977,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KALIMPONG(District Magistrate Kalimpong_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.611Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -12660,16 +12661,16 @@
             "disbursedAmount": 400000,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 75,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 75,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: CHITTOOR(DISTRICT COLLECTOR CHITTOOR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.631Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -14058,16 +14059,16 @@
             "disbursedAmount": 184273,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.418Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -14095,16 +14096,16 @@
             "disbursedAmount": 270000,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: FARIDKOT(DEPUTY COMMISSIONER FARIDKOT_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.443Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -14132,16 +14133,16 @@
             "disbursedAmount": 798050,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: MADHUBANI(DISTRICT PLANNING OFFICER MADHUBANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.468Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -14169,16 +14170,16 @@
             "disbursedAmount": 1745311,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: TENKASI(DISTRICT COLLECTOR TENKASI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.492Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -14206,16 +14207,16 @@
             "disbursedAmount": 499948,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: PARBHANI(DISTRICT COLLECTOR PARBHANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.540Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -14243,16 +14244,16 @@
             "disbursedAmount": 381365,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Cooch Behar(DISTRICT MAGISTRATE COOCHBEHAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.561Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -14280,16 +14281,16 @@
             "disbursedAmount": 188987,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Kushinagar(DISTRICT MAGISTRATE KUSHINAGAR PADRAUNA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.583Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -14317,16 +14318,16 @@
             "disbursedAmount": 224925,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KALIMPONG(District Magistrate Kalimpong_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.607Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -14354,16 +14355,16 @@
             "disbursedAmount": 300000,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.627Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -14391,16 +14392,16 @@
             "disbursedAmount": 346346,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 70,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 70,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.647Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -15789,16 +15790,16 @@
             "disbursedAmount": 135133,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.414Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -15826,16 +15827,16 @@
             "disbursedAmount": 175000,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.438Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -15863,16 +15864,16 @@
             "disbursedAmount": 143440,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KOTTAYAM(DISTRICT COLLECTOR KOTTAYAM_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.487Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -15900,16 +15901,16 @@
             "disbursedAmount": 649266,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: SAKTI(COLLECTOR SAKTI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.508Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -15937,16 +15938,16 @@
             "disbursedAmount": 181975,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: South 24 Parganas(DISTRICT MAGISTRATE SOUTH TWENTY FOUR PARGANAS_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.536Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -15974,16 +15975,16 @@
             "disbursedAmount": 264022,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Cooch Behar(DISTRICT MAGISTRATE COOCHBEHAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.557Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -16011,16 +16012,16 @@
             "disbursedAmount": 1052535,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: BIRBHUM(DISTRICT MAGISTRATE BIRBHUM_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.579Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -16048,16 +16049,16 @@
             "disbursedAmount": 750000,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: RAIPUR(DISTRICT COLLECTOR RAIPUR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.602Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -16085,16 +16086,16 @@
             "disbursedAmount": 449783,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.623Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -16122,16 +16123,16 @@
             "disbursedAmount": 275000,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 65,
-          "risk_band": "HIGH",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "HIGH",
-            "score": 65,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.643Z"
           },
           "confidence": 0.94,
-          "status": "Audit Review",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -17520,16 +17521,16 @@
             "disbursedAmount": 124646,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 60,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 60,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.432Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -17557,16 +17558,16 @@
             "disbursedAmount": 325000,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 60,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 60,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: BARWANI(DISTRICT COLLECTOR BADWANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.455Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -17594,16 +17595,16 @@
             "disbursedAmount": 235597,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 60,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 60,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KOTTAYAM(DISTRICT COLLECTOR KOTTAYAM_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.483Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -17631,16 +17632,16 @@
             "disbursedAmount": 22500,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 60,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 60,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: PATHANAMTHITTA(DISTRICT COLLECTOR PATHANAMTHITTA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.502Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -17668,16 +17669,16 @@
             "disbursedAmount": 136468,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 60,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 60,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: South 24 Parganas(DISTRICT MAGISTRATE SOUTH TWENTY FOUR PARGANAS_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.530Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -17705,16 +17706,16 @@
             "disbursedAmount": 440037,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 60,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 60,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Cooch Behar(DISTRICT MAGISTRATE COOCHBEHAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.551Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -17742,16 +17743,16 @@
             "disbursedAmount": 216750,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 60,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 60,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: FEROZEPUR(DEPUTY COMMISSIONER FIROZEPUR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.573Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -17779,16 +17780,16 @@
             "disbursedAmount": 129929,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 60,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 60,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Kushinagar(DISTRICT MAGISTRATE KUSHINAGAR PADRAUNA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.597Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -17816,16 +17817,16 @@
             "disbursedAmount": 350000,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 60,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 60,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.617Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -18984,16 +18985,16 @@
             "disbursedAmount": 259548,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 55,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 55,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DHARWAD(DEPUTY COMMISSIONER DHARWAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.406Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -19021,16 +19022,16 @@
             "disbursedAmount": 200000,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 55,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 55,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.427Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -19058,16 +19059,16 @@
             "disbursedAmount": 101340,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 55,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 55,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.449Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -19095,16 +19096,16 @@
             "disbursedAmount": 297080,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 55,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 55,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KAIMUR (BHABUA)(DISTRICT PLANNING OFFICER KAIMUR BHABUA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.477Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -19132,16 +19133,16 @@
             "disbursedAmount": 1692750,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 55,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 55,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: PALI(DISTRICT COLLECTOR PALI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.498Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -19169,16 +19170,16 @@
             "disbursedAmount": 391460,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 55,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 55,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Tirupathur(District Collector Tirupathur_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.524Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -19206,16 +19207,16 @@
             "disbursedAmount": 322694,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 55,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 55,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Cooch Behar(DISTRICT MAGISTRATE COOCHBEHAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.547Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -19243,16 +19244,16 @@
             "disbursedAmount": 162443,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 55,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 55,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: FEROZEPUR(DEPUTY COMMISSIONER FIROZEPUR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.567Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -19280,16 +19281,16 @@
             "disbursedAmount": 226347,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 55,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 55,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KALIMPONG(District Magistrate Kalimpong_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.613Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -19317,16 +19318,16 @@
             "disbursedAmount": 325000,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 55,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 55,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: CHITTOOR(DISTRICT COLLECTOR CHITTOOR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.633Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -20398,16 +20399,16 @@
             "disbursedAmount": 223733,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 50,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 50,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DHARWAD(DEPUTY COMMISSIONER DHARWAR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.397Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -20435,16 +20436,16 @@
             "disbursedAmount": 150000,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 50,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 50,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Dahod(DISTRICT COLLECTOR DOHAD_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.420Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -20472,16 +20473,16 @@
             "disbursedAmount": 225000,
             "utilizationPercentage": 75
           },
-          "composite_risk_score": 50,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 50,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: FARIDKOT(DEPUTY COMMISSIONER FARIDKOT_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.445Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -20509,16 +20510,16 @@
             "disbursedAmount": 986400,
             "utilizationPercentage": 90
           },
-          "composite_risk_score": 50,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 50,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: MADHUBANI(DISTRICT PLANNING OFFICER MADHUBANI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.471Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -20546,16 +20547,16 @@
             "disbursedAmount": 165000,
             "utilizationPercentage": 55
           },
-          "composite_risk_score": 50,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 50,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: SONIPAT(DEPUTY COMMISSIONER SONEPAT_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.494Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -20583,16 +20584,16 @@
             "disbursedAmount": 304500,
             "utilizationPercentage": 70
           },
-          "composite_risk_score": 50,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 50,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: TIRUVANNAMALAI(DISTRICT COLLECTOR TIRUVANNAMALAI_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.517Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -20620,16 +20621,16 @@
             "disbursedAmount": 177949,
             "utilizationPercentage": 50
           },
-          "composite_risk_score": 50,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 50,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: PURBA BARDHAMAN(DISTRICT MAGISTRATE PURBA BARDHAMAN_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.563Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -20657,16 +20658,16 @@
             "disbursedAmount": 153552,
             "utilizationPercentage": 65
           },
-          "composite_risk_score": 50,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 50,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: Kushinagar(DISTRICT MAGISTRATE KUSHINAGAR PADRAUNA_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.586Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -20694,16 +20695,16 @@
             "disbursedAmount": 400000,
             "utilizationPercentage": 80
           },
-          "composite_risk_score": 50,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 50,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: KALIMPONG(District Magistrate Kalimpong_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.609Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -20731,16 +20732,16 @@
             "disbursedAmount": 90000,
             "utilizationPercentage": 45
           },
-          "composite_risk_score": 50,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 50,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: CHITTOOR(DISTRICT COLLECTOR CHITTOOR_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.629Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",
@@ -20768,16 +20769,16 @@
             "disbursedAmount": 279903,
             "utilizationPercentage": 60
           },
-          "composite_risk_score": 50,
-          "risk_band": "MEDIUM",
+          "composite_risk_score": null,
+          "risk_band": "DUPLICATE",
           "risk": {
-            "level": "MEDIUM",
-            "score": 50,
+            "level": "duplicate",
+            "score": null,
             "primarySignal": "High semantic similarity (>88%) detected with work in adjacent ledger for agency: DARJEELING(DISTRICT MAGISTRATE DARJEELING_IDA).",
             "lastAssessedAt": "2026-09-05T16:39:53.649Z"
           },
           "confidence": 0.94,
-          "status": "Compliant",
+          "status": "Duplicate",
           "triggered_signals": [
             {
               "code": "SCOPE_DUP_02",

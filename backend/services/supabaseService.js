@@ -125,9 +125,9 @@ const FALLBACK_PROJECTS = [
     gpsCoordinates: { latitude: 28.5865, longitude: 77.168 },
     gps_coordinates: { latitude: 28.5865, longitude: 77.168 },
     risk: {
-      score: 76,
-      level: "high",
-      primarySignal: "Potential Scope Duplication & Spatial Overlap with MPL-004821 (<450m Distance)",
+      score: null,
+      level: "duplicate",
+      primarySignal: "Duplicate Scope & Spatial Overlap with MPL-004821 (<450m Distance)",
       confidence: 0.89,
       breakdown: {
         financialAnomalyScore: 16,
@@ -142,7 +142,7 @@ const FALLBACK_PROJECTS = [
           id: "RSN-04",
           title: "Geospatial & Semantic Work Description Duplication",
           category: "Duplicate Scope",
-          severity: "high",
+          severity: "duplicate",
           scoreContribution: 20,
           confidence: 0.91,
           explanation: "High semantic overlap (92.4%) with nearby project MPL-004821 sanctioned in the same financial year under identical executing agency.",
@@ -570,8 +570,8 @@ const supabaseService = {
           costDeviationPercent: 0,
         },
         risk: w.risk || {
-          score: w.composite_risk_score || 0,
-          level: (w.risk_band || "LOW").toLowerCase(),
+          score: (w.risk_band === "DUPLICATE" || w.risk?.level === "duplicate") ? null : (w.composite_risk_score ?? 0),
+          level: (w.risk_band === "DUPLICATE" || w.risk?.level === "duplicate") ? "duplicate" : (w.risk_band || "LOW").toLowerCase(),
           primarySignal: w.risk?.primarySignal || "Routine automated monitoring",
         },
       }));
@@ -589,7 +589,14 @@ const supabaseService = {
     if (filters.state && filters.state !== "all") list = list.filter((p) => p.state.toLowerCase() === filters.state.toLowerCase());
     if (filters.district && filters.district !== "all") list = list.filter((p) => p.district.toLowerCase() === filters.district.toLowerCase());
     if (filters.category && filters.category !== "all") list = list.filter((p) => p.category === filters.category);
-    if (filters.riskLevel && filters.riskLevel !== "all") list = list.filter((p) => p.risk?.level === filters.riskLevel);
+    if (filters.riskLevel && filters.riskLevel !== "all") {
+      const rk = filters.riskLevel.toLowerCase();
+      list = list.filter((p) => {
+        const isDup = p.risk?.level === "duplicate" || p.risk_band === "DUPLICATE";
+        if (rk === "duplicate") return isDup;
+        return !isDup && (p.risk?.level?.toLowerCase() === rk || (p.risk_band && p.risk_band.toLowerCase() === rk));
+      });
+    }
     if (filters.status && filters.status !== "all") list = list.filter((p) => p.status === filters.status);
 
     return { projects: list.map(normalizeProject), total: list.length };

@@ -327,7 +327,7 @@ To ensure complete provenance and historical traceability, all evaluated audit b
   - `GET /api/datasets/reports`: Returns catalog of all historical audit batches.
   - `GET /api/datasets/reports/:batchId`: Retrieves specific audit batch and itemized works.
   - `POST /api/datasets/scope/restore`: Clears active upload scope back to clean unloaded baseline.
-  - Frontend accessible at `/app/reports` (Uploaded Reports Hub).
+  - Frontend accessible at `/app/reports` (Reports Panel & Official Statutory Dossier Viewer).
 
 ### 4.3. System Administrator 1-Click Multi-Stream Batch Ingestion (`POST /api/datasets/admin/ingest-all`)
 To facilitate rapid audit onboarding, the platform exposes an automated batch ingestion pipeline:
@@ -625,7 +625,7 @@ Natural-language interface grounded exclusively in structured project records an
 
 | Layer | Technologies & Frameworks | Key Responsibilities |
 |---|---|---|
-| **Frontend** | Next.js 16 (App Router), React 19 (Pure JSX), Tailwind CSS v4, Recharts, Lucide React | 7 Institutional Command Centers, Project Digital Twins, Role Ingestion Hub (`/app/data`), Uploaded Reports (`/app/reports`), Live System Telemetry Card |
+| **Frontend** | Next.js 16 (App Router), React 19 (Pure JSX), Tailwind CSS v4, Recharts, Lucide React | 7 Institutional Command Centers, Project Digital Twins, Role Ingestion Hub (`/app/data`), Reports Panel (`/app/reports`), Live System Telemetry Card |
 | **API Backend** | Node.js, Express REST API, Multer, JWT, Morgan, Winston | Strict 7-role RBAC enforcement, Cloud dataset streaming, Case lifecycle state machine, System Activity monitor, Admin batch ingest |
 | **Persistent Reports DB** | Node.js FS atomic engine (`reports_db.json`) & Supabase sync | Durable persistence for all evaluated batches, itemized work dossiers, and active surveillance scope across server restarts |
 | **GIS & Geospatial** | WGS84 Geodetic Normalization Engine, India State-Boundaries Raster (`/maps/india-states.png`) | Pan-India risk anomaly pinning, calibrated geographic projection, state/UT drill-down, and proximity clustering |

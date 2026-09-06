@@ -107,7 +107,16 @@ export function getRiskLevelFromScore(score) {
     return "low";
 }
 export function getRiskBadgeStyles(level) {
-    switch (level) {
+    const norm = (level || "").toLowerCase();
+    switch (norm) {
+        case "duplicate":
+            return {
+                bg: "bg-purple-50 dark:bg-purple-950/40",
+                text: "text-purple-700 dark:text-purple-400",
+                border: "border-purple-200 dark:border-purple-800/60",
+                dot: "bg-purple-500",
+                label: "Duplicate",
+            };
         case "critical":
             return {
                 bg: "bg-rose-50 dark:bg-rose-950/40",
