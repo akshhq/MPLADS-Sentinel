@@ -59,7 +59,7 @@ export const Sidebar = ({ onCloseMobile }) => {
       case "system_admin":
         return [
           { label: "Command Center", href: "/app/command-center", icon: LayoutDashboard },
-          { label: "User & RBAC Manager", href: "/app/command-center#admin-users", icon: Users, badge: "Admin", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
+          { label: "User & RBAC Manager", href: "/app/admin", icon: Users, badge: "Admin", badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300" },
           { label: "Master Projects", href: "/app/projects", icon: FolderKanban },
           { label: "Risk Intelligence", href: "/app/risk", icon: ShieldAlert, badge: "161", badgeColor: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300" },
           { label: "Reports", href: "/app/reports", icon: FileText, badge: "Reports", badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },

@@ -62,18 +62,104 @@ if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 
-// Health Check
-app.get("/api/health", (req, res) => {
+// Enhanced Unified End-to-End Health Check Endpoint
+app.get("/api/health", async (req, res) => {
+  const startTime = Date.now();
+  let dbStatus = "unconfigured";
+  let dbLatencyMs = 0;
+  let storageStatus = "unconfigured";
+  let storageBuckets = [];
+  let aiEngineStatus = "unreachable";
+  let aiEngineLatencyMs = 0;
+
+  // 1. Supabase PostgreSQL Health Check
+  if (isConfigured && supabase) {
+    const dbStart = Date.now();
+    try {
+      const { count, error } = await supabase.from("profiles").select("id", { count: "exact", head: true });
+      dbLatencyMs = Date.now() - dbStart;
+      if (!error) {
+        dbStatus = "connected";
+      } else {
+        dbStatus = `degraded: ${error.message}`;
+      }
+    } catch (err) {
+      dbLatencyMs = Date.now() - dbStart;
+      dbStatus = `error: ${err.message}`;
+    }
+
+    // 2. Supabase Storage Check
+    try {
+      const { data: buckets, error: storageErr } = await supabase.storage.listBuckets();
+      if (!storageErr && Array.isArray(buckets)) {
+        storageStatus = "connected";
+        storageBuckets = buckets.map((b) => b.name);
+      } else {
+        storageStatus = storageErr ? storageErr.message : "unavailable";
+      }
+    } catch (err) {
+      storageStatus = err.message;
+    }
+  }
+
+  // 3. AI Engine Microservice Ping
+  const aiUrl = process.env.AI_ENGINE_URL || "http://localhost:8000";
+  const aiStart = Date.now();
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const aiRes = await fetch(`${aiUrl}/health`, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    aiEngineLatencyMs = Date.now() - aiStart;
+    if (aiRes.ok) {
+      aiEngineStatus = "healthy";
+    } else {
+      aiEngineStatus = `status_${aiRes.status}`;
+    }
+  } catch (err) {
+    aiEngineLatencyMs = Date.now() - aiStart;
+    aiEngineStatus = err.name === "AbortError" ? "timeout (>2s)" : "offline / cold-starting";
+  }
+
+  const mem = process.memoryUsage();
+  const reportsDatabaseService = require("./services/reportsDatabaseService");
+  const activeScope = reportsDatabaseService.getActiveScope();
+  const allReports = reportsDatabaseService.getAllReportBatches();
+
   res.json({
     status: "healthy",
     service: "MPLADS Sentinel Backend API",
     version: "1.0.0",
     sihProblem: "SIH26102",
     ministry: "Ministry of Statistics and Programme Implementation (MoSPI)",
-    database: isConfigured ? "Supabase PostgreSQL (Connected)" : "Supabase Local Engine (Fallback Ready)",
-    supabaseUrl: SUPABASE_URL ? SUPABASE_URL.replace(/:\/\/.*@/, "://***@") : "Not configured",
-    authProvider: "Supabase Auth + JWT",
+    checks: {
+      database: {
+        provider: isConfigured ? "Supabase PostgreSQL" : "Local Disk JSON Engine",
+        status: dbStatus,
+        latencyMs: dbLatencyMs,
+      },
+      storage: {
+        status: storageStatus,
+        buckets: storageBuckets,
+      },
+      aiEngine: {
+        url: aiUrl,
+        status: aiEngineStatus,
+        latencyMs: aiEngineLatencyMs,
+      },
+      persistence: {
+        mode: activeScope?.mode || "unloaded",
+        savedBatchesCount: allReports.length,
+        activeWorksCount: activeScope?.batch?.summary?.totalWorksCount || 0,
+      },
+      memory: {
+        rssMb: Math.round(mem.rss / (1024 * 1024)),
+        heapUsedMb: Math.round(mem.heapUsed / (1024 * 1024)),
+      },
+    },
+    uptimeSeconds: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),
+    totalLatencyMs: Date.now() - startTime,
   });
 });
 

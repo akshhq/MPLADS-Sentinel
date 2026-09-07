@@ -109,26 +109,75 @@ exports.createInvestigation = async (req, res) => {
   }
 };
 
+// Valid investigation state transitions per SYSTEM_OPERATIONAL_FLOW.md
+const VALID_TRANSITIONS = {
+  new: ["under_review", "closed", "escalated"],
+  under_review: ["evidence_requested", "escalated", "cleared", "confirmed_irregularity", "closed"],
+  evidence_requested: ["under_review", "escalated", "confirmed_irregularity", "cleared"],
+  escalated: ["under_review", "confirmed_irregularity", "cleared", "closed"],
+  confirmed_irregularity: ["closed", "under_review"],
+  cleared: ["closed", "under_review"],
+  closed: ["under_review"], // Case reopening under new evidence
+};
+
 // PATCH /api/investigations/:id/status
 exports.updateInvestigationStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status, note } = req.body;
 
+    if (!status) {
+      return res.status(400).json({ success: false, message: "New status is required." });
+    }
+
     const item = await supabaseService.getInvestigationById(id);
     if (!item) {
       return res.status(404).json({ success: false, message: `Investigation case ${id} not found.` });
     }
 
+    const currentStatus = item.status || "new";
+    const allowedNext = VALID_TRANSITIONS[currentStatus] || [];
+
+    // Validate state machine progression
+    if (status !== currentStatus && !allowedNext.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid status transition from '${currentStatus}' to '${status}'. Allowed transitions: ${allowedNext.join(", ")}`,
+      });
+    }
+
     const actorName = req.profile?.full_name || req.user?.email || "Reviewing Officer";
     const activityLogs = [...(item.activityLogs || [])];
+
     activityLogs.push({
       id: `LOG-${Date.now()}`,
       timestamp: new Date().toISOString(),
       actor: actorName,
       action: `Status Updated to ${status.toUpperCase()}`,
-      details: note || `Status transitioned to ${status}.`,
+      details: note || `Investigation status transitioned from ${currentStatus} to ${status}.`,
     });
+
+    // Escalation Trigger 1: Field Inspection Warrant on evidence_requested
+    if (status === "evidence_requested") {
+      activityLogs.push({
+        id: `LOG-WARRANT-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        actor: "Automated Governance Dispatcher",
+        action: "Field Inspection Warrant Dispatched",
+        details: `Dispatched field physical verification order to Field Inspection Wing for Project ${item.projectId || item.project_id} (${item.district}, ${item.state}).`,
+      });
+    }
+
+    // Escalation Trigger 2: Statutory Fund Freeze & Active Learning on confirmed_irregularity
+    if (status === "confirmed_irregularity") {
+      activityLogs.push({
+        id: `LOG-FREEZE-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        actor: "MoSPI Vigilance Protocol",
+        action: "Milestone Disbursement Freeze & Active Learning Trigger",
+        details: `Statutory disbursement hold applied to Project ${item.projectId || item.project_id}. Confirmed irregular pattern logged to Active Learning feedback loop (Module 21).`,
+      });
+    }
 
     const notes = [...(item.notes || [])];
     if (note) {

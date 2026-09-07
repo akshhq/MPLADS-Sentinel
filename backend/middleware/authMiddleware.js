@@ -38,6 +38,12 @@ const DEMO_PERSONA_MAP = {
     department: "District Technical Inspection Wing",
     jurisdiction: "Jaipur District Field Units",
   },
+  system_admin: {
+    name: "Sanjay Singhania",
+    designation: "Platform Principal Administrator",
+    department: "National Informatics & Platform Governance",
+    jurisdiction: "Central Infrastructure & All-India Scope",
+  },
 };
 
 /**

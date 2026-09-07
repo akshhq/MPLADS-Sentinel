@@ -874,7 +874,25 @@ export const api = {
         return null;
     },
 
-    // --- System Activity Stats (Database, Backend, AI-Modules) ---
+    // --- Admin User & RBAC Management ---
+    getAllUsers: async () => {
+        return fetchFromBackend("/auth/users");
+    },
+    createUser: async (userData) => {
+        return fetchFromBackend("/auth/users", {
+            method: "POST",
+            body: JSON.stringify(userData),
+        });
+    },
+    updateUser: async (id, userData) => {
+        return fetchFromBackend(`/auth/users/${id}`, {
+            method: "PATCH",
+            body: JSON.stringify(userData),
+        });
+    },
+    getAuditLogs: async () => {
+        return fetchFromBackend("/auth/audit-logs");
+    },
     async getSystemActivity() {
         try {
             const res = await fetchFromBackend("/system/activity");
