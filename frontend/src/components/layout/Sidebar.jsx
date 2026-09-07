@@ -22,6 +22,11 @@ import {
   Server,
   Activity,
   ChevronUp,
+  HelpCircle,
+  BookOpen,
+  GraduationCap,
+  Scale,
+  Info,
 } from "lucide-react";
 import { APP_NAME, APP_HINDI_NAME, SIH_PROBLEM_ID } from "@/lib/constants";
 import { useAuth } from "@/lib/authContext";
@@ -179,6 +184,7 @@ export const Sidebar = ({ onCloseMobile }) => {
           const Icon = item.icon;
           const isActive =
             pathname === item.href ||
+            (item.href === "/app/command-center" && (pathname === "/" || pathname === "/app")) ||
             (item.href !== "/app/command-center" && pathname.startsWith(item.href));
           return (
             <Link
@@ -213,6 +219,42 @@ export const Sidebar = ({ onCloseMobile }) => {
             </Link>
           );
         })}
+
+        {/* Multipage Statutory Reference & Documentation */}
+        <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800/80">
+          <div className="px-3 pb-1.5 flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              Statutory Knowledge
+            </span>
+          </div>
+          {[
+            { label: "How It Works", href: "/how-it-works", icon: HelpCircle },
+            { label: "AI Methodology", href: "/methodology", icon: BookOpen },
+            { label: "Research & CAG", href: "/research", icon: GraduationCap },
+            { label: "Trust & Ethics", href: "/transparency", icon: Scale },
+            { label: "About MoSPI", href: "/about", icon: Info },
+          ].map((refItem) => {
+            const RefIcon = refItem.icon;
+            const isRefActive = pathname === refItem.href || pathname.startsWith(refItem.href + "/");
+            return (
+              <Link
+                key={refItem.href}
+                href={refItem.href}
+                onClick={onCloseMobile}
+                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                  isRefActive
+                    ? "bg-slate-100 dark:bg-slate-850 text-blue-600 dark:text-blue-400 font-bold"
+                    : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-850/60 hover:text-slate-900 dark:hover:text-slate-200"
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <RefIcon className={`w-3.5 h-3.5 ${isRefActive ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500"}`} />
+                  <span className="truncate">{refItem.label}</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
       {/* Real-time System Activity Stats (Bottom Left) */}

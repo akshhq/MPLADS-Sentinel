@@ -197,6 +197,7 @@ export const ROLE_ALLOWED_ROUTES = {
   system_admin: [
     "/app",
     "/app/command-center",
+    "/app/admin",
     "/app/reports",
     "/app/data",
     "/app/copilot",
