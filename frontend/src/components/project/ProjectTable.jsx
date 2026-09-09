@@ -239,10 +239,16 @@ export const ProjectTable = ({ projects, total }) => {
                       <div className="font-mono font-bold text-slate-800 dark:text-slate-200">
                         {formatIndianCurrency(sanctioned)}
                       </div>
-                      <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-                        <span>Fin: <strong className="font-mono text-slate-600 dark:text-slate-300">{finProg}%</strong></span>
-                        <span>•</span>
-                        <span>Phy: <strong className="font-mono text-slate-600 dark:text-slate-300">{phyProg}%</strong></span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-16 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${phyProg >= 75 ? "bg-emerald-500" : phyProg >= 40 ? "bg-blue-500" : "bg-amber-500"}`}
+                            style={{ width: `${Math.min(100, Math.max(0, phyProg))}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] font-mono font-bold text-slate-700 dark:text-slate-300">
+                          {phyProg}%
+                        </span>
                       </div>
                     </div>
                   </td>

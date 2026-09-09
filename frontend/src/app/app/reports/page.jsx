@@ -186,7 +186,7 @@ export default function ReportsPage() {
             sanction: 2400000,
             disbursed: 2379048,
             riskLevel: "critical",
-            riskScore: 94.2,
+            riskScore: 14.2,
           },
         },
         "*"
@@ -722,7 +722,7 @@ export default function ReportsPage() {
                         <th className="py-3 px-4">Project Title &amp; Sector</th>
                         <th className="py-3 px-4">Location &amp; Agency</th>
                         <th className="py-3 px-4">Financials (Sanction / Disbursed)</th>
-                        <th className="py-3 px-4">Risk Evaluation</th>
+                        <th className="py-3 px-4">Evaluation &amp; Score</th>
                         <th className="py-3 px-4">Primary Signal</th>
                         <th className="py-3 px-4 text-right">Actions</th>
                       </tr>

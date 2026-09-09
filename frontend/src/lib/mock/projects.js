@@ -28,7 +28,7 @@ export const MOCK_PROJECTS = [
         actualStartDate: "2025-11-02",
         status: "milestone_delayed",
         risk: {
-            score: 87,
+            score: 13,
             level: "critical",
             breakdown: {
                 financial: 25,
@@ -303,7 +303,7 @@ export const MOCK_PROJECTS = [
         actualStartDate: "2025-08-15",
         status: "milestone_delayed",
         risk: {
-            score: 89,
+            score: 11,
             level: "critical",
             breakdown: {
                 financial: 28,
@@ -375,7 +375,7 @@ export const MOCK_PROJECTS = [
         actualStartDate: "2025-09-10",
         status: "in_progress",
         risk: {
-            score: 76,
+            score: 24,
             level: "high",
             breakdown: {
                 financial: 24,
@@ -446,7 +446,7 @@ export const MOCK_PROJECTS = [
         actualStartDate: "2025-11-15",
         status: "in_progress",
         risk: {
-            score: 72,
+            score: 28,
             level: "high",
             breakdown: {
                 financial: 16,
@@ -517,8 +517,8 @@ export const MOCK_PROJECTS = [
         actualStartDate: "2025-10-05",
         status: "in_progress",
         risk: {
-            score: 14,
-            level: "low",
+            score: 86,
+            level: "normal",
             breakdown: {
                 financial: 3,
                 timeline: 2,
@@ -574,7 +574,7 @@ export const MOCK_PROJECTS = [
         actualStartDate: "2025-10-01",
         status: "in_progress",
         risk: {
-            score: 48,
+            score: 52,
             level: "medium",
             breakdown: {
                 financial: 12,
@@ -645,8 +645,8 @@ export const MOCK_PROJECTS = [
         actualStartDate: "2025-11-05",
         status: "in_progress",
         risk: {
-            score: 22,
-            level: "low",
+            score: 92,
+            level: "normal",
             breakdown: {
                 financial: 5,
                 timeline: 4,

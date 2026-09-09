@@ -21,13 +21,13 @@ class RiskFusionEngine:
         if not signals:
             return RiskEvaluationResult(
                 work_id=profile.work_id,
-                composite_risk_score=0.0,
+                composite_risk_score=100.0,
                 risk_band="low",
                 is_escalated=False,
                 confirmatory_signal_count=0,
                 breakdown=RiskBreakdown(),
                 signals=[],
-                recommended_action="✅ Compliance Clearance: Project proceeding within normal baseline parameters",
+                recommended_action="Compliance Clearance: Project proceeding within normal baseline parameters",
                 suggested_inspection_checklist=["Standard routine milestone audit as per annual MoSPI verification quota."],
             )
 
@@ -59,22 +59,24 @@ class RiskFusionEngine:
 
         # Apply multi-signal confirmation bonus if >= 2 independent severe anomalies
         multiplier = MULTI_SIGNAL_BONUS_MULTIPLIER if confirmatory_severe_signals >= 2 else 0.0
-        final_score = min(100.0, normalized_score + multiplier)
-        final_score = round(max(0.0, final_score), 1)
+        raw_anomaly_score = min(100.0, normalized_score + multiplier)
+        
+        # Reversed scoring: Higher is better (100 = full compliance/health, 0 = critical anomaly)
+        final_score = round(max(0.0, 100.0 - raw_anomaly_score), 1)
 
-        # Classify risk band
-        if final_score >= RISK_THRESHOLD_CRITICAL and confirmatory_severe_signals >= 2:
+        # Classify risk band (higher score = safer / better)
+        if final_score <= (100.0 - RISK_THRESHOLD_CRITICAL) and confirmatory_severe_signals >= 2:
             risk_band = "critical"
             is_escalated = True
-            rec_action = "🚨 Automatic Escalation: Open Vigilance Case & Issue Physical Inspection Warrant"
-        elif final_score >= RISK_THRESHOLD_MODERATE or confirmatory_severe_signals >= 1:
-            risk_band = "moderate" if final_score < RISK_THRESHOLD_CRITICAL else "critical"
+            rec_action = "Automatic Escalation: Open Vigilance Case & Issue Physical Inspection Warrant"
+        elif final_score <= (100.0 - RISK_THRESHOLD_MODERATE) or confirmatory_severe_signals >= 1:
+            risk_band = "moderate" if final_score > (100.0 - RISK_THRESHOLD_CRITICAL) else "critical"
             is_escalated = (risk_band == "critical")
-            rec_action = "🚨 Priority Escalation" if is_escalated else "⚠️ Desk Audit Advisory: Queue for District Authority Clarification Notice"
+            rec_action = "Priority Escalation" if is_escalated else "Desk Audit Advisory: Queue for District Authority Clarification Notice"
         else:
             risk_band = "low"
             is_escalated = False
-            rec_action = "✅ Compliance Clearance: Project proceeding within normal baseline parameters"
+            rec_action = "Compliance Clearance: Project proceeding within normal baseline parameters"
 
         # Construct inspection checklist based on triggered signals
         checklist = []

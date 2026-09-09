@@ -99,15 +99,17 @@ export function formatRelativeTime(dateStr) {
 }
 export function getRiskLevelFromScore(score) {
     if (score === null || score === undefined || isNaN(score))
-        return "low";
+        return "normal";
     const num = Number(score);
     if (num >= 80)
-        return "critical";
+        return "normal";
     if (num >= 60)
-        return "high";
-    if (num >= 35)
+        return "low";
+    if (num >= 40)
         return "medium";
-    return "low";
+    if (num >= 20)
+        return "high";
+    return "critical";
 }
 export function getRiskBadgeStyles(level) {
     const norm = (level || "").toLowerCase();

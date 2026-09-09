@@ -99,139 +99,117 @@
       width: 100%;
       max-width: 900px;
       min-height: 1150px;
-      padding: 45px 55px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+      padding: 40px 50px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
       border-radius: 4px;
       position: relative;
-      color: #0f172a;
-      line-height: 1.55;
-      font-size: 12.5px;
     }
 
-    /* Official Government Header */
+    /* Government Emblems and Headers */
     .gov-header {
       text-align: center;
       border-bottom: 2px solid #0f172a;
-      padding-bottom: 14px;
-      margin-bottom: 16px;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
     }
-
     .emblem-text {
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 700;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
       color: #475569;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
-
     .ministry-title {
       font-family: var(--font-serif);
-      font-size: 17px;
+      font-size: 18px;
       font-weight: 900;
       color: #0f172a;
       text-transform: uppercase;
       letter-spacing: 0.02em;
     }
-
     .division-title {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
       color: #334155;
-      margin-top: 2px;
-      letter-spacing: 0.01em;
+      margin-top: 3px;
     }
 
-    /* Security & Priority Classification */
+    /* Classification & Priority Banner */
     .security-banner {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #fee2e2;
-      border: 1px solid #f87171;
-      padding: 6px 14px;
-      border-radius: 4px;
-      margin-bottom: 16px;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--accent-red);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+      border-radius: 3px;
     }
 
-    /* Metadata Table */
+    /* Metadata Block */
     .meta-grid {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 10px 18px;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 24px;
       background: #f8fafc;
-      border: 1px solid var(--border-dark);
-      padding: 12px 16px;
+      border: 1px solid #cbd5e1;
+      padding: 14px 18px;
       border-radius: 4px;
-      margin-bottom: 18px;
-      font-size: 12px;
+      font-size: 11.5px;
+      margin-bottom: 20px;
     }
-
-    .meta-row { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; border-bottom: 1px dashed #e2e8f0; }
-    .meta-row:last-child { border-bottom: none; }
-    .meta-label { font-weight: 600; color: #475569; }
-    .meta-val { font-weight: 700; color: #0f172a; font-family: var(--font-mono); font-size: 11.5px; }
-
-    /* Section Headings */
-    .doc-section-title {
-      font-family: var(--font-serif);
-      font-size: 13.5px;
-      font-weight: 900;
-      color: var(--accent-blue);
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-      border-bottom: 1.5px solid #cbd5e1;
-      padding-bottom: 4px;
-      margin-top: 22px;
-      margin-bottom: 12px;
+    .meta-row {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      padding: 2px 0;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+    .meta-row:last-child { border-bottom: none; }
+    .meta-label { color: #64748b; font-weight: 600; }
+    .meta-val { font-weight: 700; color: #0f172a; font-family: var(--font-mono); }
+
+    /* Section Titles */
+    .doc-section-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #0f172a;
+      border-left: 4px solid #1e3a8a;
+      padding-left: 10px;
+      margin: 22px 0 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .section-badge {
+      font-size: 9.5px;
       font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 3px;
       background: #e2e8f0;
       color: #334155;
-      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 600;
     }
 
-    /* Callout Boxes */
+    /* Callout & Directives */
     .callout-box {
-      border: 1px solid #cbd5e1;
-      border-left: 4px solid #b91c1c;
-      background: #fff1f2;
-      padding: 10px 14px;
-      border-radius: 2px;
-      margin: 10px 0;
-      font-size: 12px;
+      background: var(--accent-red-bg);
+      border: 1px solid var(--accent-red-border);
+      border-left: 4px solid var(--accent-red);
+      padding: 12px 14px;
+      font-size: 11.5px;
+      color: #7f1d1d;
+      margin: 12px 0;
       line-height: 1.5;
+      border-radius: 0 4px 4px 0;
     }
 
-    .formula-box {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      border-left: 4px solid var(--accent-blue);
-      padding: 8px 14px;
-      border-radius: 2px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: #1e293b;
-      margin: 8px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    /* Metric Badges */
+    /* Badges */
     .badge-critical {
       background: #fee2e2;
       color: #991b1b;
@@ -278,7 +256,7 @@
     }
     .doc-table th, .doc-table td {
       border: 1px solid #cbd5e1;
-      padding: 6px 9px;
+      padding: 7px 10px;
       text-align: left;
       vertical-align: top;
     }
@@ -297,23 +275,21 @@
     .kpi-strip {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin: 10px 0 14px;
+      gap: 10px;
+      margin: 12px 0 16px;
     }
     .kpi-card {
       background: #f8fafc;
       border: 1px solid #cbd5e1;
       border-radius: 4px;
-      padding: 8px 10px;
+      padding: 10px 12px;
       text-align: center;
     }
     .kpi-label { font-size: 9.5px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; }
-    .kpi-value { font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: #0f172a; margin-top: 2px; }
-    .kpi-sub { font-size: 9.5px; color: #475569; font-weight: 500; margin-top: 1px; }
+    .kpi-value { font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: #0f172a; margin-top: 3px; }
+    .kpi-sub { font-size: 9.5px; color: #475569; font-weight: 500; margin-top: 2px; }
 
-    /* =========================================================
-       NEW ANALYTICAL FORENSIC VIOLATION CARD STYLES
-       ========================================================= */
+    /* EXECUTIVE FINDING CARDS (Structured, Plain-Language Reasoning) */
     .violation-card {
       background: #ffffff;
       border: 1px solid #cbd5e1;
@@ -330,7 +306,7 @@
     .violation-card-head {
       background: #f8fafc;
       border-bottom: 1px solid #e2e8f0;
-      padding: 7px 12px;
+      padding: 8px 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -351,15 +327,15 @@
       color: #475569;
     }
 
-    /* 3-Column Comparative Parameter Matrix */
+    /* 3-Column Comparative Structured Reasoning Matrix */
     .violation-matrix {
       display: grid;
-      grid-template-columns: 1fr 1.15fr 1.15fr;
+      grid-template-columns: 1fr 1.15fr 1.25fr;
       border-bottom: 1px solid #e2e8f0;
       font-size: 11px;
     }
     .matrix-col {
-      padding: 8px 12px;
+      padding: 9px 12px;
       border-right: 1px solid #e2e8f0;
     }
     .matrix-col:last-child { border-right: none; }
@@ -375,74 +351,18 @@
     }
     .title-baseline { color: #475569; }
     .title-observed { color: #991b1b; }
-    .title-variance { color: #1e3a8a; }
+    .title-reasoning { color: #1e3a8a; }
 
     .matrix-value {
-      font-family: var(--font-mono);
       font-size: 11px;
       color: #0f172a;
-      line-height: 1.45;
+      line-height: 1.5;
     }
 
-    /* Analytical Meter Bar */
-    .meter-wrap {
-      padding: 6px 12px;
-      background: #fdfdfd;
-      border-bottom: 1px solid #f1f5f9;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 10px;
-    }
-    .meter-label {
-      font-family: var(--font-mono);
-      font-weight: 600;
-      color: #64748b;
-      width: 140px;
-      flex-shrink: 0;
-    }
-    .meter-track {
-      flex: 1;
-      height: 8px;
-      background: #e2e8f0;
-      border-radius: 4px;
-      position: relative;
-      overflow: hidden;
-    }
-    .meter-fill-safe {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      background: #059669;
-    }
-    .meter-fill-breach {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      background: #dc2626;
-    }
-    .meter-marker {
-      position: absolute;
-      top: -2px;
-      bottom: -2px;
-      width: 2px;
-      background: #0f172a;
-      z-index: 2;
-    }
-    .meter-stat {
-      font-family: var(--font-mono);
-      font-weight: 700;
-      color: #0f172a;
-      width: 110px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    /* Evidentiary Proof & Data Pointer Footer */
+    /* Evidentiary Proof Footer */
     .violation-evidence-footer {
       background: #fafafa;
-      padding: 6px 12px;
+      padding: 7px 12px;
       font-size: 10.5px;
       color: #334155;
       display: flex;
@@ -460,7 +380,7 @@
       border: 1px solid #cbd5e1;
     }
 
-    /* Key-Value Analytical Details */
+    /* Key-Value Details */
     .detail-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -483,7 +403,6 @@
       border-top: 1px dashed #cbd5e1;
       font-size: 11px;
     }
-
     .sign-box { text-align: center; }
     .sign-line { border-bottom: 1px solid #0f172a; width: 75%; margin: 24px auto 5px; }
 
@@ -524,7 +443,7 @@
   <div class="action-bar">
     <div style="display:flex; align-items:center; gap:10px;">
       <a href="/app/reports" class="btn-back"><i data-lucide="arrow-left"></i> Return to Reports Panel</a>
-      <span style="font-weight:700; font-size:0.9rem;">Official Statutory Forensic Dossier (Analytical Standard)</span>
+      <span style="font-weight:700; font-size:0.9rem;">Official Statutory Audit Dossier (Executive Standard)</span>
     </div>
     <div style="display:flex; gap:10px;">
       <button class="btn-print" onclick="window.print()">
@@ -546,477 +465,402 @@
     <!-- Security & Priority Classification -->
     <div class="security-banner">
       <span id="doc-classification">Classification: CONFIDENTIAL // STATUTORY INQUIRY BRIEF — CAG &amp; CVC ADMISSIBLE</span>
-      <span id="doc-risk-priority">Risk Priority: CRITICAL (CRS 94.2/100 • 99.8th %-tile)</span>
+      <span id="doc-risk-priority">Audit Status: CRITICAL CONCERN (Compliance &amp; Health Score: 14.2 / 100)</span>
     </div>
 
     <!-- Master Forensic Case Metadata Grid -->
     <div class="meta-grid">
       <div>
         <div class="meta-row"><span class="meta-label">Case Reference UID:</span><span id="doc-case-uid" class="meta-val">MOSPI/VIG/2026/CR-0842/UP-VAR</span></div>
-        <div class="meta-row"><span class="meta-label">Primary Key (Work ID):</span><span id="doc-work-id" class="meta-val">LS-EXP-2024-8842</span></div>
-        <div class="meta-row"><span class="meta-label">eSAKSHI Sanction Ledger ID:</span><span id="doc-ledger-id" class="meta-val">SANC-UP-VAR-2024-8842</span></div>
+        <div class="meta-row"><span class="meta-label">Project ID:</span><span id="doc-work-id" class="meta-val">LS-EXP-2024-8842</span></div>
+        <div class="meta-row"><span class="meta-label">Sanction Ledger ID:</span><span id="doc-ledger-id" class="meta-val">SANC-UP-VAR-2024-8842</span></div>
         <div class="meta-row"><span class="meta-label">House / State / PC:</span><span id="doc-location">Lok Sabha • Uttar Pradesh • Varanasi (PC-77)</span></div>
-        <div class="meta-row"><span class="meta-label">Implementing Agency (IDA):</span><span id="doc-agency">Rural Engineering Dept (RED), Div-II, Varanasi</span></div>
-        <div class="meta-row"><span class="meta-label">Vendor / Contractor:</span><span id="doc-vendor">M/s Ajay Kumar Singh Construction (GSTIN: 09AAACA0123M1Z5)</span></div>
+        <div class="meta-row"><span class="meta-label">Implementing Agency:</span><span id="doc-agency">Rural Engineering Dept (RED), Div-II, Varanasi</span></div>
+        <div class="meta-row"><span class="meta-label">Awarded Contractor:</span><span id="doc-vendor">M/s Ajay Kumar Singh Construction (GSTIN: 09AAACA0123M1Z5)</span></div>
       </div>
       <div>
-        <div class="meta-row"><span class="meta-label">Sanctioned Allocation (C<sub>sanc</sub>):</span><span id="doc-sanction" class="meta-val">₹24,00,000.00</span></div>
-        <div class="meta-row"><span class="meta-label">Cumulative Disbursed (F<sub>disb</sub>):</span><span id="doc-disbursed" class="meta-val" style="color:var(--accent-red);">₹23,79,048.00 (99.13%)</span></div>
-        <div class="meta-row"><span class="meta-label">Verified Physical Progress (P<sub>ver</sub>):</span><span id="doc-phy-progress" class="meta-val" style="color:var(--accent-red);">35.00% (Plinth Only)</span></div>
-        <div class="meta-row"><span class="meta-label">Physical-Financial Gap (&delta;):</span><span id="doc-gap" class="meta-val" style="color:var(--accent-red);">+64.13% (Severe &ge; 25%)</span></div>
-        <div class="meta-row"><span class="meta-label">Unbacked Public Outflow (&Delta;L):</span><span id="doc-outflow" class="meta-val" style="color:var(--accent-red);">₹15,39,048.00</span></div>
-        <div class="meta-row"><span class="meta-label">Multi-Signal Risk Score (CRS):</span><span id="doc-score" class="meta-val" style="color:var(--accent-red);">94.20 / 100 (Confidence: 98.7%)</span></div>
+        <div class="meta-row"><span class="meta-label">Sanctioned Allocation:</span><span id="doc-sanction" class="meta-val">₹24,00,000.00</span></div>
+        <div class="meta-row"><span class="meta-label">Cumulative Disbursed:</span><span id="doc-disbursed" class="meta-val" style="color:var(--accent-red);">₹23,79,048.00 (99.1%)</span></div>
+        <div class="meta-row"><span class="meta-label">Verified Milestone Delivery:</span><span id="doc-phy-progress" class="meta-val" style="color:var(--accent-red);">35.0% (Plinth Only)</span></div>
+        <div class="meta-row"><span class="meta-label">Unbacked Fund Advance:</span><span id="doc-outflow" class="meta-val" style="color:var(--accent-red);">₹15,39,048.00</span></div>
+        <div class="meta-row"><span class="meta-label">Compliance &amp; Health Score:</span><span id="doc-score" class="meta-val" style="color:var(--accent-red);">14.2 / 100 (Critical Concern)</span></div>
+        <div class="meta-row"><span class="meta-label">Administrative Action:</span><span class="meta-val" style="color:var(--accent-red); font-weight:bold;">Disbursement Frozen</span></div>
       </div>
     </div>
 
-    <!-- KPI Summary Strip -->
+    <!-- KPI Summary Strip (Clear, intuitive metrics) -->
     <div class="kpi-strip">
       <div class="kpi-card">
-        <div class="kpi-label">Disbursed vs Physical Gap</div>
-        <div class="kpi-value" style="color:var(--accent-red);">+64.13%</div>
-        <div class="kpi-sub">Critical Alert Threshold &gt; 25%</div>
+        <div class="kpi-label">On-Ground Completion</div>
+        <div class="kpi-value" style="color:var(--accent-red);">35.0% Built</div>
+        <div class="kpi-sub">Plinth Only • Walls Missing</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Benford Split Index</div>
-        <div class="kpi-value" style="color:var(--accent-red);">&chi;&sup2; = 48.6</div>
-        <div class="kpi-sub">52 Vouchers @ ~₹19,992</div>
+        <div class="kpi-label">Structured Invoicing</div>
+        <div class="kpi-value" style="color:var(--accent-red);">52 Vouchers</div>
+        <div class="kpi-sub">Drawn Below ₹20,000 Limit</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Vendor Monopoly HHI</div>
-        <div class="kpi-value" style="color:var(--accent-red);">8,420</div>
-        <div class="kpi-sub">Z = +4.82&sigma; (88.4% MP share)</div>
+        <div class="kpi-label">Contractor Concentration</div>
+        <div class="kpi-value" style="color:var(--accent-red);">88.4% Awarded</div>
+        <div class="kpi-sub">119 of 134 Works in District</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Direct Public Recovery</div>
-        <div class="kpi-value" style="color:var(--accent-blue);">₹15.39 L</div>
-        <div class="kpi-sub">+ ₹4.21 L Penal Int @ 18%</div>
+        <div class="kpi-label">Unbacked Fund Advance</div>
+        <div class="kpi-value" style="color:var(--accent-red);">₹15.39 Lakhs</div>
+        <div class="kpi-sub">Disbursed Without Delivery</div>
       </div>
     </div>
 
-    <!-- 1. Executive Case Summary & Algorithmic Risk Attribution -->
+    <!-- 1. Executive Case Summary & Direct Reason -->
     <h2 class="doc-section-title">
-      <span>1. Executive Case Summary &amp; Algorithmic Attribution</span>
-      <span class="section-badge">ISO 27001 AUDIT SPEC</span>
+      <span>1. Executive Case Summary &amp; Decision Rationale</span>
+      <span class="section-badge">EXECUTIVE SUMMARY</span>
     </h2>
-    <p style="text-align: justify; margin-bottom: 6px;">
-      This Statutory Investigation Brief is automatically generated pursuant to surveillance triggers executed by the <strong>MPLADS Sentinel Multi-Signal Fusion Engine</strong> across 4 independent eSAKSHI data pipelines. Target project <strong>LS-EXP-2024-8842</strong> (<em>"Construction of Boundary Wall &amp; Interlocking Pavers at Community Center, Badagaon"</em>) exhibits high-confidence statistical anomalies culminating in a <strong>Calibrated Composite Risk Score (CRS) of 94.2 / 100</strong> (ranking in the 99.8th percentile of all active civil works across Uttar Pradesh).
+    <p style="text-align: justify; margin-bottom: 8px; line-height: 1.6; font-size: 12px;">
+      This Statutory Investigation Brief is issued for target project <strong>LS-EXP-2024-8842</strong> (<em>"Construction of Boundary Wall &amp; Interlocking Pavers at Community Center, Badagaon"</em>). The project demonstrates serious statutory non-compliance, resulting in a low <strong>Compliance &amp; Health Score of 14.2 / 100</strong>. Key observations indicate premature drawdown of 99.1% of sanctioned funds against only 35.0% verified physical completion, systematic splitting of payment vouchers to bypass approval thresholds, and vendor cartelization in the district.
     </p>
 
-    <!-- Fused Signal Attribution Breakdown -->
-    <div class="formula-box">
-      <span>FUSED RISK EQUATION: CRS = &sum; (w<sub>i</sub> &times; S<sub>i</sub>) = 0.35(100.0) + 0.25(100.0) + 0.20(92.4) + 0.20(78.5) = <strong>94.20 / 100</strong></span>
-      <span class="badge-critical">CRITICAL SURVEILLANCE TRIGGER</span>
-    </div>
-
     <div class="callout-box">
-      <strong>INTERIM STATUTORY ADMINISTRATIVE ORDER (ENFORCEMENT ACTION):</strong><br>
-      Pursuant to executive powers vested under Section 11.2 of the MPLADS Operational Guidelines (Revised 2023) read with General Financial Rules (GFR) 2017 Rule 211, all pending and future milestone disbursements to Implementing Agency <strong>Rural Engineering Department (RED Div-II)</strong> and Contractor <strong>M/s Ajay Kumar Singh Construction</strong> under CNA Account <strong>#UP-VAR-091</strong> are hereby <strong>FROZEN WITH IMMEDIATE EFFECT</strong> pending formal departmental and judicial proceedings.
+      <strong>INTERIM STATUTORY ENFORCEMENT ORDER:</strong><br>
+      Pursuant to executive powers under Section 11.2 of the MPLADS Operational Guidelines read with General Financial Rules (GFR) 2017 Rule 211, all pending and future milestone disbursements to Implementing Agency <strong>Rural Engineering Department (RED Div-II)</strong> and Contractor <strong>M/s Ajay Kumar Singh Construction</strong> under CNA Account <strong>#UP-VAR-091</strong> are hereby <strong>FROZEN WITH IMMEDIATE EFFECT</strong> pending formal audit reconciliation.
     </div>
 
-    <!-- 2. Analytical Statutory Violations & Rulebook Citations (FORENSIC CARD DOSSIER) -->
+    <!-- 2. Statutory Violations & Plain-Language Reasoning Cards -->
     <h2 class="doc-section-title">
-      <span>2. Statutory Violations &amp; Quantitative Rulebook Metrics</span>
-      <span class="section-badge">ANALYTICAL COMPLIANCE DOSSIER</span>
+      <span>2. Detected Irregularities &amp; Core Reasoning</span>
+      <span class="section-badge">FINDINGS &amp; REASONING</span>
     </h2>
-    <p style="margin-bottom: 8px; color:#475569; font-size:11.5px;">
-      Deterministic evaluation against Central Government procurement, financial accountability, and operational guidelines:
+    <p style="margin-bottom: 10px; color:#475569; font-size:11.5px;">
+      Key operational findings with plain-language regulatory reasoning:
     </p>
 
     <!-- VIOLATION CARD 1: TENDER SPLITTING -->
     <div class="violation-card">
       <div class="violation-card-head">
         <div class="violation-code">
-          <span style="color:var(--accent-red); font-weight:900;">VIO-01</span>
-          <span>ARTIFICIAL TRANSACTION STRUCTURING &amp; GE-M EVASION</span>
+          <span style="color:var(--accent-red); font-weight:900;">FINDING 1</span>
+          <span>ARTIFICIAL PAYMENT FRAGMENTATION (TENDER SPLITTING)</span>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <span class="violation-citation">GFR 2017 Rule 157 &amp; 149(i) &bull; CVC 05/03/2019</span>
-          <span class="badge-critical">CLASS-A FRAUD</span>
+          <span class="violation-citation">GFR 2017 Rule 157 &amp; 149(i)</span>
+          <span class="badge-critical">CRITICAL</span>
         </div>
       </div>
       <div class="violation-matrix">
         <div class="matrix-col">
-          <div class="matrix-title title-baseline"><i data-lucide="shield" style="width:11px;"></i> Mandated Statutory Baseline</div>
+          <div class="matrix-title title-baseline"><i data-lucide="shield" style="width:11px;"></i> Mandated Policy</div>
           <div class="matrix-value">
-            &bull; Single quote cap: &le; ₹25,000<br>
-            &bull; Prohibition: Fragmenting works to avoid open e-tenders / GeM
+            Competitive e-procurement through open tenders or GeM portal is mandatory for cumulative civil work contracts. Dividing contracts into small chunks to avoid approvals is prohibited.
           </div>
         </div>
         <div class="matrix-col">
-          <div class="matrix-title title-observed"><i data-lucide="activity" style="width:11px;"></i> Measured Empirical Point</div>
+          <div class="matrix-title title-observed"><i data-lucide="activity" style="width:11px;"></i> Observed Fact</div>
           <div class="matrix-value">
-            &bull; Volume: <strong>52 payment vouchers</strong><br>
-            &bull; Uniform Range: [₹19,900, ₹19,995]<br>
-            &bull; Mean &mu; = ₹19,992.40 (&sigma; = ₹14.20)
+            <strong>52 separate payment vouchers</strong> were issued between ₹19,900 and ₹19,995 across 43 days, totaling ₹23,79,048 to the same contractor.
           </div>
         </div>
         <div class="matrix-col">
-          <div class="matrix-title title-variance"><i data-lucide="calculator" style="width:11px;"></i> Quantitative Variance Proof</div>
+          <div class="matrix-title title-reasoning"><i data-lucide="info" style="width:11px;"></i> Reasoning &amp; Impact</div>
           <div class="matrix-value">
-            &bull; <strong>Benford's Law (1st-Digit):</strong><br>
-            Digit '1' in 96.2% of txns (&chi;&sup2; = 48.6, p = 7.4&times;10<sup>-8</sup>)<br>
-            &bull; Coeff of Variation CV = <strong>0.071%</strong> (Synthetic)
+            <strong>Reasoning:</strong> Payments were deliberately kept ₹8 below the ₹20,000 threshold to evade mandatory higher-tier executive sign-offs and open competitive bidding.
           </div>
         </div>
-      </div>
-      <div class="meter-wrap">
-        <div class="meter-label">Voucher Cap Cluster:</div>
-        <div class="meter-track">
-          <div class="meter-fill-safe" style="width:75%;"></div>
-          <div class="meter-marker" style="left:80%;" title="Local Sanction Ceiling ₹20,000"></div>
-          <div class="meter-fill-breach" style="left:79.5%; width:0.5%;"></div>
-        </div>
-        <div class="meter-stat" style="color:var(--accent-red);">₹19,992 (99.96% of cap)</div>
       </div>
       <div class="violation-evidence-footer">
-        <div><strong>Forensic Inference:</strong> Deliberate clustering ₹8 below ₹20,000 threshold to bypass higher-tier executive countersignature.</div>
+        <div><strong>Impact:</strong> Public funds were disbursed without competitive rate discovery or supervisory verification.</div>
         <div class="evidence-pointer">LEDGER: VCH-2024-001 to 052</div>
       </div>
     </div>
 
-    <!-- VIOLATION CARD 2: PHYSICAL-FINANCIAL DIVERGENCE -->
+    <!-- VIOLATION CARD 2: PREMATURE DISBURSEMENT -->
     <div class="violation-card">
       <div class="violation-card-head">
         <div class="violation-code">
-          <span style="color:var(--accent-red); font-weight:900;">VIO-02</span>
-          <span>PHYSICAL-FINANCIAL DIVERGENCE &amp; PREMATURE DRAWDOWN</span>
+          <span style="color:var(--accent-red); font-weight:900;">FINDING 2</span>
+          <span>PREMATURE FUND RELEASE WITHOUT ON-SITE CONSTRUCTION</span>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <span class="violation-citation">MPLADS Guidelines 2023 &sect;3.4 &bull; CPWD Manual &sect;10.1</span>
-          <span class="badge-critical">CLASS-A FISCAL</span>
+          <span class="violation-citation">MPLADS Guidelines §3.4</span>
+          <span class="badge-critical">CRITICAL</span>
         </div>
       </div>
       <div class="violation-matrix">
         <div class="matrix-col">
-          <div class="matrix-title title-baseline"><i data-lucide="shield" style="width:11px;"></i> Mandated Statutory Baseline</div>
+          <div class="matrix-title title-baseline"><i data-lucide="shield" style="width:11px;"></i> Mandated Policy</div>
           <div class="matrix-value">
-            &bull; Stage 1 Plinth Cap: &le; 35.0%<br>
-            &bull; Max Admissible: <strong>₹8,40,000.00</strong><br>
-            &bull; Rule: Milestone verification mandatory
+            Fund releases must correspond strictly with verified on-ground completion. For foundation work, admissible payout cannot exceed 35% (₹8,40,000).
           </div>
         </div>
         <div class="matrix-col">
-          <div class="matrix-title title-observed"><i data-lucide="activity" style="width:11px;"></i> Measured Empirical Point</div>
+          <div class="matrix-title title-observed"><i data-lucide="activity" style="width:11px;"></i> Observed Fact</div>
           <div class="matrix-value">
-            &bull; Disbursed: <strong>₹23,79,048.00 (99.13%)</strong><br>
-            &bull; Verified Physical Progress: <strong>35.00%</strong><br>
-            &bull; Wall / Pavers Ground State: 0.00%
+            <strong>99.1% of sanctioned allocation</strong> (₹23.79 Lakhs) has been drawn down, while independent physical inspection verifies only 35.0% completion.
           </div>
         </div>
         <div class="matrix-col">
-          <div class="matrix-title title-variance"><i data-lucide="calculator" style="width:11px;"></i> Quantitative Variance Proof</div>
+          <div class="matrix-title title-reasoning"><i data-lucide="info" style="width:11px;"></i> Reasoning &amp; Impact</div>
           <div class="matrix-value">
-            &bull; <strong>Divergence Gap (&delta;):</strong><br>
-            &delta; = F<sub>disb</sub>% &minus; P<sub>ver</sub>% = <strong>+64.13%</strong> (Limit: 25%)<br>
-            &bull; Unbacked Liquidity: <strong>₹15,39,048.00</strong>
+            <strong>Reasoning:</strong> Implementing agency paid out full project value before the brick boundary walls and paver blocks were even commenced on site.
           </div>
         </div>
-      </div>
-      <div class="meter-wrap">
-        <div class="meter-label">Disbursed vs Physical:</div>
-        <div class="meter-track">
-          <div class="meter-fill-safe" style="width:35%;"></div>
-          <div class="meter-marker" style="left:35%;" title="Ground Physical Rung 35%"></div>
-          <div class="meter-fill-breach" style="left:35%; width:64.13%;"></div>
-        </div>
-        <div class="meter-stat" style="color:var(--accent-red);">&delta; = +64.13% Breach</div>
       </div>
       <div class="violation-evidence-footer">
-        <div><strong>Forensic Inference:</strong> 99.13% public capital released for 35.0% structure. Direct unearned advance drawn without physical asset backing.</div>
-        <div class="evidence-pointer">TEL: FVO-UP-041 &bull; CV-SEG: 98.2m&sup2;</div>
+        <div><strong>Impact:</strong> ₹15.39 Lakhs in public capital has been given as an unauthorized cash advance to the contractor without asset backing.</div>
+        <div class="evidence-pointer">INSPECTION REPORT: FVO-UP-041</div>
       </div>
     </div>
 
-    <!-- VIOLATION CARD 3: VENDOR MONOPOLY (HHI) -->
+    <!-- VIOLATION CARD 3: VENDOR MONOPOLY -->
     <div class="violation-card card-warning">
       <div class="violation-card-head">
         <div class="violation-code">
-          <span style="color:var(--accent-amber); font-weight:900;">VIO-03</span>
-          <span>ANTI-COMPETITIVE VENDOR CONCENTRATION &amp; MONOPSONY</span>
+          <span style="color:var(--accent-amber); font-weight:900;">FINDING 3</span>
+          <span>EXCESSIVE VENDOR CONCENTRATION &amp; CARTELIZATION</span>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <span class="violation-citation">GFR 2017 Rule 144(i) &bull; Competition Act 2002 &sect;3</span>
-          <span class="badge-warning">CLASS-B CARTEL</span>
+          <span class="violation-citation">Competition Act 2002 §3 &bull; GFR Rule 144</span>
+          <span class="badge-warning">HIGH</span>
         </div>
       </div>
       <div class="violation-matrix">
         <div class="matrix-col">
-          <div class="matrix-title title-baseline"><i data-lucide="shield" style="width:11px;"></i> Mandated Statutory Baseline</div>
+          <div class="matrix-title title-baseline"><i data-lucide="shield" style="width:11px;"></i> Mandated Policy</div>
           <div class="matrix-value">
-            &bull; Concentration: HHI &lt; 2,500<br>
-            &bull; Single Vendor Share Cap: &le; 20.0%<br>
-            &bull; Mandate: Open fair competition
+            Fair and transparent public procurement requires non-discriminatory participation. Single vendor concentration should not corner a parliamentary jurisdiction.
           </div>
         </div>
         <div class="matrix-col">
-          <div class="matrix-title title-observed"><i data-lucide="activity" style="width:11px;"></i> Measured Empirical Point</div>
+          <div class="matrix-title title-observed"><i data-lucide="activity" style="width:11px;"></i> Observed Fact</div>
           <div class="matrix-value">
-            &bull; Portfolio Cornered: <strong>119 of 134 works</strong><br>
-            &bull; Volume Share: <strong>88.80%</strong> (PC-77)<br>
-            &bull; Value Share: ₹2.84 Cr / ₹3.21 Cr (88.4%)
+            A single contractor was awarded <strong>119 out of 134 civil works</strong> (88.4% of total parliamentary constituency value, ₹2.84 Cr).
           </div>
         </div>
         <div class="matrix-col">
-          <div class="matrix-title title-variance"><i data-lucide="calculator" style="width:11px;"></i> Quantitative Variance Proof</div>
+          <div class="matrix-title title-reasoning"><i data-lucide="info" style="width:11px;"></i> Reasoning &amp; Impact</div>
           <div class="matrix-value">
-            &bull; <strong>Herfindahl Index:</strong> HHI = <strong>8,420</strong><br>
-            &bull; District Z-Score: <strong>Z = +4.82&sigma;</strong><br>
-            (p &lt; 0.0001 vs state-wide mean 14.2%)
+            <strong>Reasoning:</strong> Evidence points to exclusionary bidding practices that systematically favor one vendor over all local competing firms.
           </div>
         </div>
-      </div>
-      <div class="meter-wrap">
-        <div class="meter-label">HHI Concentration Index:</div>
-        <div class="meter-track">
-          <div class="meter-fill-safe" style="width:25%;"></div>
-          <div class="meter-marker" style="left:25%;" title="Competitive Ceiling 2,500"></div>
-          <div class="meter-fill-breach" style="left:25%; width:59.2%;"></div>
-        </div>
-        <div class="meter-stat" style="color:var(--accent-amber);">HHI 8,420 (3.36x cap)</div>
       </div>
       <div class="violation-evidence-footer">
-        <div><strong>Forensic Inference:</strong> Monopolistic cartelization across single MP jurisdiction with systemic exclusion of competitive bidding.</div>
+        <div><strong>Impact:</strong> Eliminates competitive cost pressure and indicates potential administrative favoritism.</div>
         <div class="evidence-pointer">GSTIN: 09AAACA0123M1Z5</div>
       </div>
     </div>
 
-    <!-- VIOLATION CARD 4: UC DEFAULT -->
+    <!-- VIOLATION CARD 4: OVERDUE UC -->
     <div class="violation-card card-warning">
       <div class="violation-card-head">
         <div class="violation-code">
-          <span style="color:var(--accent-amber); font-weight:900;">VIO-04</span>
+          <span style="color:var(--accent-amber); font-weight:900;">FINDING 4</span>
           <span>STATUTORY UTILIZATION CERTIFICATE (GFR 12-A) DEFAULT</span>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <span class="violation-citation">GFR 2017 Rule 238(1) &bull; Public Audit Act</span>
-          <span class="badge-warning">CLASS-B COMPLIANCE</span>
+          <span class="violation-citation">GFR 2017 Rule 238(1)</span>
+          <span class="badge-warning">HIGH</span>
         </div>
       </div>
       <div class="violation-matrix">
         <div class="matrix-col">
-          <div class="matrix-title title-baseline"><i data-lucide="shield" style="width:11px;"></i> Mandated Statutory Baseline</div>
+          <div class="matrix-title title-baseline"><i data-lucide="shield" style="width:11px;"></i> Mandated Policy</div>
           <div class="matrix-value">
-            &bull; Submission Window: &le; 365 days<br>
-            &bull; Mandatory GFR 12-A form<br>
-            &bull; Verified Measurement Book entry
+            Statutory Utilization Certificates (Form GFR 12-A) signed by verified engineers must be submitted within 12 months of initial fund release.
           </div>
         </div>
         <div class="matrix-col">
-          <div class="matrix-title title-observed"><i data-lucide="activity" style="width:11px;"></i> Measured Empirical Point</div>
+          <div class="matrix-title title-observed"><i data-lucide="activity" style="width:11px;"></i> Observed Fact</div>
           <div class="matrix-value">
-            &bull; Elapsed Duration: <strong>T = 588 days</strong><br>
-            &bull; Overdue Duration: <strong>+223 days</strong><br>
-            &bull; Portal Filing: <code>NON_SUBMITTED</code>
+            More than <strong>19 months (588 days)</strong> have elapsed since initial disbursement. Form GFR 12-A remains unsubmitted.
           </div>
         </div>
         <div class="matrix-col">
-          <div class="matrix-title title-variance"><i data-lucide="calculator" style="width:11px;"></i> Quantitative Variance Proof</div>
+          <div class="matrix-title title-reasoning"><i data-lucide="info" style="width:11px;"></i> Reasoning &amp; Impact</div>
           <div class="matrix-value">
-            &bull; Drawdown Date: 02-Feb-2024<br>
-            &bull; Statutory Deadline: 01-Feb-2025<br>
-            &bull; MB-402 (pp. 12-18) lacks JE signature
+            <strong>Reasoning:</strong> Project funds are unaccounted for on the statutory portal without engineer sign-off or measurement book reconciliation.
           </div>
         </div>
       </div>
       <div class="violation-evidence-footer">
-        <div><strong>Forensic Inference:</strong> Public funds retained in non-statutory status for >19 months without audited accounting reconciliation.</div>
-        <div class="evidence-pointer">DOC: MB-402 &bull; GFR-12A: MISSING</div>
+        <div><strong>Impact:</strong> Retains public funds in un-audited status, preventing formal accounting closure.</div>
+        <div class="evidence-pointer">DOC: MB-402 &bull; GFR-12A: NOT FILED</div>
       </div>
     </div>
 
-    <!-- VIOLATION CARD 5: SLA RUBBER STAMP -->
+    <!-- VIOLATION CARD 5: PROCEDURAL RUBBER STAMP -->
     <div class="violation-card card-warning">
       <div class="violation-card-head">
         <div class="violation-code">
-          <span style="color:var(--accent-amber); font-weight:900;">VIO-05</span>
-          <span>ZERO-DAY TECHNICAL VETTING &amp; RUBBER-STAMP SANCTION</span>
+          <span style="color:var(--accent-amber); font-weight:900;">FINDING 5</span>
+          <span>EXPEDITED SANCTION WITHOUT TECHNICAL SITE SCRUTINY</span>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <span class="violation-citation">MPLADS Guidelines 2023 &sect;3.2 &bull; State PWD Code</span>
-          <span class="badge-warning">CLASS-C PROCEDURAL</span>
+          <span class="violation-citation">MPLADS Guidelines §3.2</span>
+          <span class="badge-warning">MEDIUM</span>
         </div>
       </div>
       <div class="violation-matrix">
         <div class="matrix-col">
-          <div class="matrix-title title-baseline"><i data-lucide="shield" style="width:11px;"></i> Mandated Statutory Baseline</div>
+          <div class="matrix-title title-baseline"><i data-lucide="shield" style="width:11px;"></i> Mandated Policy</div>
           <div class="matrix-value">
-            &bull; Feasibility SLA: 15 to 45 days<br>
-            &bull; Mandatory ground site inspection<br>
-            &bull; Rate vetting against DSR-2023
+            Mandatory engineering scrutiny of cost estimates against State/Central PWD schedules of rates prior to sanction.
           </div>
         </div>
         <div class="matrix-col">
-          <div class="matrix-title title-observed"><i data-lucide="activity" style="width:11px;"></i> Measured Empirical Point</div>
+          <div class="matrix-title title-observed"><i data-lucide="activity" style="width:11px;"></i> Observed Fact</div>
           <div class="matrix-value">
-            &bull; Turnaround: <strong>&Delta;t = 33.6 hours</strong><br>
-            &bull; Site Vetting Time: 0.0 hrs<br>
-            &bull; Approved Rate: ₹14,200 / linear m
+            Administrative approval was issued in <strong>under 34 hours</strong> without documented engineering site inspection. Unit rate was ₹14,200/m vs standard ₹5,900/m.
           </div>
         </div>
         <div class="matrix-col">
-          <div class="matrix-title title-variance"><i data-lucide="calculator" style="width:11px;"></i> Quantitative Variance Proof</div>
+          <div class="matrix-title title-reasoning"><i data-lucide="info" style="width:11px;"></i> Reasoning &amp; Impact</div>
           <div class="matrix-value">
-            &bull; Turnaround Anomaly: <strong>Z = -2.23&sigma;</strong><br>
-            (&mu; = 28.4 days, &sigma; = 12.1 days)<br>
-            &bull; Rate Inflation: <strong>+140.7% (2.41x)</strong> vs DSR
+            <strong>Reasoning:</strong> Rapid rubber-stamp sanctioning approved an inflated cost estimate without independent technical verification.
           </div>
         </div>
       </div>
       <div class="violation-evidence-footer">
-        <div><strong>Forensic Inference:</strong> Administrative sanction passed within 33.6 hrs without structural engineering vetting despite 2.4x cost inflation.</div>
+        <div><strong>Impact:</strong> Cost inflated by over 140% above benchmark rates without recorded technical justification.</div>
         <div class="evidence-pointer">REC: 12-Jan-2024 &rarr; SANC: 13-Jan-2024</div>
       </div>
     </div>
 
-    <!-- 3. Multi-Signal Forensic Evidence Matrix -->
+    <!-- 3. Multi-Dataset Reconciliation -->
     <h2 class="doc-section-title">
-      <span>3. Multi-Signal Forensic Cross-Dataset Reconciliation</span>
-      <span class="section-badge">4-DATASET RECONCILIATION</span>
+      <span>3. Cross-Dataset Ledger Reconciliation</span>
+      <span class="section-badge">TRANSACTION LEDGER</span>
     </h2>
     <p style="margin-bottom: 6px; color:#475569; font-size:11.5px;">
-      Cross-examination across all 4 mandatory eSAKSHI parliamentary transaction registers establishes an unbroken chain of systemic manipulation:
+      Reconciliation across official parliamentary project registers:
     </p>
 
     <table class="doc-table">
       <thead>
         <tr>
-          <th style="width:20%;">Source Pipeline</th>
-          <th style="width:18%;">Record Identifier</th>
-          <th style="width:26%;">Observed Entity &amp; Value</th>
-          <th style="width:24%;">Statutory Benchmark &amp; Norm</th>
-          <th style="width:12%;">Variance Flag</th>
+          <th style="width:22%;">Pipeline Register</th>
+          <th style="width:20%;">Reference ID</th>
+          <th style="width:26%;">Observed Record Details</th>
+          <th style="width:20%;">Official Benchmark</th>
+          <th style="width:12%;">Audit Status</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>1. Works Recommended (LS)</strong></td>
+          <td><strong>1. Works Recommended</strong></td>
           <td class="mono">REC-UP-VAR-2024-8842</td>
-          <td>Estimated Unit Rate: <strong>₹14,200 / linear m</strong> (Total: ₹24,00,000 for 169m boundary wall)</td>
-          <td>District Schedule of Rates (DSR-2023): ₹5,900 / linear m</td>
-          <td><span class="badge-critical">+140.7% (2.41x) Cost Outlier</span></td>
+          <td>Approved Rate: ₹14,200 / linear meter (169m boundary wall)</td>
+          <td>Standard PWD Rate: ₹5,900 / linear meter</td>
+          <td><span class="badge-critical">Cost Outlier</span></td>
         </tr>
         <tr>
-          <td><strong>2. Works Sanctioned (LS)</strong></td>
+          <td><strong>2. Works Sanctioned</strong></td>
           <td class="mono">SANC-UP-VAR-2024-8842</td>
-          <td>Sanctioned: 13-Jan-2024 19:50 IST (&Delta;t = 33.6 hrs from recommendation)</td>
-          <td>Mandatory technical scrutiny window: 15 to 45 calendar days</td>
-          <td><span class="badge-warning">Z = -2.23&sigma; Rubber-Stamp</span></td>
+          <td>Approved 33.6 hours after initial MP recommendation</td>
+          <td>Technical Scrutiny SLA: 15 to 45 days</td>
+          <td><span class="badge-warning">Rubber Stamp</span></td>
         </tr>
         <tr>
-          <td><strong>3. Expenditure as on Date (LS)</strong></td>
+          <td><strong>3. Expenditure as on Date</strong></td>
           <td class="mono">VCH-2024-001 to 052</td>
-          <td>52 disbursements of <strong>₹19,992.00 to ₹19,995.00</strong> across 43 days (Total: ₹23,79,048.00)</td>
-          <td>Standard milestone releases (25% / 50% / 25% tranches via RTGS)</td>
-          <td><span class="badge-critical">&chi;&sup2; = 48.6 Split Invoicing</span></td>
+          <td>52 disbursements of ~₹19,992 across 43 days (Total: ₹23,79,048)</td>
+          <td>Standard milestone-linked tranches via RTGS</td>
+          <td><span class="badge-critical">Split Invoicing</span></td>
         </tr>
         <tr>
-          <td><strong>4. Works Completed (LS)</strong></td>
+          <td><strong>4. Works Completed</strong></td>
           <td class="mono">CMP-UP-VAR-2024-8842</td>
-          <td>Portal Status: <code>COMPLETED</code> on 20-Jul-2024 | Image File: <code>NULL_ATTACHMENT</code> (0 bytes)</td>
-          <td>Mandatory dual-angle geotagged photographic proof with EXIF</td>
-          <td><span class="badge-critical">False Certification (&delta; = +64.1%)</span></td>
+          <td>Marked "Completed" with a blank (0-byte) image attachment</td>
+          <td>Mandatory dual-angle photographic site proof</td>
+          <td><span class="badge-critical">False Sign-Off</span></td>
         </tr>
       </tbody>
     </table>
 
-    <!-- 4. Spatial-Temporal & Computer Vision Telemetry -->
+    <!-- 4. Field Inspection Summary -->
     <h2 class="doc-section-title">
-      <span>4. Spatial-Temporal &amp; Computer Vision Ground Telemetry</span>
-      <span class="section-badge">GPS + CV INFERENCE</span>
+      <span>4. On-Site Physical Inspection Findings</span>
+      <span class="section-badge">FIELD VERIFICATION</span>
     </h2>
 
     <div class="detail-grid">
       <div>
-        <div><strong>Inspecting Nodal Officer:</strong> Shri Rajesh Sharma (ID: FVO-UP-041)</div>
-        <div><strong>Physical Inspection Timestamp:</strong> 24-Aug-2026, 14:32:10 IST (UTC+05:30)</div>
-        <div><strong>Registered Project Centroid:</strong> <code>25.317600° N, 82.973900° E</code></div>
-        <div><strong>Inspector GPS Coordinates:</strong> <code>25.317920° N, 82.974180° E</code> (Alt: 81.4m MSL)</div>
+        <div><strong>Field Verification Officer:</strong> Shri Rajesh Sharma (ID: FVO-UP-041)</div>
+        <div><strong>Inspection Date &amp; Time:</strong> 24-Aug-2026, 14:32 IST</div>
+        <div><strong>Site Location:</strong> <code>25.3176° N, 82.9739° E</code> (Badagaon Community Center)</div>
       </div>
       <div>
-        <div><strong>Haversine Ground Distance (d):</strong> <span class="mono" style="font-weight:700; color:var(--accent-emerald);">42.3 meters</span> (&le;250m Buffer <span class="badge-pass">GEOFENCE PASSED</span>)</div>
-        <div><strong>CV Architecture / Model:</strong> Swin-Transformer + Mask2Former (v2.4)</div>
-        <div><strong>Plinth Foundation Detected:</strong> <span class="mono">98.2 sq.m (Confidence: 97.1%)</span></div>
-        <div><strong>Wall / Paving Detected:</strong> <span class="mono" style="color:var(--accent-red);">0.00% (Non-Existent on Ground)</span></div>
+        <div><strong>Geofence Verification:</strong> <span class="badge-pass">Verified on Site (42m buffer)</span></div>
+        <div><strong>Sub-Structure (Foundation Plinth):</strong> <span class="mono" style="font-weight:700; color:var(--accent-emerald);">Verified Built (35.0% of Scope)</span></div>
+        <div><strong>Superstructure &amp; Paver Blocks:</strong> <span class="mono" style="font-weight:700; color:var(--accent-red);">Completely Missing (0.0% on Ground)</span></div>
       </div>
     </div>
 
-    <!-- Computer Vision Quantitative Stage Inference -->
     <table class="doc-table" style="margin-top:6px;">
       <thead>
         <tr>
-          <th>Structural Component</th>
-          <th>Sanctioned Engineering Scope</th>
-          <th>CV Segmented Area / Height</th>
-          <th>Component Physical Progress</th>
-          <th>Weight</th>
-          <th>Weighted Ground Score</th>
+          <th>Engineering Scope Item</th>
+          <th>Approved Project Specification</th>
+          <th>On-Site Physical Inspection Finding</th>
+          <th>Execution Status</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Sub-Structure (Plinth &amp; Excavation)</td>
-          <td>169.0 linear m / 100.0 sq.m</td>
-          <td class="mono">98.2 sq.m (Plinth Rung Verified)</td>
-          <td class="mono">100.00%</td>
-          <td class="mono">35.0%</td>
-          <td class="mono" style="font-weight:700;">35.00%</td>
+          <td><strong>Foundation &amp; Excavation</strong></td>
+          <td>169 linear meters of brick plinth foundation</td>
+          <td>Foundation structure completed and solid</td>
+          <td><span class="badge-pass">Completed (35%)</span></td>
         </tr>
         <tr>
-          <td>Super-Structure (Brick Boundary Wall)</td>
-          <td>169.0 linear m &times; 2.4m height</td>
-          <td class="mono" style="color:var(--accent-red);">0.00 linear m (0.0% pixels detected)</td>
-          <td class="mono" style="color:var(--accent-red);">0.00%</td>
-          <td class="mono">45.0%</td>
-          <td class="mono" style="color:var(--accent-red);">0.00%</td>
+          <td><strong>Brick Boundary Wall</strong></td>
+          <td>169 linear meters &times; 2.4 meters height</td>
+          <td>No brick walls constructed on site</td>
+          <td><span class="badge-critical">Not Started (0%)</span></td>
         </tr>
         <tr>
-          <td>Surfacing (Interlocking Paver Blocks)</td>
-          <td>450.0 sq.m M-30 Grade Blocks</td>
-          <td class="mono" style="color:var(--accent-red);">0.00 sq.m (Raw mud ground)</td>
-          <td class="mono" style="color:var(--accent-red);">0.00%</td>
-          <td class="mono">20.0%</td>
-          <td class="mono" style="color:var(--accent-red);">0.00%</td>
-        </tr>
-        <tr style="background:#f1f5f9; font-weight:700;">
-          <td colspan="5" style="text-align:right;">AGGREGATED VERIFIED GROUND PHYSICAL PROGRESS (P<sub>ver</sub>):</td>
-          <td class="mono" style="color:var(--accent-red); font-size:12px;">35.00% &plusmn; 3.1%</td>
+          <td><strong>Interlocking Paver Blocks</strong></td>
+          <td>450 square meters M-30 paver flooring</td>
+          <td>Ground remains unpaved bare soil</td>
+          <td><span class="badge-critical">Not Started (0%)</span></td>
         </tr>
       </tbody>
     </table>
 
-    <!-- 5. Quantitative Financial Recovery Computation & Action Matrix -->
+    <!-- 5. Financial Summary & Enforcement Directives -->
     <h2 class="doc-section-title">
-      <span>5. Quantitative Financial Recovery &amp; Statutory Directives</span>
-      <span class="section-badge">RECOVERY ENFORCEMENT</span>
+      <span>5. Financial Reconciliation &amp; Action Directives</span>
+      <span class="section-badge">DIRECTIVES</span>
     </h2>
 
-    <!-- Mathematical Recovery Formulation -->
-    <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:10px 14px; border-radius:4px; margin-bottom:10px;">
-      <div style="font-weight:700; color:#1e293b; margin-bottom:4px; font-size:11.5px; text-transform:uppercase; letter-spacing:0.03em;">
-        Statutory Public Recovery Computation Formulation (GFR 2017 Rule 238(1)):
+    <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:12px 16px; border-radius:4px; margin-bottom:12px; font-size:11.5px; line-height:1.6;">
+      <div style="font-weight:700; color:#1e293b; margin-bottom:6px; font-size:12px; text-transform:uppercase; letter-spacing:0.03em;">
+        Account Reconciliation Summary:
       </div>
-      <div class="mono" style="font-size:11px; line-height:1.6; color:#0f172a;">
-        &bull; Gross Public Funds Disbursed (F<sub>disb</sub>): <strong>₹23,79,048.00</strong> (99.13%)<br>
-        &bull; Lawful Admissible Value for 35.0% Verified Ground Progress (V<sub>admissible</sub> = C<sub>sanc</sub> &times; P<sub>ver</sub>): ₹24,00,000.00 &times; 0.350 = <strong>₹8,40,000.00</strong><br>
-        &bull; <strong>Direct Principal Public Demand (R<sub>principal</sub> = F<sub>disb</sub> &minus; V<sub>admissible</sub>):</strong> ₹23,79,048.00 &minus; ₹8,40,000.00 = <strong style="color:var(--accent-red); font-size:12.5px;">₹15,39,048.00</strong><br>
-        &bull; Mandatory Penal Interest under GFR Rule 238(1) @ 18.0% p.a. (18.2 months): <strong style="color:var(--accent-red);">₹4,20,534.00</strong><br>
-        &bull; <strong>TOTAL STATUTORY REVENUE RECOVERY DEMAND:</strong> <strong style="color:var(--accent-blue); font-size:13px; background:#dbeafe; padding:1px 6px; border-radius:3px;">₹19,59,582.00</strong>
+      <div>&bull; Total Public Funds Disbursed: <strong>₹23,79,048.00</strong> (99.1% of sanctioned allocation)</div>
+      <div>&bull; Legitimate Admissible Value for Verified Foundation Work (35%): <strong>₹8,40,000.00</strong></div>
+      <div>&bull; <strong>Unearned Advance Payout (Unbacked Disbursal):</strong> <strong style="color:var(--accent-red);">₹15,39,048.00</strong></div>
+      <div>&bull; Applicable Statutory Interest under GFR Rule 238: <strong>₹4,20,534.00</strong></div>
+      <div style="margin-top:4px; padding-top:4px; border-top:1px dashed #cbd5e1;">
+        &bull; <strong>Total Revenue Reconciliation Demand:</strong> <strong style="color:var(--accent-blue); font-size:13px; background:#dbeafe; padding:1px 6px; border-radius:3px;">₹19,59,582.00</strong>
       </div>
     </div>
 
     <!-- Numbered Legal Directions -->
-    <ol style="margin-left: 20px; font-size: 12px; line-height: 1.6; text-align: justify;">
+    <ol style="margin-left: 20px; font-size: 11.5px; line-height: 1.6; text-align: justify;">
       <li>
-        <strong>Revenue Recovery Notice under Public Demands Recovery Act:</strong> Issue Form GFR 12-B Statutory Demand Notice for <strong>₹19,59,582.00</strong> (Principal: ₹15.39 L + Penal Interest: ₹4.21 L) against Implementing Agency RED Div-II and Contractor M/s Ajay Kumar Singh Construction under Section 5 of the U.P. Public Demands Recovery Act, 1913.
+        <strong>Administrative Payment Freeze:</strong> Immediately freeze all pending disbursements under CNA Account #UP-VAR-091 for Implementing Agency RED Div-II and Contractor M/s Ajay Kumar Singh Construction.
       </li>
       <li>
-        <strong>Mandatory Contractor Debarment / Blacklisting:</strong> Initiate debarment proceedings against M/s Ajay Kumar Singh Construction (GSTIN: <code>09AAACA0123M1Z5</code>) across GeM (Government e-Marketplace) and CPPP for a mandatory statutory period of <strong>36 months (3 Years)</strong> under GFR 2017 Rule 151(iii).
+        <strong>Statutory Explanation Notice:</strong> Issue a 14-day statutory demand notice for <strong>₹19,59,582.00</strong> under GFR Rule 238(1) to recover unearned advance disbursements.
       </li>
       <li>
-        <strong>Disciplinary &amp; Departmental Vigilance Proceedings:</strong> Frame Article of Charges under Rule 14 of CCS (CCA) Rules, 1965 against the Executive Engineer and Assistant Engineer (RED Div-II) for certifying false completion records and passing structured split vouchers without Measurement Book validation.
+        <strong>Contractor Eligibility Review:</strong> Initiate debarment review against M/s Ajay Kumar Singh Construction on GeM and state procurement portals for artificial tender splitting.
       </li>
       <li>
-        <strong>Statutory Transmission to CAG &amp; CVC:</strong> Forward the complete cryptographic evidence package to the Principal Accountant General (Audit-II), Uttar Pradesh and Chief Vigilance Officer (MoSPI) for systemic portfolio audit across all 119 projects cornered by the vendor cluster in Parliamentary Constituency PC-77.
+        <strong>Departmental Inquiry:</strong> Order a formal inquiry into the false completion sign-off and lack of measurement book verification.
+      </li>
+      <li>
+        <strong>Submission to Audit Authorities:</strong> Transmit this dossier to the Principal Accountant General (Audit-II) and Chief Vigilance Officer for constituency-wide review.
       </li>
     </ol>
 
@@ -1042,7 +886,6 @@
     <div class="sha-footer">
       DIGITALLY VERIFIED STATUTORY AUDIT DOSSIER &bull; GENERATED VIA MPLADS SENTINEL REGULATORY PLATFORM<br>
       SHA-256 PROVENANCE HASH: <code>e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</code><br>
-      MERKLE ROOT: <code>8f3d1b94c029a471e984210cfb74a10e8d9103bc49281048201948271049281a</code> &bull; BLOCK: <code>#BLK-2026-UP-VAR-00842-TX9</code><br>
       PUBLIC VERIFICATION GATEWAY: <code>https://mplads.mospi.gov.in/sentinel/verify/MOSPI-VIG-2026-CR-0842</code>
     </div>
 
@@ -1088,21 +931,23 @@
 
       if (isDup) {
         if (scoreEl) {
-          scoreEl.textContent = 'NOT RATED (DUPLICATE WORK)';
+          scoreEl.textContent = 'NOT RATED (DUPLICATE)';
           scoreEl.style.color = '#9333ea';
         }
         if (prioEl) {
-          prioEl.textContent = 'STATUS: DUPLICATE WORK (SCOPE OVERLAP // NO RATING)';
+          prioEl.textContent = 'Status: DUPLICATE WORK (SCOPE OVERLAP // NO RATING)';
           prioEl.style.color = '#7e22ce';
         }
       } else if (data.riskScore !== undefined && data.riskScore !== null && data.riskScore !== '') {
+        const numScore = Number(data.riskScore);
         if (scoreEl) {
-          scoreEl.textContent = `${data.riskScore} / 100`;
-          scoreEl.style.color = 'var(--accent-red)';
+          scoreEl.textContent = `${numScore} / 100`;
+          scoreEl.style.color = numScore >= 80 ? 'var(--accent-emerald)' : numScore >= 50 ? 'var(--accent-amber)' : 'var(--accent-red)';
         }
         if (prioEl) {
-          prioEl.textContent = `Risk Priority: ${(data.riskLevel || 'HIGH').toUpperCase()} (CRS ${data.riskScore}/100)`;
-          prioEl.style.color = 'var(--accent-red)';
+          const statusLabel = numScore >= 80 ? 'NORMAL / HEALTHY' : numScore >= 60 ? 'LOW RISK' : numScore >= 40 ? 'MEDIUM RISK' : numScore >= 20 ? 'HIGH RISK' : 'CRITICAL CONCERN';
+          prioEl.textContent = `Audit Status: ${statusLabel} (Compliance & Health Score: ${numScore} / 100)`;
+          prioEl.style.color = numScore >= 80 ? 'var(--accent-emerald)' : numScore >= 50 ? 'var(--accent-amber)' : 'var(--accent-red)';
         }
       }
     }

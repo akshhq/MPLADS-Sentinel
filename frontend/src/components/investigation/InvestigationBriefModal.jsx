@@ -80,7 +80,7 @@ export const InvestigationBriefModal = ({ isOpen, onClose, caseItem, project, })
               </p>
               {project && (<p className="text-slate-500 font-mono text-[11px] pt-1">
                   Sanctioned: <strong>{formatIndianCurrency(project.financials.sanctionedAmount)}</strong> | Disbursed:{" "}
-                  <strong>{formatIndianCurrency(project.financials.paidDisbursedAmount)}</strong> ({project.financialProgress}%) | Physical Progress: <strong>{project.physicalProgress}%</strong>
+                  <strong>{formatIndianCurrency(project.financials.paidDisbursedAmount)}</strong> | Project Progress: <strong>{project.physicalProgress}%</strong>
                 </p>)}
             </div>
           </div>
