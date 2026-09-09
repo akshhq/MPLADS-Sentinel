@@ -26,7 +26,7 @@ export const MOCK_PROJECTS = [
         plannedStartDate: "2025-10-15",
         plannedCompletionDate: "2026-06-30",
         actualStartDate: "2025-11-02",
-        status: "milestone_delayed",
+        status: "under_investigation",
         risk: {
             score: 13,
             level: "critical",
@@ -42,7 +42,7 @@ export const MOCK_PROJECTS = [
             },
             primarySignal: "Financial / Physical Progress Mismatch (88% vs 52%)",
             lastAssessedAt: "2026-08-28T14:32:00Z",
-            status: "flagged",
+            status: "under_investigation",
             reasons: [
                 {
                     id: "R-001",
@@ -301,7 +301,7 @@ export const MOCK_PROJECTS = [
         plannedStartDate: "2025-08-01",
         plannedCompletionDate: "2026-02-28",
         actualStartDate: "2025-08-15",
-        status: "milestone_delayed",
+        status: "under_investigation",
         risk: {
             score: 11,
             level: "critical",
@@ -317,7 +317,7 @@ export const MOCK_PROJECTS = [
             },
             primarySignal: "₹23.4 L Unreconciled Advance & 64-Day Deadline Overrun",
             lastAssessedAt: "2026-08-28T12:15:00Z",
-            status: "flagged",
+            status: "under_investigation",
             reasons: [
                 {
                     id: "R-007",
@@ -373,7 +373,7 @@ export const MOCK_PROJECTS = [
         plannedStartDate: "2025-09-01",
         plannedCompletionDate: "2026-04-30",
         actualStartDate: "2025-09-10",
-        status: "in_progress",
+        status: "flagged",
         risk: {
             score: 24,
             level: "high",
@@ -389,7 +389,7 @@ export const MOCK_PROJECTS = [
             },
             primarySignal: "Split Payment Pattern & Vendor High Concentration",
             lastAssessedAt: "2026-08-27T16:00:00Z",
-            status: "flagged",
+            status: "under_review",
             reasons: [
                 {
                     id: "R-008",
@@ -444,7 +444,7 @@ export const MOCK_PROJECTS = [
         plannedStartDate: "2025-11-01",
         plannedCompletionDate: "2026-05-31",
         actualStartDate: "2025-11-15",
-        status: "in_progress",
+        status: "flagged",
         risk: {
             score: 28,
             level: "high",
@@ -460,7 +460,7 @@ export const MOCK_PROJECTS = [
             },
             primarySignal: "Utilization Certificate Mismatch with Sanction Order",
             lastAssessedAt: "2026-08-28T09:45:00Z",
-            status: "flagged",
+            status: "under_review",
             reasons: [
                 {
                     id: "R-009",
@@ -572,7 +572,7 @@ export const MOCK_PROJECTS = [
         plannedStartDate: "2025-09-15",
         plannedCompletionDate: "2026-03-31",
         actualStartDate: "2025-10-01",
-        status: "in_progress",
+        status: "milestone_delayed",
         risk: {
             score: 52,
             level: "medium",
@@ -588,7 +588,7 @@ export const MOCK_PROJECTS = [
             },
             primarySignal: "Pipeline Distribution Delay (42 days)",
             lastAssessedAt: "2026-08-28T08:30:00Z",
-            status: "flagged",
+            status: "under_review",
             reasons: [
                 {
                     id: "R-010",

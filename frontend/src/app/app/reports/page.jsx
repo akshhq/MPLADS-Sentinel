@@ -675,10 +675,10 @@ export default function ReportsPage() {
                   >
                     <option value="all">All Risk Bands</option>
                     <option value="duplicate">Duplicate</option>
-                    <option value="critical">Critical Risk (80+)</option>
-                    <option value="high">High Risk (65-79)</option>
-                    <option value="medium">Medium Concern (45-64)</option>
-                    <option value="low">Normal / Low Risk (&lt;45)</option>
+                    <option value="critical">Critical Risk (&lt;20)</option>
+                    <option value="high">High Risk (20-39)</option>
+                    <option value="medium">Medium Concern (40-59)</option>
+                    <option value="low">Normal / Low Risk (60+)</option>
                   </select>
 
                   {/* State Filter */}

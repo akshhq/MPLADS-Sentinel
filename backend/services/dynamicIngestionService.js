@@ -487,12 +487,14 @@ class DynamicIngestionService {
         ],
         confidence: availabilityMatrix.expenditure?.available && availabilityMatrix.sanctioned?.available ? 0.94 : 0.76,
         status: isDuplicate
-          ? "Duplicate"
+          ? "duplicate"
           : riskBand === "CRITICAL"
-          ? "Immediate Inquiry"
+          ? "under_investigation"
           : riskBand === "HIGH"
-          ? "Audit Review"
-          : "Compliant",
+          ? "flagged"
+          : riskBand === "MEDIUM"
+          ? "milestone_delayed"
+          : "in_progress",
         triggered_signals: triggeredSignals,
         missingDataImpact: missingDataNotices.map((n) => `${n.dimension}: ${n.impact}`),
         recommendation: isDuplicate

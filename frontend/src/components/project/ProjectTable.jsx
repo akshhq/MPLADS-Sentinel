@@ -142,6 +142,7 @@ export const ProjectTable = ({ projects, total }) => {
                   (gap >= 25 ? `Disbursement Gap (${finProg}% vs ${phyProg}%)` : "Normal Parameters");
 
               // Structured Status Pill
+              const projectStatus = project.status || "in_progress";
               const getStatusBadge = () => {
                 if (isDup) {
                   return (
@@ -150,30 +151,37 @@ export const ProjectTable = ({ projects, total }) => {
                     </span>
                   );
                 }
-                if (riskLevel === "critical") {
+                if (projectStatus === "under_investigation") {
                   return (
                     <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
-                      Critical
+                      Under Investigation
                     </span>
                   );
                 }
-                if (riskLevel === "high") {
+                if (projectStatus === "flagged") {
                   return (
                     <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
-                      High Risk
+                      Flagged
                     </span>
                   );
                 }
-                if (riskLevel === "medium") {
+                if (projectStatus === "milestone_delayed") {
                   return (
                     <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-                      Medium Risk
+                      Milestone Delayed
+                    </span>
+                  );
+                }
+                if (projectStatus === "completed") {
+                  return (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                      Completed
                     </span>
                   );
                 }
                 return (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                    Normal
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-200 dark:border-sky-800">
+                    In Progress
                   </span>
                 );
               };

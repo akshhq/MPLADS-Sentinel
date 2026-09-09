@@ -150,10 +150,10 @@ function ProjectsContent() {
             <select value={selectedRisk} onChange={(e) => setSelectedRisk(e.target.value)} className="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 focus:outline-none">
               <option value="all">All Risk Levels</option>
               <option value="duplicate">Duplicate</option>
-              <option value="critical">Critical (80+)</option>
-              <option value="high">High Risk (60-79)</option>
-              <option value="medium">Medium Risk (30-59)</option>
-              <option value="low">Normal / Low Risk (&lt;30)</option>
+              <option value="critical">Critical (&lt;20)</option>
+              <option value="high">High Risk (20-39)</option>
+              <option value="medium">Medium Risk (40-59)</option>
+              <option value="low">Normal / Low Risk (60+)</option>
             </select>
           </div>
 
@@ -166,8 +166,9 @@ function ProjectsContent() {
               <option value="all">All Statuses</option>
               <option value="in_progress">In Progress</option>
               <option value="milestone_delayed">Milestone Delayed</option>
-              <option value="completed">Completed</option>
+              <option value="flagged">Flagged</option>
               <option value="under_investigation">Under Investigation</option>
+              <option value="completed">Completed</option>
             </select>
           </div>
 
