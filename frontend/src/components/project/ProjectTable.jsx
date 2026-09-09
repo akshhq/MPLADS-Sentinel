@@ -19,20 +19,22 @@ export const ProjectTable = ({ projects, total }) => {
         }
     };
     const sortedProjects = [...projects].sort((a, b) => {
-        let aVal = "";
-        let bVal = "";
+        let aVal = 0;
+        let bVal = 0;
         if (sortField === "risk") {
-            aVal = a.risk.score;
-            bVal = b.risk.score;
+            const aIsDup = a.risk?.level === "duplicate" || a.risk_band === "DUPLICATE";
+            const bIsDup = b.risk?.level === "duplicate" || b.risk_band === "DUPLICATE";
+            aVal = aIsDup ? 999 : (a.risk?.score ?? a.composite_risk_score ?? 0);
+            bVal = bIsDup ? 999 : (b.risk?.score ?? b.composite_risk_score ?? 0);
         }
         else if (sortField === "sanctioned") {
-            aVal = a.financials.sanctionedAmount;
-            bVal = b.financials.sanctionedAmount;
+            aVal = a.financials?.sanctionedAmount ?? a.sanction_amount ?? a.sanctionAmount ?? 0;
+            bVal = b.financials?.sanctionedAmount ?? b.sanction_amount ?? b.sanctionAmount ?? 0;
         }
         else {
             const field = sortField;
-            const rawA = a[field];
-            const rawB = b[field];
+            const rawA = a[field] ?? "";
+            const rawB = b[field] ?? "";
             aVal = typeof rawA === "string" || typeof rawA === "number" ? rawA : "";
             bVal = typeof rawB === "string" || typeof rawB === "number" ? rawB : "";
         }
@@ -47,7 +49,20 @@ export const ProjectTable = ({ projects, total }) => {
     const exportCSV = () => {
         const headers = "Project ID,Title,Category,State,District,Sanctioned (INR),Financial Progress (%),Physical Progress (%),Risk Score,Risk Level\n";
         const rows = projects
-            .map((p) => `"${p.id}","${p.title.replace(/"/g, '""')}","${p.category}","${p.state}","${p.district}",${p.financials?.sanctionedAmount || 0},${p.financialProgress || 0},${p.physicalProgress || 0},${p.risk?.level === "duplicate" ? "Not Rated (Duplicate)" : (p.risk?.score ?? "")},"${p.risk?.level === "duplicate" ? "Duplicate" : (p.risk?.level || "Low")}"`)
+            .map((p) => {
+                const safeId = p.id || p.work_id || "";
+                const safeTitle = (p.title || p["work_title"] || p["Work Description"] || "Untitled Work").replace(/"/g, '""');
+                const safeCat = p.category || "General";
+                const safeState = p.state || "National";
+                const safeDistrict = p.district || "";
+                const sanctioned = p.financials?.sanctionedAmount ?? p.sanction_amount ?? p.sanctionAmount ?? 0;
+                const finProg = p.financialProgress ?? p.financial_progress ?? 0;
+                const phyProg = p.physicalProgress ?? p.physical_progress ?? 0;
+                const isDup = p.risk?.level === "duplicate" || p.risk_band === "DUPLICATE";
+                const score = isDup ? "Not Rated (Duplicate)" : (p.risk?.score ?? p.composite_risk_score ?? "");
+                const level = isDup ? "Duplicate" : (p.risk?.level || p.risk_band || "Low");
+                return `"${safeId}","${safeTitle}","${safeCat}","${safeState}","${safeDistrict}",${sanctioned},${finProg},${phyProg},${score},"${level}"`;
+            })
             .join("\n");
         const blob = new Blob([headers + rows], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
@@ -102,70 +117,90 @@ export const ProjectTable = ({ projects, total }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-            {paginatedProjects.map((project) => (<tr key={project.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/50 transition-colors group cursor-pointer">
-                {/* ID */}
-                <td className="px-4 py-3.5 font-mono font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">
-                  <Link href={`/app/projects/${project.id}`} className="hover:underline">
-                    {project.id}
-                  </Link>
-                </td>
+            {paginatedProjects.map((project, idx) => {
+              const id = project.id || project.work_id || `WORK-${idx + 1}`;
+              const title = project.title || project["work_title"] || project["Work Description"] || "Developmental Work";
+              const category = project.category || "General";
+              const agency = project.implementingAgency || project.implementing_agency || "District Authority";
+              const district = project.district || "District";
+              const state = project.state || "National";
+              const sanctioned = project.financials?.sanctionedAmount ?? project.sanction_amount ?? project.sanctionAmount ?? 0;
+              const finProg = Number(project.financialProgress ?? project.financial_progress ?? 0);
+              const phyProg = Number(project.physicalProgress ?? project.physical_progress ?? 0);
+              const gap = Math.abs(finProg - phyProg);
+              const isDup = project.risk?.level === "duplicate" || project.risk_band === "DUPLICATE";
+              const riskLevel = isDup ? "duplicate" : (project.risk?.level || project.risk_band?.toLowerCase() || "low");
+              const riskScore = isDup ? null : (project.risk?.score ?? project.composite_risk_score ?? null);
 
-                {/* Description & Category */}
-                <td className="px-4 py-3.5 max-w-xs">
-                  <Link href={`/app/projects/${project.id}`} className="block">
-                    <p className="font-semibold text-slate-900 dark:text-slate-100 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                      {project.title}
-                    </p>
-                    <p className="text-[11px] text-slate-400 mt-0.5 truncate">
-                      {project.category} • {project.implementingAgency}
-                    </p>
-                  </Link>
-                </td>
+              return (
+                <tr key={`${id}-${idx}`} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/50 transition-colors group cursor-pointer">
+                  {/* ID */}
+                  <td className="px-4 py-3.5 font-mono font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">
+                    <Link href={`/app/projects/${encodeURIComponent(id)}`} className="hover:underline">
+                      {id}
+                    </Link>
+                  </td>
 
-                {/* Location */}
-                <td className="px-4 py-3.5 whitespace-nowrap">
-                  <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0"/>
-                    <span>{project.district}, {project.state}</span>
-                  </div>
-                </td>
+                  {/* Description & Category */}
+                  <td className="px-4 py-3.5 max-w-xs">
+                    <Link href={`/app/projects/${encodeURIComponent(id)}`} className="block">
+                      <p className="font-semibold text-slate-900 dark:text-slate-100 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        {title}
+                      </p>
+                      <p className="text-[11px] text-slate-400 mt-0.5 truncate">
+                        {category} • {agency}
+                      </p>
+                    </Link>
+                  </td>
 
-                {/* Sanctioned Amount */}
-                <td className="px-4 py-3.5 whitespace-nowrap font-mono font-semibold text-slate-800 dark:text-slate-200">
-                  {formatIndianCurrency(project.financials.sanctionedAmount)}
-                </td>
-
-                {/* Progress Gap Bar */}
-                <td className="px-4 py-3.5 min-w-[140px]">
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[10px] text-slate-500">
-                      <span>Fin: <strong className="font-mono">{project.financialProgress}%</strong></span>
-                      <span>Phy: <strong className="font-mono">{project.physicalProgress}%</strong></span>
+                  {/* Location */}
+                  <td className="px-4 py-3.5 whitespace-nowrap">
+                    <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+                      <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0"/>
+                      <span>{district}, {state}</span>
                     </div>
-                    {/* Visual mini-bar */}
-                    <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex">
-                      <div className="bg-blue-600 h-full" style={{ width: `${project.financialProgress}%` }} title={`Financial Progress: ${project.financialProgress}%`}/>
-                      <div className="bg-emerald-500 h-full" style={{ width: `${project.physicalProgress}%` }} title={`Physical Progress: ${project.physicalProgress}%`}/>
+                  </td>
+
+                  {/* Sanctioned Amount */}
+                  <td className="px-4 py-3.5 whitespace-nowrap font-mono font-semibold text-slate-800 dark:text-slate-200">
+                    {formatIndianCurrency(sanctioned)}
+                  </td>
+
+                  {/* Progress Gap Bar */}
+                  <td className="px-4 py-3.5 min-w-[140px]">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[10px] text-slate-500">
+                        <span>Fin: <strong className="font-mono">{finProg}%</strong></span>
+                        <span>Phy: <strong className="font-mono">{phyProg}%</strong></span>
+                      </div>
+                      {/* Visual mini-bar */}
+                      <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex">
+                        <div className="bg-blue-600 h-full" style={{ width: `${Math.min(100, Math.max(0, finProg))}%` }} title={`Financial Progress: ${finProg}%`}/>
+                        <div className="bg-emerald-500 h-full" style={{ width: `${Math.min(100, Math.max(0, phyProg))}%` }} title={`Physical Progress: ${phyProg}%`}/>
+                      </div>
+                      {gap >= 25 && (
+                        <span className="text-[10px] text-rose-600 dark:text-rose-400 font-bold block">
+                          Gap: {gap}% points
+                        </span>
+                      )}
                     </div>
-                    {Math.abs(project.financialProgress - project.physicalProgress) >= 25 && (<span className="text-[10px] text-rose-600 dark:text-rose-400 font-bold block">
-                        Gap: {Math.abs(project.financialProgress - project.physicalProgress)}% points
-                      </span>)}
-                  </div>
-                </td>
+                  </td>
 
-                {/* Risk */}
-                <td className="px-4 py-3.5 whitespace-nowrap">
-                  <RiskBadge level={project.risk.level} score={project.risk.score} size="sm"/>
-                </td>
+                  {/* Risk */}
+                  <td className="px-4 py-3.5 whitespace-nowrap">
+                    <RiskBadge level={riskLevel} score={riskScore} size="sm"/>
+                  </td>
 
-                {/* Action */}
-                <td className="px-4 py-3.5 text-right whitespace-nowrap">
-                  <Link href={`/app/projects/${project.id}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 transition-all shadow-xs">
-                    <span>Digital Twin</span>
-                    <ArrowRight className="w-3.5 h-3.5"/>
-                  </Link>
-                </td>
-              </tr>))}
+                  {/* Action */}
+                  <td className="px-4 py-3.5 text-right whitespace-nowrap">
+                    <Link href={`/app/projects/${encodeURIComponent(id)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 transition-all shadow-xs">
+                      <span>Digital Twin</span>
+                      <ArrowRight className="w-3.5 h-3.5"/>
+                    </Link>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

@@ -439,20 +439,30 @@ const FALLBACK_GEO_POINTS = [
 // Helper to normalize Supabase project record
 function normalizeProject(p) {
   if (!p) return null;
+  const financials = p.financials || {};
   return {
     id: p.id,
-    title: p.title,
-    category: p.category,
-    state: p.state,
-    district: p.district,
-    constituency: p.constituency,
-    mpName: p.mp_name || p.mpName,
+    title: p.title || "Developmental Work",
+    category: p.category || "General",
+    state: p.state || "National",
+    district: p.district || "",
+    constituency: p.constituency || "",
+    mpName: p.mp_name || p.mpName || "Member of Parliament",
     mpHouse: p.mp_house || p.mpHouse || "Lok Sabha",
-    implementingAgency: p.implementing_agency || p.implementingAgency,
-    status: p.status,
-    financials: p.financials || {},
-    financialProgress: p.financial_progress !== undefined ? p.financial_progress : p.financialProgress || 0,
-    physicalProgress: p.physical_progress !== undefined ? p.physical_progress : p.physicalProgress || 0,
+    implementingAgency: p.implementingAgency || p.implementing_agency || "State Agency",
+    status: p.status || "in_progress",
+    financials: {
+      recommendedAmount: financials.recommendedAmount ?? p.sanction_amount ?? 0,
+      sanctionedAmount: financials.sanctionedAmount ?? p.sanction_amount ?? 0,
+      committedAmount: financials.committedAmount ?? p.sanction_amount ?? 0,
+      paidDisbursedAmount: financials.paidDisbursedAmount ?? p.disbursed_amount ?? 0,
+      verifiedExpenditureAmount: financials.verifiedExpenditureAmount ?? p.disbursed_amount ?? 0,
+      unreconciledGap: financials.unreconciledGap ?? Math.max(0, (financials.sanctionedAmount || p.sanction_amount || 0) - (financials.paidDisbursedAmount || p.disbursed_amount || 0)),
+      comparableMedianAmount: financials.comparableMedianAmount ?? Math.round((financials.sanctionedAmount || p.sanction_amount || 0) * 0.85),
+      costDeviationPercent: financials.costDeviationPercent ?? 0,
+    },
+    financialProgress: p.financial_progress !== undefined ? p.financial_progress : (p.financialProgress !== undefined ? p.financialProgress : 0),
+    physicalProgress: p.physical_progress !== undefined ? p.physical_progress : (p.physicalProgress !== undefined ? p.physicalProgress : 0),
     dates: p.dates || {},
     gpsCoordinates: p.gps_coordinates || p.gpsCoordinates || {},
     risk: (() => {
@@ -468,15 +478,15 @@ function normalizeProject(p) {
       return {
         score,
         level,
-        primarySignal: p.risk?.primarySignal || "",
+        primarySignal: p.risk?.primarySignal || p.triggered_signals?.[0]?.finding || "Routine automated monitoring",
         breakdown: p.risk?.breakdown || {},
         reasons: p.risk?.reasons || [],
       };
     })(),
     milestones: p.milestones || [],
     investigationCaseId: p.investigation_case_id || p.investigationCaseId || null,
-    createdAt: p.created_at || p.createdAt,
-    updatedAt: p.updated_at || p.updatedAt,
+    createdAt: p.created_at || p.createdAt || new Date().toISOString(),
+    updatedAt: p.updated_at || p.updatedAt || new Date().toISOString(),
   };
 }
 
@@ -568,23 +578,31 @@ const supabaseService = {
 
     if (activeScope?.mode === "uploaded" && activeScope.batch) {
       const works = activeScope.batch.workReports || activeScope.batch.priorityProjects || activeScope.batch.flaggedCases || [];
-      list = works.map((w) => ({
-        id: w.id || w.work_id,
-        title: w.title,
+      list = works.map((w, idx) => ({
+        id: w.id || w.work_id || `WORK-${idx + 1}`,
+        title: w.title || "Developmental Work",
         category: w.category || "Development Work",
         state: w.state || "State",
         district: w.district || "District",
         constituency: w.constituency || w.district || "Constituency",
-        mpName: w.mpName || "Member of Parliament",
-        implementingAgency: w.implementing_agency || "State Agency",
+        mpName: w.mpName || w.mp_name || "Member of Parliament",
+        mpHouse: w.mpHouse || w.mp_house || "Lok Sabha",
+        implementingAgency: w.implementingAgency || w.implementing_agency || "State Agency",
         status: w.status || "in_progress",
+        financialProgress: w.financialProgress ?? w.financial_progress ?? 0,
+        financial_progress: w.financial_progress ?? w.financialProgress ?? 0,
+        physicalProgress: w.physicalProgress ?? w.physical_progress ?? 0,
+        physical_progress: w.physical_progress ?? w.physicalProgress ?? 0,
         financials: {
-          recommendedAmount: w.sanction_amount || w.financials?.sanctionedAmount || 0,
-          sanctionedAmount: w.sanction_amount || w.financials?.sanctionedAmount || 0,
-          committedAmount: w.sanction_amount || w.financials?.sanctionedAmount || 0,
-          paidDisbursedAmount: w.disbursed_amount || w.financials?.disbursedAmount || 0,
-          verifiedExpenditureAmount: w.disbursed_amount || w.financials?.disbursedAmount || 0,
-          costDeviationPercent: 0,
+          recommendedAmount: w.financials?.recommendedAmount || w.sanction_amount || w.financials?.sanctionedAmount || 0,
+          sanctionedAmount: w.financials?.sanctionedAmount || w.sanction_amount || 0,
+          committedAmount: w.financials?.committedAmount || w.sanction_amount || w.financials?.sanctionedAmount || 0,
+          paidDisbursedAmount: w.financials?.paidDisbursedAmount || w.disbursed_amount || w.financials?.disbursedAmount || 0,
+          verifiedExpenditureAmount: w.financials?.verifiedExpenditureAmount || w.disbursed_amount || w.financials?.disbursedAmount || 0,
+          unreconciledGap: w.financials?.unreconciledGap ?? Math.max(0, (w.sanction_amount || 0) - (w.disbursed_amount || 0)),
+          comparableMedianAmount: w.financials?.comparableMedianAmount ?? Math.round((w.sanction_amount || 0) * 0.85),
+          costDeviationPercent: w.financials?.costDeviationPercent ?? 0,
+          ...(w.financials || {}),
         },
         risk: (() => {
           const isDup = (w.risk_band === "DUPLICATE" || w.risk?.level === "duplicate");
@@ -599,7 +617,7 @@ const supabaseService = {
           return {
             score,
             level,
-            primarySignal: w.risk?.primarySignal || "Routine automated monitoring",
+            primarySignal: w.risk?.primarySignal || w.triggered_signals?.[0]?.finding || "Routine automated monitoring",
             breakdown: w.risk?.breakdown || {},
             reasons: w.risk?.reasons || [],
           };

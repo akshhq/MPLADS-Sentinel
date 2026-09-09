@@ -16,7 +16,8 @@ import { api } from "@/lib/api";
 import { formatIndianCurrency } from "@/lib/formatters";
 export default function ProjectDetailPage({ params }) {
     const resolvedParams = use(params);
-    const projectId = resolvedParams.projectId;
+    const rawId = resolvedParams?.projectId;
+    const projectId = Array.isArray(rawId) ? decodeURIComponent(rawId.join("/")) : decodeURIComponent(rawId || "");
     const router = useRouter();
     const [project, setProject] = useState(null);
     const [evidenceList, setEvidenceList] = useState([]);
@@ -123,7 +124,7 @@ export default function ProjectDetailPage({ params }) {
 
           {/* Right Risk Gauge & Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center gap-6 shrink-0 pt-4 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
-            <RiskScoreGauge score={project.risk.score} level={project.risk.level} size="md"/>
+            <RiskScoreGauge score={project.risk?.score} level={project.risk?.level} size="md"/>
 
             <div className="flex flex-col gap-2 w-full sm:w-auto">
               <button onClick={handleCreateInvestigation} disabled={creatingCase} className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 shadow-sm transition-all active:scale-[0.98]">
@@ -144,7 +145,7 @@ export default function ProjectDetailPage({ params }) {
           <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-1">
             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Sanctioned Budget</p>
             <p className="text-lg font-mono font-extrabold text-slate-900 dark:text-white">
-              {formatIndianCurrency(project.financials.sanctionedAmount)}
+              {formatIndianCurrency(project.financials?.sanctionedAmount ?? 0)}
             </p>
             <span className="text-[10px] text-slate-400 block">100% of Administrative Approval</span>
           </div>
@@ -152,15 +153,15 @@ export default function ProjectDetailPage({ params }) {
           <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-1">
             <p className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Paid / Disbursed</p>
             <p className="text-lg font-mono font-extrabold text-blue-600 dark:text-blue-400">
-              {formatIndianCurrency(project.financials.paidDisbursedAmount)}
+              {formatIndianCurrency(project.financials?.paidDisbursedAmount ?? 0)}
             </p>
-            <span className="text-[10px] text-slate-400 block">{project.financialProgress}% of Total Sanction</span>
+            <span className="text-[10px] text-slate-400 block">{project.financialProgress ?? 0}% of Total Sanction</span>
           </div>
 
           <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-1">
             <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Verified Expenditure</p>
             <p className="text-lg font-mono font-extrabold text-emerald-600 dark:text-emerald-400">
-              {formatIndianCurrency(project.financials.verifiedExpenditureAmount)}
+              {formatIndianCurrency(project.financials?.verifiedExpenditureAmount ?? 0)}
             </p>
             <span className="text-[10px] text-slate-400 block">Audited Treasury Debits</span>
           </div>
@@ -168,7 +169,7 @@ export default function ProjectDetailPage({ params }) {
           <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-1">
             <p className="text-[10px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">Unreconciled Gap</p>
             <p className="text-lg font-mono font-extrabold text-rose-600 dark:text-rose-400">
-              {formatIndianCurrency(project.financials.unreconciledGap)}
+              {formatIndianCurrency(project.financials?.unreconciledGap ?? 0)}
             </p>
             <span className="text-[10px] text-rose-500 font-semibold block">Pending Utilization Proof</span>
           </div>
@@ -176,25 +177,25 @@ export default function ProjectDetailPage({ params }) {
           <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-1">
             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Comparable Median</p>
             <p className="text-lg font-mono font-extrabold text-slate-800 dark:text-slate-200">
-              {formatIndianCurrency(project.financials.comparableMedianAmount)}
+              {formatIndianCurrency(project.financials?.comparableMedianAmount ?? 0)}
             </p>
             <span className="text-[10px] text-rose-500 font-bold block">
-              +{project.financials.costDeviationPercent}% Cost Anomaly
+              +{project.financials?.costDeviationPercent ?? 0}% Cost Anomaly
             </span>
           </div>
         </div>
 
         {/* Financial / Physical Mismatch Gauge */}
-        <FinancialProgressMismatch financialProgress={project.financialProgress} physicalProgress={project.physicalProgress} disbursedAmount={project.financials.paidDisbursedAmount} sanctionedAmount={project.financials.sanctionedAmount}/>
+        <FinancialProgressMismatch financialProgress={project.financialProgress ?? 0} physicalProgress={project.physicalProgress ?? 0} disbursedAmount={project.financials?.paidDisbursedAmount ?? 0} sanctionedAmount={project.financials?.sanctionedAmount ?? 0}/>
 
         {/* Milestone Lifecycle Stepper */}
-        <MilestoneLifecycle milestones={project.milestones}/>
+        <MilestoneLifecycle milestones={project.milestones || []}/>
 
         {/* Two-Column Grid: Risk Reasons & Risk Breakdown */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Explainable Reasons */}
           <div className="lg:col-span-8">
-            <ExplainableReasons reasons={project.risk.reasons}/>
+            <ExplainableReasons reasons={project.risk?.reasons || []}/>
           </div>
 
           {/* Risk Category Breakdown */}
@@ -207,7 +208,7 @@ export default function ProjectDetailPage({ params }) {
                 Aggregated category points out of 100 total index
               </p>
             </div>
-            <RiskBreakdownBar breakdown={project.risk.breakdown}/>
+            <RiskBreakdownBar breakdown={project.risk?.breakdown || {}}/>
           </div>
         </div>
 

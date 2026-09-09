@@ -32,7 +32,7 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/lib/authContext";
 
 export default function CommandCenterPage() {
-  const { profile, managedUsers, updateManagedUser, addManagedUser, toggleUserStatus } = useAuth();
+  const { profile, managedUsers = [], updateManagedUser, addManagedUser, toggleUserStatus } = useAuth();
   const [analytics, setAnalytics] = useState(null);
   const [datasetSummary, setDatasetSummary] = useState(null);
   const [priorityProjects, setPriorityProjects] = useState([]);
@@ -99,7 +99,9 @@ export default function CommandCenterPage() {
 
         const list = (batch.priorityProjects && batch.priorityProjects.length > 0)
           ? batch.priorityProjects
-          : (batch.flaggedCases || batch.workReports || []);
+          : (batch.flaggedCases && batch.flaggedCases.length > 0)
+          ? batch.flaggedCases.slice(0, 10)
+          : (batch.workReports || []).slice(0, 10);
         setPriorityProjects(list);
       } else {
         const [anData, sumData, projData] = await Promise.all([
@@ -110,7 +112,13 @@ export default function CommandCenterPage() {
         setAnalytics(anData);
         setDatasetSummary(sumData);
         const list = projData?.projects || [];
-        const sorted = [...list].sort((a, b) => (b.risk?.score ?? 0) - (a.risk?.score ?? 0));
+        const sorted = [...list].sort((a, b) => {
+          const aIsDup = a.risk?.level === "duplicate" || a.risk_band === "DUPLICATE";
+          const bIsDup = b.risk?.level === "duplicate" || b.risk_band === "DUPLICATE";
+          const aVal = aIsDup ? 999 : (a.risk?.score ?? a.composite_risk_score ?? 0);
+          const bVal = bIsDup ? 999 : (b.risk?.score ?? b.composite_risk_score ?? 0);
+          return bVal - aVal;
+        });
         setPriorityProjects(sorted);
       }
     } catch (err) {

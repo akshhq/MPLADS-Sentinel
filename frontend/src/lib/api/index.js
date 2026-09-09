@@ -3,7 +3,24 @@ import { MOCK_EVIDENCE } from "../mock/evidence";
 import { MOCK_INVESTIGATIONS } from "../mock/investigations";
 import { MOCK_NATIONAL_ANALYTICS, MOCK_STATE_METRICS, MOCK_DISTRICT_METRICS, MOCK_GEO_POINTS } from "../mock/analytics";
 import { MOCK_DATASETS } from "../mock/datasets";
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+export function getApiBase() {
+    if (typeof window !== "undefined") {
+        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+            return process.env.NEXT_PUBLIC_LOCAL_API_URL || "http://localhost:5000/api";
+        }
+    }
+    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+}
+
+export function getAiEngineBase() {
+    if (typeof window !== "undefined") {
+        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+            return process.env.NEXT_PUBLIC_LOCAL_AI_ENGINE_URL || "http://localhost:8000";
+        }
+    }
+    return process.env.NEXT_PUBLIC_AI_ENGINE_URL || "https://mplads-sentinel-2.onrender.com";
+}
+
 import { supabase } from "../supabaseClient";
 // In-memory fallback state
 const investigationsStore = [...MOCK_INVESTIGATIONS];
@@ -44,7 +61,8 @@ async function fetchFromBackend(path, options) {
         if (!isFormData) {
             headers["Content-Type"] = "application/json";
         }
-        const res = await fetch(`${API_BASE}${path}`, {
+        const apiBase = getApiBase();
+        const res = await fetch(`${apiBase}${path}`, {
             ...options,
             headers,
             signal: controller.signal,
@@ -110,6 +128,19 @@ export const api = {
                     const parsed = JSON.parse(local);
                     if (parsed?.mode === "uploaded" && parsed.batch) {
                         let works = parsed.batch.workReports || parsed.batch.priorityProjects || [];
+                        if (params?.search) {
+                            const q = params.search.toLowerCase();
+                            works = works.filter((w) => (w.id || "").toLowerCase().includes(q) || (w.title || "").toLowerCase().includes(q) || (w.district || "").toLowerCase().includes(q));
+                        }
+                        if (params?.state && params.state !== "all") {
+                            works = works.filter((w) => (w.state || "").toLowerCase() === params.state.toLowerCase());
+                        }
+                        if (params?.district && params.district !== "all") {
+                            works = works.filter((w) => (w.district || "").toLowerCase() === params.district.toLowerCase());
+                        }
+                        if (params?.category && params.category !== "all") {
+                            works = works.filter((w) => (w.category || "") === params.category);
+                        }
                         if (params?.riskLevel && params.riskLevel !== "all") {
                             const req = params.riskLevel.toLowerCase();
                             works = works.filter((w) => {
@@ -118,7 +149,44 @@ export const api = {
                                 return !isDup && ((w.risk_band && w.risk_band.toLowerCase() === req) || (w.risk?.level && w.risk.level.toLowerCase() === req));
                             });
                         }
-                        return { projects: works, total: works.length };
+                        if (params?.status && params.status !== "all") {
+                            works = works.filter((w) => (w.status || "").toLowerCase() === params.status.toLowerCase());
+                        }
+                        const normalizedWorks = works.map((w, idx) => {
+                            const isDup = w.risk_band === "DUPLICATE" || w.risk?.level === "duplicate";
+                            const score = isDup ? null : (w.composite_risk_score ?? w.risk?.score ?? 0);
+                            let level = isDup ? "duplicate" : (w.risk?.level || w.risk_band || "low").toLowerCase();
+                            const sanctioned = w.financials?.sanctionedAmount ?? w.sanction_amount ?? 0;
+                            const disbursed = w.financials?.disbursedAmount ?? w.disbursed_amount ?? 0;
+                            return {
+                                ...w,
+                                id: w.id || w.work_id || `WORK-${idx + 1}`,
+                                title: w.title || "Developmental Work",
+                                category: w.category || "General",
+                                state: w.state || "National",
+                                district: w.district || "",
+                                implementingAgency: w.implementingAgency || w.implementing_agency || "District Planning Authority",
+                                financials: {
+                                    sanctionedAmount: sanctioned,
+                                    disbursedAmount: disbursed,
+                                    paidDisbursedAmount: disbursed,
+                                    verifiedExpenditureAmount: disbursed,
+                                    unreconciledGap: Math.max(0, sanctioned - disbursed),
+                                    comparableMedianAmount: Math.round(sanctioned * 0.85),
+                                    costDeviationPercent: w.financials?.costDeviationPercent ?? 0,
+                                    ...(w.financials || {}),
+                                },
+                                financialProgress: w.financialProgress ?? w.financial_progress ?? 0,
+                                physicalProgress: w.physicalProgress ?? w.physical_progress ?? 0,
+                                risk: {
+                                    score,
+                                    level,
+                                    primarySignal: w.risk?.primarySignal || w.triggered_signals?.[0]?.finding || "Routine automated monitoring",
+                                    ...(w.risk || {}),
+                                },
+                            };
+                        });
+                        return { projects: normalizedWorks, total: normalizedWorks.length };
                     }
                 }
             } catch {}
@@ -382,7 +450,7 @@ export const api = {
         return evidenceData;
     },
     async getAuditDossier(workId) {
-        const AI_ENGINE_URL = process.env.NEXT_PUBLIC_AI_ENGINE_URL || "https://mplads-sentinel-2.onrender.com";
+        const AI_ENGINE_URL = getAiEngineBase();
         try {
             const res = await fetch(`${AI_ENGINE_URL}/api/v1/dossier/${encodeURIComponent(workId || "MPL-004821")}`);
             if (res.ok) {
@@ -908,7 +976,7 @@ export const api = {
     },
     // --- AI Copilot ---
     async queryCopilot(query, context) {
-        const AI_ENGINE_URL = process.env.NEXT_PUBLIC_AI_ENGINE_URL || "https://mplads-sentinel-2.onrender.com";
+        const AI_ENGINE_URL = getAiEngineBase();
         const q = (query || "").toLowerCase();
         const activeProject = context?.projectId
             ? projectsStore.find((p) => p.id === context.projectId)

@@ -43,64 +43,80 @@ export const PriorityQueueTable = ({ projects, totalWorks = "45,806" }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-            {projects.map((project) => (<tr key={project.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer">
-                {/* Project ID */}
-                <td className="px-4 py-3.5 font-mono font-bold text-slate-900 dark:text-slate-100 whitespace-nowrap">
-                  <Link href={`/app/projects/${project.id}`} className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
-                    <span>{project.id}</span>
-                  </Link>
-                </td>
+            {(projects || []).map((project, idx) => {
+              const id = project.id || project.work_id || `PROJ-${idx + 1}`;
+              const title = project.title || project["work_title"] || project["Work Description"] || "Developmental Work";
+              const district = project.district || "District";
+              const state = project.state || "National";
+              const category = project.category || "General";
+              const sanctioned = project.financials?.sanctionedAmount ?? project.sanction_amount ?? project.sanctionAmount ?? 0;
+              const isDup = project.risk?.level === "duplicate" || project.risk_band === "DUPLICATE";
+              const riskLevel = isDup ? "duplicate" : (project.risk?.level || project.risk_band?.toLowerCase() || "high");
+              const riskScore = isDup ? null : (project.risk?.score ?? project.composite_risk_score ?? null);
+              const primarySignal = project.risk?.primarySignal || project.triggered_signals?.[0]?.finding || "Identified by automated cross-stream reconciliation.";
+              const lastAssessedAt = project.risk?.lastAssessedAt || project.timestamp || project.created_at || new Date().toISOString();
 
-                {/* Title & Location */}
-                <td className="px-4 py-3.5 max-w-xs">
-                  <Link href={`/app/projects/${project.id}`} className="block">
-                    <p className="font-semibold text-slate-800 dark:text-slate-200 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                      {project.title}
-                    </p>
-                    <div className="flex items-center gap-2 mt-0.5 text-slate-400 text-[11px]">
-                      <span className="flex items-center gap-1 truncate">
-                        <MapPin className="w-3 h-3 text-slate-400 shrink-0"/>
-                        {project.district}, {project.state}
+              return (
+                <tr key={`${id}-${idx}`} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer">
+                  {/* Project ID */}
+                  <td className="px-4 py-3.5 font-mono font-bold text-slate-900 dark:text-slate-100 whitespace-nowrap">
+                    <Link href={`/app/projects/${encodeURIComponent(id)}`} className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+                      <span>{id}</span>
+                    </Link>
+                  </td>
+
+                  {/* Title & Location */}
+                  <td className="px-4 py-3.5 max-w-xs">
+                    <Link href={`/app/projects/${encodeURIComponent(id)}`} className="block">
+                      <p className="font-semibold text-slate-800 dark:text-slate-200 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        {title}
+                      </p>
+                      <div className="flex items-center gap-2 mt-0.5 text-slate-400 text-[11px]">
+                        <span className="flex items-center gap-1 truncate">
+                          <MapPin className="w-3 h-3 text-slate-400 shrink-0"/>
+                          {district}, {state}
+                        </span>
+                        <span>•</span>
+                        <span className="truncate">{category}</span>
+                      </div>
+                    </Link>
+                  </td>
+
+                  {/* Sanctioned Amount */}
+                  <td className="px-4 py-3.5 whitespace-nowrap font-mono font-semibold text-slate-700 dark:text-slate-300">
+                    {formatIndianCurrency(sanctioned)}
+                  </td>
+
+                  {/* Risk Badge */}
+                  <td className="px-4 py-3.5 whitespace-nowrap">
+                    <RiskBadge level={riskLevel} score={riskScore} size="sm"/>
+                  </td>
+
+                  {/* Primary Signal */}
+                  <td className="px-4 py-3.5 max-w-xs">
+                    <div className="flex items-start gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5"/>
+                      <span className="text-slate-700 dark:text-slate-300 font-medium line-clamp-1">
+                        {primarySignal}
                       </span>
-                      <span>•</span>
-                      <span className="truncate">{project.category}</span>
                     </div>
-                  </Link>
-                </td>
+                  </td>
 
-                {/* Sanctioned Amount */}
-                <td className="px-4 py-3.5 whitespace-nowrap font-mono font-semibold text-slate-700 dark:text-slate-300">
-                  {formatIndianCurrency(project.financials.sanctionedAmount)}
-                </td>
+                  {/* Relative Timestamp */}
+                  <td className="px-4 py-3.5 whitespace-nowrap text-slate-400 text-[11px]">
+                    {formatRelativeTime(lastAssessedAt)}
+                  </td>
 
-                {/* Risk Badge */}
-                <td className="px-4 py-3.5 whitespace-nowrap">
-                  <RiskBadge level={project.risk.level} score={project.risk.score} size="sm"/>
-                </td>
-
-                {/* Primary Signal */}
-                <td className="px-4 py-3.5 max-w-xs">
-                  <div className="flex items-start gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5"/>
-                    <span className="text-slate-700 dark:text-slate-300 font-medium line-clamp-1">
-                      {project.risk.primarySignal}
-                    </span>
-                  </div>
-                </td>
-
-                {/* Relative Timestamp */}
-                <td className="px-4 py-3.5 whitespace-nowrap text-slate-400 text-[11px]">
-                  {formatRelativeTime(project.risk.lastAssessedAt)}
-                </td>
-
-                {/* Action */}
-                <td className="px-4 py-3.5 text-right whitespace-nowrap">
-                  <Link href={`/app/projects/${project.id}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg font-bold text-xs bg-slate-100 hover:bg-blue-600 hover:text-white dark:bg-slate-800 dark:hover:bg-blue-600 text-slate-700 dark:text-slate-200 transition-all shadow-xs">
-                    <span>Inspect Twin</span>
-                    <ArrowRight className="w-3.5 h-3.5"/>
-                  </Link>
-                </td>
-              </tr>))}
+                  {/* Action */}
+                  <td className="px-4 py-3.5 text-right whitespace-nowrap">
+                    <Link href={`/app/projects/${encodeURIComponent(id)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg font-bold text-xs bg-slate-100 hover:bg-blue-600 hover:text-white dark:bg-slate-800 dark:hover:bg-blue-600 text-slate-700 dark:text-slate-200 transition-all shadow-xs">
+                      <span>Inspect Twin</span>
+                      <ArrowRight className="w-3.5 h-3.5"/>
+                    </Link>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
