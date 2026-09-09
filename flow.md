@@ -9,7 +9,7 @@ This document visually details the complete lifecycle of data across the **MPLAD
 ```mermaid
 flowchart TD
     subgraph SOURCES["📁 Layer 1: Data Sources & Field Ingestion"]
-        S1["🏛️ 12 Official Government CSVs<br/>(Lok Sabha & Rajya Sabha across 6 stages)"]
+        S1["🏛️ 12 Official Parliamentary CSVs<br/>(Lok Sabha & Rajya Sabha across 6 stages)"]
         S2["📄 e-SAKSHI Uploads<br/>(PFMS Vouchers, Contractor Bills, AS Orders)"]
         S3["📷 Mobile Field Evidence<br/>(Site Photos with EXIF Geotags & Timestamps)"]
     end
@@ -41,14 +41,16 @@ flowchart TD
         A1["/api/datasets/reports — Batch Ledger Catalog"]
         A2["/api/projects — Digital Twin Query & Filter Engine"]
         A3["/api/system/activity — Real-Time Health Telemetry"]
-        A4["Strict 7-Role RBAC Authorization Guard"]
+        A4["Strict 7-Role Institutional RBAC Authorization Guard"]
+        A5["Dynamic API Client (getApiBase() port 5000 fallback)"]
     end
 
-    subgraph UI_LAYER["💻 Layer 6: Frontend Command Centers & Statutory Dossiers"]
+    subgraph UI_LAYER["💻 Layer 6: Frontend Multipage Command Centers"]
         U1["📊 National Command Center (/app/command-center)<br/>(Live screening velocity, risk donut, priority queue)"]
         U2["📑 Reports Panel (/app/reports)<br/>(A4 Official HTML Statutory Dossier Viewer & Batch Ledger)"]
-        U3["🚨 Risk Intelligence Hubs (/app/risk, /duplicates, /financial)"]
-        U4["🔍 Project Digital Twins (/app/projects/:id)"]
+        U3["🗺️ Geospatial Risk Map (/app/analytics)<br/>(Calibrated WGS84 Geodetic India Anomaly Map)"]
+        U4["🔍 Project Digital Twins (/app/projects/[...projectId])<br/>(Catch-all route for slash-delimited work codes)"]
+        U5["⚡ System Telemetry Card (Sidebar Footer)<br/>(Live DB, Backend port 5000, 21/21 AI Modules)"]
     end
 
     SOURCES --> INGEST
@@ -77,10 +79,10 @@ sequenceDiagram
     participant API as Express API Server (:5000)
     participant Ingest as Dynamic Ingestion Service
     participant AIEngine as 21-Module AI Grid
-    participant DB as Persistent Reports DB
+    participant DB as Persistent Reports DB (reports_db.json)
     participant Supabase as Supabase Cloud Sync
 
-    Officer->>Frontend: Clicks 'Ingest All 12 Official Datasets' or Uploads e-SAKSHI CSV
+    Officer->>Frontend: Clicks 'Add All 12 Files at Once' (or uploads e-SAKSHI CSV)
     Frontend->>API: POST /api/datasets/admin/ingest-all (or /upload)
     API->>Ingest: Stream multi-dataset buffers (Lok Sabha & Rajya Sabha)
     
@@ -223,8 +225,14 @@ stateDiagram-v2
 
 | Screen / Route | Primary Data Sources | Key Visual Capabilities |
 |---|---|---|
-| **Command Center**<br/>`/app/command-center` | `GET /api/datasets/scope/active`<br/>`GET /api/analytics/national` | • Dynamic **Risk Screening & Anomaly Velocity Chart** (Composed bar + rate trend line)<br/>• **National Risk Donut** with center total<br/>• **Priority Investigation Queue Table** with live audit action links |
+| **Command Center**<br/>`/app/command-center` | `GET /api/datasets/scope/active`<br/>`GET /api/analytics/national` | • Dynamic **Risk Screening & Anomaly Velocity Chart** (Composed bar + rate trend line)<br/>• **National Risk Donut** with center total<br/>• **Priority Investigation Queue Table** with null-safe property accessors and audit links<br/>• **1-Click Batch Ingestion** button ("Add All 12 Files at Once") |
 | **Reports Panel**<br/>`/app/reports` | `GET /api/datasets/reports`<br/>`GET /api/datasets/reports/:batchId` | • **Official Statutory HTML Dossier Viewer** with A4 print/PDF export, zoom controls, and dynamic work switching<br/>• **Itemized Works Ledger** with CSV export, search, and duplicate filtering |
-| **Risk Intelligence**<br/>`/app/risk`<br/>`/app/risk/duplicates`<br/>`/app/risk/financial` | `GET /api/projects?riskLevel=...` | • High-risk investigation matrix<br/>• Side-by-side duplicate work comparison (Project A vs Project B)<br/>• PFMS expenditure velocity & milestone divergence breakdowns |
-| **Project Digital Twins**<br/>`/app/projects/:id` | `GET /api/projects/:id` | • Full physical vs. financial milestone progress gap bar<br/>• Itemized triggered AI anomaly signals with statutory citations<br/>• Geospatial site coordinates and photographic evidence verification |
+| **Geospatial Risk Map**<br/>`/app/analytics` | `GET /api/analytics/national` | • **Calibrated WGS84 Geodetic India Risk Map** (`/maps/india-states.png`)<br/>• Pulsing radar pins (`animate-ping`) for Critical/High anomalies<br/>• Interactive state/UT filter, severity toggles, and Digital Twin side drawer |
+| **Ingestion Hub**<br/>`/app/data` | `POST /api/datasets/admin/ingest-all`<br/>`POST /api/datasets/upload` | • **12 Official MoSPI Datasets Matrix** with stage mapping<br/>• **1-Click Batch Ingestion** and drag-and-drop file dropzone<br/>• Real-time processing feedback and anomaly breakdowns |
+| **Master Projects Ledger**<br/>`/app/projects` | `GET /api/projects` | • Filterable, searchable national projects table<br/>• Physical vs financial progress gap indicators and risk badges |
+| **Project Digital Twins**<br/>`/app/projects/[...projectId]` | `GET /api/projects/:id` | • Next.js catch-all route supporting slash-delimited work codes (e.g. `WS/MP620/2024`)<br/>• Full physical vs. financial milestone progress gap bar<br/>• Itemized triggered AI anomaly signals with statutory citations<br/>• Geospatial site coordinates and photographic evidence verification |
+| **Grounded Audit Copilot**<br/>`/app/copilot` | `POST /api/copilot/chat` | • Conversational AI audit assistant powered by Google Gemini 2.0 Flash<br/>• Grounded in MoSPI 2023 Guidelines and GFR 2017 with exact rule citations |
 | **Live Telemetry Card**<br/>(Sidebar Footer) | `GET /api/system/activity` | • Real-time heartbeat of Database engine, Express port `5000`, uptime, and `21/21 Ready` AI modules |
+
+---
+*(MPLADS Sentinel — End-to-End Operational Flow & System Lifecycle)*

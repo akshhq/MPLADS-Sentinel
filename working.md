@@ -147,18 +147,20 @@ MPLADS-Sentinel/
 │   ├── public/
 │   │   └── maps/india-states.png        # Official 624x468 Survey of India base raster
 │   └── src/app/
-│       ├── app/                         # Authenticated application shell
+│       ├── app/                         # Authenticated application shell (pure multipage layout)
 │       │   ├── admin/                   # Dedicated System Administration Portal
 │       │   ├── analytics/               # Geospatial National Risk Map & State Charts
-│       │   ├── command-center/          # Primary Surveillance Command Center
+│       │   ├── command-center/          # Primary Surveillance Command Center & Dashboard
 │       │   ├── copilot/                 # Grounded MoSPI Audit Copilot
-│       │   ├── data/                    # Ingestion Hub & Batch Processing
+│       │   ├── data/                    # Ingestion Hub & Batch Processing (Add All 12 Files)
 │       │   ├── evidence/                # Tamper-Evident Evidence Vault
 │       │   ├── investigations/          # Priority Vigilance Case Management
-│       │   ├── projects/                # Project Digital Twins & Anomaly Inspector
-│       │   └── reports/                 # Reports Hub & Statutory A4 Dossier Viewer
+│       │   ├── projects/                # Master Canonical Projects Directory
+│       │   │   └── [...projectId]/      # Digital Project Twins (catch-all route for slash-delimited IDs)
+│       │   ├── reports/                 # Reports Hub, Persistent DB Browser & Statutory A4 Dossier
+│       │   └── risk/                    # Risk Screening & Anomaly Filtering Suite
 │       ├── layout.jsx                   # Root layout with Tailwind CSS v4 & theme
-│       └── page.jsx                     # Public landing page & scheme statistics
+│       └── page.jsx                     # Server-side redirect (/) to /app/command-center
 ├── ai-engine/                           # Python FastAPI AI Surveillance Microservice
 │   ├── modules/                         # 21 AI surveillance modules (mod01 to mod21)
 │   ├── api.py                           # FastAPI application endpoints (:8000)

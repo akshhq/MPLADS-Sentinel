@@ -16,18 +16,17 @@ rather than giving every user access to the complete system.
 
 # 1. Core User Types
 
-MPLADS Sentinel should initially support **six operational user types**:
+MPLADS Sentinel supports **seven institutional user types**:
 
-1. **MoSPI / Ministry Officer**
-2. **State Nodal Authority**
-3. **Member of Parliament (MP)**
-4. **Implementing Agency**
-5. **Investigator / Audit Officer**
-6. **Field Verification Officer**
+1. **MoSPI Central Ministry Officer** (`mospi_central_officer`): All-India national surveillance, policy thresholds, and macro fund flow governance.
+2. **State Nodal Authority** (`state_nodal_authority`): Statewide multi-district audit reviews and inter-agency coordination.
+3. **Member of Parliament (MP)** (`mp`): Constituency recommendation tracking, fund utilization metrics, and execution timelines.
+4. **Implementing Agency (IA)** (`implementing_agency`): Milestone submissions, contractor RA bill uploads, and physical progress reporting.
+5. **Vigilance Investigator / Auditor** (`investigator`): High-risk case examination, forensic dossier evaluation, inquiry initiation, and milestone fund freeze orders.
+6. **Field Verification Officer** (`field_verification_officer`): Mobile on-site GPS verification, geo-tagged milestone photo uploads, and physical inspection notes.
+7. **Platform System Administrator** (`system_admin`): Dedicated User & RBAC Manager (`/app/admin`), 1-click batch ingestion, surveillance scope reset (`/api/datasets/scope/restore`), and platform health telemetry.
 
-A separate technical **System Administrator** may exist internally for platform administration, but it should not be presented as a primary MPLADS stakeholder in the SIH demo.
-
-> **Citizen/Public Auditor is intentionally excluded from this version of the system.**
+> **Citizen/Public Auditor is intentionally excluded from this version of the system to maintain statutory confidentiality during ongoing vigilance inquiries.**
 
 ---
 

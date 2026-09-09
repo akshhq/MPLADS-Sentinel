@@ -641,4 +641,40 @@ Natural-language interface grounded exclusively in structured project records an
 
 ---
 
+## 10. Modern Architecture Upgrades & Multipage Platform Delivery
+
+### 10.1. Pure Multipage Layout Refactor
+The standalone public landing page has been removed; the **Surveillance Command Center** (`/app/command-center`) now serves as the primary operational entry point and dashboard. The root route (`/`) automatically redirects to `/app/command-center`. The user interface is structured across ten dedicated statutory command views:
+1. `/app/command-center` — National surveillance dashboard, velocity charts, risk donut, and priority anomaly queue.
+2. `/app/analytics` — Calibrated National Geospatial Project Risk Map and state comparative rankings.
+3. `/app/reports` — Persistent reports catalog, batch ledgers, and official statutory A4 HTML dossier viewer.
+4. `/app/data` — e-SAKSHI Ingestion Hub with 12 official MoSPI datasets matrix and 1-click batch ingestion.
+5. `/app/projects` — Master canonical projects database and search ledger.
+6. `/app/projects/[...projectId]` — Canonical Digital Project Twin (catch-all route supporting slash-delimited work IDs).
+7. `/app/risk` — Multi-vector risk screening suite with critical, high, medium, and duplicate filters.
+8. `/app/copilot` — Grounded AI Audit Copilot citing MoSPI 2023 Guidelines and GFR 2017.
+9. `/app/investigations` — Priority case management, inquiry tracking, and disbursement freeze actions.
+10. `/app/admin` — System Administrator portal for user management and surveillance scope resets.
+
+### 10.2. Dynamic API Resolution (`getApiBase()`)
+The frontend client dynamically resolves the backend REST API URL, prioritizing the local Express server on port 5000 (`http://localhost:5000/api`) when running in local browser environments, before falling back to cloud production microservices. This completely eliminates CORS mismatch and port divergence issues.
+
+### 10.3. Next.js Catch-All Project Routing
+Indian public works often contain forward slashes in their official codes (e.g. `WS/MP620/2024` or `WS/MP18152/2024`). Next.js catch-all route `src/app/app/projects/[...projectId]/page.jsx` captures the entire path array and reconstructs the decoded work ID, preventing 404 router errors.
+
+### 10.4. Persistent Reports Database (`reports_db.json`)
+Backed by `backend/services/reportsDatabaseService.js` and stored in `backend/data/reports_db.json`, all processed surveillance batches, canonical project ledgers, and risk matrices are persisted across server restarts in a rolling 50-batch historical ledger.
+
+### 10.5. 1-Click Administrative Batch Ingestion
+System Administrators can ingest all 12 official parliamentary CSV datasets (45,806+ records) in a single click via `POST /api/datasets/admin/ingest-all`, automatically triggering schema standardization, entity matching, and multi-vector risk evaluation.
+
+### 10.6. Calibrated National Geospatial Project Risk Map
+Integrated in `/app/analytics`, the Survey of India calibrated base raster (`/maps/india-states.png`) operates with WGS84 Geodetic normalization, displaying real-time geocoded anomaly radar pins with animated pulses, risk severity filters, and Digital Project Twin side drawers.
+
+### 10.7. Real-Time System Activity Telemetry
+Embedded in the bottom-left sidebar footer across all pages, real-time polling of `GET /api/system/activity` provides live operational indicators for the Database, Express Backend (port 5000, process uptime), and `21/21 Ready` AI Modules.
+
+---
+
 *Master System Architecture Document for MPLADS Sentinel — Ministry of Statistics and Programme Implementation (MoSPI).*
+

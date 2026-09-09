@@ -1,8 +1,8 @@
 # SIH26102 — Complete Working Knowledge Base
 
-> **⚠️ Scope Lock:** We verified the real MPLADS export (see §20–21) contains no images and no document content — the "Image" field in Works Completed is a text placeholder (`"Images"`), not actual image data. Everything below involving Document/Image Intelligence is kept as designed *roadmap*, explicitly marked `[DEFERRED]`, and moved out of §27's MUST HAVE list. This keeps this doc consistent with `MPLADS_Sentinel_Custom_AI_Specification.md`.
+> **💡 Architecture Realization:** While the official 12 parliamentary CSV exports (45,806 rows) supply tabular financial records without embedded images, MPLADS Sentinel implements a complete **e-SAKSHI Ingestion Hub (`/app/data`) and Evidence Vault (`/app/evidence`)**, enabling field officers to stream real multi-modal evidence (geotagged inspection photos via 64-bit `dHash` and contractor invoices via OCR), delivering on the complete 21-Module AI Grid.
 
-> **Purpose:** Master reference containing everything established so far for the MPLADS AI monitoring project.
+> **Purpose:** Master reference containing everything established for the MPLADS AI monitoring project under SIH26102.
 
 ## 1. Problem Statement
 

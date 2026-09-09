@@ -1,115 +1,111 @@
-# MPLADS Sentinel (रक्षक) — Web Application
+# 🌐 MPLADS Sentinel — Frontend Web Application
+### Pure Multipage Surveillance Command Center & Statutory Audit UI
 
-**Beneficiary Ministry:** Ministry of Statistics and Programme Implementation (MoSPI), Government of India  
+[![Next.js 16](https://img.shields.io/badge/Next.js-16_App_Router-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
+[![React 19](https://img.shields.io/badge/React-19_Pure_JSX-blue?style=for-the-badge&logo=react)](https://react.dev)
+[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-CSS_v4-teal?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com)
+[![Lucide Icons](https://img.shields.io/badge/Icons-Lucide_React-orange?style=for-the-badge)](https://lucide.dev)
+[![Recharts](https://img.shields.io/badge/Charts-Recharts-indigo?style=for-the-badge)](https://recharts.org)
 
-MPLADS Sentinel is a multi-source surveillance and risk intelligence platform built for public infrastructure audit. Instead of replacing **e-SAKSHI**, Sentinel ingests and analyzes data already generated across the project lifecycle (proposals, sanction orders, contractor RA bills, geotagged milestone photos, and PFMS treasury disbursements) to prioritize irregular works for authorized human investigation.
-
-> 💡 **e-SAKSHI File Ingestion:** Direct live integration with e-SAKSHI is simulated via the built-in **e-SAKSHI Ingestion Hub** (`/app/data`), allowing users to upload lifecycle files or load 1-click test vectors to run the 21-Module AI Detection Grid.  
-> 📖 **Complete System Flow Documentation:** See [SYSTEM_ARCHITECTURE_AND_DETECTION_FLOW.md](../SYSTEM_ARCHITECTURE_AND_DETECTION_FLOW.md) for the in-depth architectural and operational lifecycle breakdown.
-
----
-
-## 🏛️ System Architecture Overview
-
-```text
-ML & Analysis:
-Python • Pandas • NumPy • SciPy • RapidFuzz • NetworkX (Graph Analytics) • Perceptual Image Hashing (dHash) • Multi-Vector Risk Fusion (21 AI Modules)
-
-Backend & API:
-Node.js (Express.js Gateway & RBAC) • Python (FastAPI AI Engine) • Supabase PostgreSQL • Supabase Auth & Storage CDN
-
-Frontend & GIS:
-Next.js 16 • React 19 • Tailwind CSS v4 • Recharts • Haversine GIS Spatial Buffering & Proximity Clustering
-
-XAI & COPILOT:
-Google Gemini 2.0 Flash • Grounded RAG (MPLADS Guidelines 2023 & GFR 2017) • Explainable Multi-Source Evidence Lineage
-```
+> **Beneficiary Ministry**: Ministry of Statistics and Programme Implementation (MoSPI), Government of India  
+> **Problem Statement**: **SIH26102** — AI-Powered Multi-Source Surveillance, Risk-Intelligence, and Vigilance Governance Layer for MPLADS  
+> **Deployment**: [https://mplads-sentinel-omega.vercel.app](https://mplads-sentinel-omega.vercel.app)
 
 ---
 
-## 🚀 How to Run the Application
+## 🏛️ Architecture & Design Philosophy
 
-### Prerequisites
-- **Node.js**: v18.18.0 or newer (Node.js 20+ recommended)
-- **MongoDB**: Local MongoDB instance (`mongodb://127.0.0.1:27017`) or MongoDB Atlas URI (optional; backend includes automatic in-memory fallback)
+The frontend is built using **Next.js 16 App Router** with **React 19** in a pure multipage architecture designed for operational vigilance and statutory auditing:
+
+1. **Multipage Layout**: 
+   - The standalone landing page has been removed. The **Surveillance Command Center** (`/app/command-center`) is the primary application interface and dashboard.
+   - Root URL (`/`) automatically performs a server-level redirect to `/app/command-center`.
+2. **Zero Fake Data Policy**:
+   - Strictly presents authentic ingested data. Prior to dataset ingestion, dashboards rest at an authentic zero baseline (`0 works monitored`, `₹0 Cr sanctioned`, `0 risk flags`).
+   - When datasets are ingested, all KPI cards, risk donuts, and priority anomaly queues compute dynamically from processed records.
+3. **Dynamic API Resolution (`getApiBase()`)**:
+   - The client dynamically resolves the backend URL, prioritizing the local Express server on port `5000` (`http://localhost:5000/api`) when running in local browsers before falling back to production cloud endpoints.
+4. **Catch-All Project Twin Route (`/app/projects/[...projectId]`)**:
+   - Safely handles official Indian government work codes containing forward slashes (e.g. `WS/MP620/2024` or `WS/MP18152/2024`).
+5. **Calibrated National Geospatial Project Risk Map**:
+   - Interactive India state-boundary geographic risk map (`/maps/india-states.png`) with calibrated WGS84 Geodetic normalization, animated pulsing radar pins, risk severity filters, and Digital Project Twin side drawers.
+6. **Live System Activity Telemetry**:
+   - Embedded in the bottom-left sidebar footer across all pages, polling `GET /api/system/activity` to display the operational status of the Database, Backend port `5000`, and `21/21 Ready` AI Modules.
 
 ---
 
-### Step 1: Install Dependencies
-Install dependencies for both frontend and backend:
+## 🧭 Multipage Route Directory
 
+| Route Path | View / Component | Primary Operational Role |
+|---|---|---|
+| **`/`** | Root Index | Server-side redirect to `/app/command-center`. |
+| **`/app/command-center`** | National Command Center | Surveillance velocity charts, risk donut, priority anomaly queue, and 1-click batch ingest. |
+| **`/app/analytics`** | National Geospatial Risk Map | Calibrated WGS84 Geodetic India risk map, state-by-state risk rankings, macro indicators. |
+| **`/app/reports`** | Statutory Reports Panel | Persistent reports catalog browser (`reports_db.json`), official A4 HTML dossier viewer, batch ledgers. |
+| **`/app/data`** | e-SAKSHI Ingestion Hub | 12 official MoSPI datasets mapping, drag-and-drop file dropzone, and 1-click batch ingestion. |
+| **`/app/projects`** | Master Projects Directory | Multi-column filterable projects ledger, physical vs financial progress gap bars, CSV export. |
+| **`/app/projects/[...projectId]`** | Digital Project Twin | Catch-all route for work details, triggered AI signals with statutory citations, and photo forensics. |
+| **`/app/risk`** | Risk Screening Suite | Deep-dive anomaly filtering across critical, high, medium, and duplicate work tiers. |
+| **`/app/copilot`** | Grounded Audit Copilot | Conversational AI assistant powered by Google Gemini 2.0 Flash citing MoSPI 2023 Guidelines & GFR 2017. |
+| **`/app/investigations`** | Case Management Portal | Priority vigilance inquiry tracker, field inspection order dispatcher, and fund freeze actions. |
+| **`/app/evidence`** | Evidence Vault | Cryptographic SHA-256 evidence vault, dHash photo deduplication studio, and EXIF geotag checks. |
+| **`/app/admin`** | User & RBAC Manager | System administrator portal for user provisioning, jurisdiction scoping, and surveillance scope reset. |
+
+---
+
+## 🚀 Local Setup & Development
+
+### 1. Prerequisites
+- **Node.js**: `>= 18.18.0` (Node.js 20 LTS recommended)
+- **npm**: `>= 9.x`
+
+### 2. Install Dependencies
+From the repository root:
 ```bash
-# Install frontend dependencies
 npm install
-
-# Install backend dependencies
-cd backend && npm install && cd ..
 ```
-
----
-
-### Step 2: Seed the MongoDB Database (Optional)
-Populate MongoDB with realistic Indian project fixtures (`MPL-004821` showcase in New Delhi, `MPL-004822` duplicate, `MPL-005104` in Varanasi, `CASE-2026-00128`, evidence items, and geo coordinates):
-
+Or within the `frontend/` directory:
 ```bash
-npm run seed
+cd frontend && npm install
 ```
 
----
+### 3. Environment Variables
+Create or verify `frontend/.env`:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_AI_ENGINE_URL=http://localhost:8000
+NEXT_PUBLIC_SUPABASE_URL=https://vehldtcasdnmghnoktay.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-### Step 3: Run the Application
+### 4. Start Development Server
+```bash
+npm run dev
+# Starts Next.js on http://localhost:3000
+```
 
-#### Option A: Run Full MERN Stack Concurrently (Recommended)
-Starts both the Express API server (port 5000) and Next.js frontend (port 3000) in a single terminal:
-
+To run both frontend and backend concurrently from root:
 ```bash
 npm run dev:all
 ```
 
-#### Option B: Run Services in Separate Terminals
+### 5. Validate Production Build
 ```bash
-# Terminal 1: Start Express.js API Backend (Port 5000)
-npm run server
-
-# Terminal 2: Start React / Next.js Frontend (Port 3000)
-npm run dev
+npm run build
+# Compiles all 27 App Router routes with zero TypeScript/lint errors
 ```
 
-Open your browser at:
-👉 **[http://localhost:3000](http://localhost:3000)**  
-👉 **API Health Check:** **[http://localhost:5000/api/health](http://localhost:5000/api/health)**
-
 ---
 
-## 🧭 Key Navigation Routes
+## 🛠️ Technology Stack & Dependencies
 
-### 🏛️ Core Operational Modules
-- **[http://localhost:3000/app/command-center](http://localhost:3000/app/command-center)** — National Executive Command Center (18,432 works, 127 high risk, 34 critical, ₹42.8 Cr flagged value).
-- **[http://localhost:3000/app/projects](http://localhost:3000/app/projects)** — Master Projects Directory with multi-column filtering, sorting, progress gap indicators, and CSV export.
-- **[http://localhost:3000/app/projects/MPL-004821](http://localhost:3000/app/projects/MPL-004821)** — **Showcase Digital Project Twin** (Village Khera Community Hall, Risk 87/100, 88% financial vs 52% physical progress gap, 99.4% image reuse, ₹41L vs ₹35L invoice mismatch).
-- **[http://localhost:3000/app/risk](http://localhost:3000/app/risk)** — Multi-Modal Risk Intelligence Suite (Financial, Timeline, Duplicates, Documents, Computer Vision).
-- **[http://localhost:3000/app/risk/documents/compare](http://localhost:3000/app/risk/documents/compare)** — **Document & Layout Similarity Studio** (Drag & Drop file upload, coordinate bounding box matcher, and template fraud screening).
-- **[http://localhost:3000/app/evidence](http://localhost:3000/app/evidence)** & **[http://localhost:3000/app/evidence/EVD-IMG-001](http://localhost:3000/app/evidence/EVD-IMG-001)** — Cryptographic Evidence Repository with SHA-256 provenance.
-- **[http://localhost:3000/app/investigations](http://localhost:3000/app/investigations)** & **[http://localhost:3000/app/investigations/CASE-2026-00128](http://localhost:3000/app/investigations/CASE-2026-00128)** — Auditor Investigation Workspace with linear Evidence Chain, investigator notes feed, and printable Executive Brief export.
-- **[http://localhost:3000/app/copilot](http://localhost:3000/app/copilot)** — Grounded AI Copilot assistant with guideline citations and action steps.
-- **[http://localhost:3000/app/analytics](http://localhost:3000/app/analytics)** — National Geospatial Risk Map with clickable pins and state rankings.
-- **[http://localhost:3000/app/data](http://localhost:3000/app/data)** — Ingestion Dataset Explorer with all 12 official CSV datasets from MoSPI and eSAKSHI.
-
-### 🌐 Public & Transparency Pages
-- **[http://localhost:3000/](http://localhost:3000/)** — Institutional Public Landing Page
-- **[http://localhost:3000/about](http://localhost:3000/about)** — Mission & Governance Roles
-- **[http://localhost:3000/how-it-works](http://localhost:3000/how-it-works)** — 5-Stage Verification Pipeline Explainer
-- **[http://localhost:3000/methodology](http://localhost:3000/methodology)** — Hybrid AI Framework (Rules + ML + NLP + CV + XAI)
-- **[http://localhost:3000/research](http://localhost:3000/research)** — Academic & CAG Performance Audit Citations
-- **[http://localhost:3000/transparency](http://localhost:3000/transparency)** — Trust & Ethics Center (Human-In-The-Loop Declaration)
+- **Framework**: Next.js 16.3.3 (App Router)
+- **UI Runtime**: React 19.2.8 & React DOM 19.2.8
+- **Styling**: Tailwind CSS v4 (PostCSS engine)
+- **Visualizations**: Recharts 3.10.1 (ResponsiveContainer, BarChart, LineChart, PieChart)
+- **Icons**: Lucide React 1.35.0
+- **Class Utilities**: `clsx` & `tailwind-merge`
+- **GIS Mapping**: Survey of India calibrated base raster (`/maps/india-states.png`) with WGS84 Geodetic normalization
 
 ---
-
-## 🛠️ Technology Stack
-
-| Layer | Technology | Details |
-|---|---|---|
-| **M** — Database | **MongoDB & Mongoose** | Schemas for Projects, Evidence, Investigations, Analytics, and Datasets |
-| **E** — Backend API | **Express.js** | REST endpoints (`/api/projects`, `/api/investigations`, `/api/layout`, `/api/ai`, etc.) |
-| **R** — Frontend | **React 19 & Next.js 16** | Turbopack, Tailwind CSS v4, Lucide Icons, Recharts |
-| **N** — Runtime | **Node.js** | Modular architecture with concurrent multi-process support |
+*(MPLADS Sentinel — Frontend Web Application Documentation)*

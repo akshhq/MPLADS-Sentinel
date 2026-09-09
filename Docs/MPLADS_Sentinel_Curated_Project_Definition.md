@@ -3,15 +3,13 @@
 > **This is the curated project definition.**  
 > A new team member should be able to read this document and understand exactly what the project is, what is in scope, what is not, and how the system works.
 
-> **⚠️ Scope Lock:** We verified the real MPLADS export (12 CSVs, 45,806 rows after cleaning) contains no images and no document content — the "Image" field in Works Completed is a text placeholder, not actual image data. Every section below involving Document or Image Intelligence is marked `[DEFERRED — Phase 2]` and is *not* part of the SIH MVP. This keeps this doc consistent with `MPLADS_Sentinel_Custom_AI_Specification.md`, `SIH26102_Complete_Knowledge_Base.md`, and the PPT content bank.
+> **💡 Architecture Realization:** While the official 12 parliamentary CSV exports (45,806 rows) primarily supply tabular financial and lifecycle records, MPLADS Sentinel provides a full-featured **e-SAKSHI Ingestion Hub (`/app/data`) and Evidence Vault (`/app/evidence`)**. This enables field officers and implementing agencies to stream real multi-modal evidence—including geo-tagged site photographs (evaluated via 64-bit `dHash` and Haversine geofencing) and contractor Running Account bills / sanction orders (evaluated via OCR and layout forensics)—demonstrating the complete 21-Module AI Grid in action.
 
 ---
 
 # 1. 🎯 One-Line Definition
 
-> **MPLADS Sentinel is an AI-powered evidence and risk-intelligence layer for MPLADS/eSAKSHI that continuously verifies project claims, financial activity, and progress against real MPLADS data, and prioritizes potentially irregular works for investigation.**
-
-*(Document/image verification dropped from the MVP definition — no real document or image data exists in the current export. See §10–11 for the Phase 2 version of this claim.)*
+> **MPLADS Sentinel is an autonomous AI-powered multi-source surveillance, risk-intelligence, and evidence-verification layer for MPLADS/eSAKSHI that continuously verifies project claims, financial velocity, and physical progress, and prioritizes potentially irregular works for authorized institutional investigation.**
 
 ---
 
