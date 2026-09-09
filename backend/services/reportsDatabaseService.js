@@ -105,7 +105,7 @@ class ReportsDatabaseService {
    * Get all persisted audit report batches
    */
   getAllReportBatches() {
-    if (!this.initialized) this.init();
+    this.init();
     return this.memoryStore.batches;
   }
 
@@ -113,7 +113,7 @@ class ReportsDatabaseService {
    * Get a specific audit report batch by ID
    */
   getReportBatchById(batchId) {
-    if (!this.initialized) this.init();
+    this.init();
     return this.memoryStore.batches.find((b) => b.batchId === batchId) || null;
   }
 
@@ -121,7 +121,7 @@ class ReportsDatabaseService {
    * Retrieve active surveillance scope
    */
   getActiveScope() {
-    if (!this.initialized) this.init();
+    this.init();
     return this.memoryStore.activeScope;
   }
 

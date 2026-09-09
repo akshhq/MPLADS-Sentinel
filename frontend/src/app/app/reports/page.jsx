@@ -352,7 +352,7 @@ export default function ReportsPage() {
                 disabled={ingestingAll || refreshing}
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 shadow-sm shadow-blue-500/20 transition"
               >
-                <Sparkles className={`w-3.5 h-3.5 ${ingestingAll ? "animate-spin" : ""}`} />
+                <Layers className={`w-3.5 h-3.5 ${ingestingAll ? "animate-spin" : ""}`} />
                 <span>{ingestingAll ? "Ingesting All 12 Files..." : "Add All 12 Files at Once"}</span>
               </button>
             )}
@@ -467,7 +467,7 @@ export default function ReportsPage() {
                     className="appearance-none pl-3 pr-8 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none cursor-pointer max-w-xs sm:max-w-md truncate"
                   >
                     <option value="flagship">
-                      ⭐ Flagship Statutory Audit: LS-EXP-2024-8842 (Varanasi PC-77)
+                      Flagship Statutory Audit: LS-EXP-2024-8842 (Varanasi PC-77)
                     </option>
                     {workReports.map((w) => {
                       const isDup =
@@ -674,11 +674,11 @@ export default function ReportsPage() {
                     className="px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-300 focus:outline-none"
                   >
                     <option value="all">All Risk Bands</option>
-                    <option value="duplicate">🟣 Duplicate Work (No Rating)</option>
-                    <option value="critical">🔴 Critical Risk (80+)</option>
-                    <option value="high">🟠 High Risk (65-79)</option>
-                    <option value="medium">🟡 Medium Concern (45-64)</option>
-                    <option value="low">🟢 Low Risk (&lt;45)</option>
+                    <option value="duplicate">Duplicate</option>
+                    <option value="critical">Critical Risk (80+)</option>
+                    <option value="high">High Risk (65-79)</option>
+                    <option value="medium">Medium Concern (45-64)</option>
+                    <option value="low">Normal / Low Risk (&lt;45)</option>
                   </select>
 
                   {/* State Filter */}
@@ -785,13 +785,13 @@ export default function ReportsPage() {
                             </td>
 
                             <td className="py-3.5 px-4 max-w-xs">
-                              <p className="text-[11px] text-slate-700 dark:text-slate-300 line-clamp-2">
+                              <span className="text-[11px] font-medium text-slate-700 dark:text-slate-300 line-clamp-1">
                                 {isDup
-                                  ? "High semantic similarity (>88%) detected with adjacent sanctioned work — duplicate scope."
+                                  ? "Duplicate Scope Detected"
                                   : work.risk?.primarySignal ||
                                     (work.triggered_signals && work.triggered_signals[0]?.finding) ||
-                                    "Operational within expected tolerances."}
-                              </p>
+                                    "Normal Parameters"}
+                              </span>
                             </td>
 
                             <td className="py-3.5 px-4 text-right whitespace-nowrap space-x-1.5">
@@ -880,14 +880,16 @@ export default function ReportsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">Location</span>
-                  <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
-                    📍 {selectedWorkModal.district}, {selectedWorkModal.state}
+                  <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span>{selectedWorkModal.district}, {selectedWorkModal.state}</span>
                   </p>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">Implementing Agency</span>
-                  <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5 truncate">
-                    🏛️ {selectedWorkModal.implementing_agency}
+                  <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5 truncate flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span className="truncate">{selectedWorkModal.implementing_agency}</span>
                   </p>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">

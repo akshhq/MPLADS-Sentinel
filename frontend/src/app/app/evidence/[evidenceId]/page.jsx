@@ -126,7 +126,7 @@ export default function EvidenceDetailPage({ params }) {
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${field.isConsistent
                         ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
                         : "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300"}`}>
-                              {field.isConsistent ? "Consistent" : "Discrepancy ⚠"}
+                              {field.isConsistent ? "Consistent" : "Discrepancy"}
                             </span>
                             {field.mismatchNote && (<p className="text-[10px] text-rose-600 dark:text-rose-400 mt-1 max-w-xs font-sans">
                                 {field.mismatchNote}

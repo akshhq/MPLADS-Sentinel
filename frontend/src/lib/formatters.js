@@ -128,30 +128,65 @@ export function getRiskBadgeStyles(level) {
                 dot: "bg-rose-600",
                 label: "Critical",
             };
+        case "corrupted":
+            return {
+                bg: "bg-rose-50 dark:bg-rose-950/40",
+                text: "text-rose-700 dark:text-rose-400",
+                border: "border-rose-200 dark:border-rose-800/60",
+                dot: "bg-rose-600",
+                label: "Corrupted Data",
+            };
         case "high":
+        case "high risk":
             return {
                 bg: "bg-orange-50 dark:bg-orange-950/40",
                 text: "text-orange-700 dark:text-orange-400",
                 border: "border-orange-200 dark:border-orange-800/60",
                 dot: "bg-orange-500",
-                label: "High",
+                label: "High Risk",
+            };
+        case "suspicious":
+            return {
+                bg: "bg-orange-50 dark:bg-orange-950/40",
+                text: "text-orange-700 dark:text-orange-400",
+                border: "border-orange-200 dark:border-orange-800/60",
+                dot: "bg-orange-500",
+                label: "Suspicious",
             };
         case "medium":
+        case "medium risk":
             return {
                 bg: "bg-amber-50 dark:bg-amber-950/40",
                 text: "text-amber-700 dark:text-amber-400",
                 border: "border-amber-200 dark:border-amber-800/60",
                 dot: "bg-amber-500",
-                label: "Medium",
+                label: "Medium Risk",
+            };
+        case "normal":
+            return {
+                bg: "bg-emerald-50 dark:bg-emerald-950/40",
+                text: "text-emerald-700 dark:text-emerald-400",
+                border: "border-emerald-200 dark:border-emerald-800/60",
+                dot: "bg-emerald-500",
+                label: "Normal",
+            };
+        case "valid":
+            return {
+                bg: "bg-emerald-50 dark:bg-emerald-950/40",
+                text: "text-emerald-700 dark:text-emerald-400",
+                border: "border-emerald-200 dark:border-emerald-800/60",
+                dot: "bg-emerald-500",
+                label: "Valid",
             };
         case "low":
+        case "low risk":
         default:
             return {
                 bg: "bg-emerald-50 dark:bg-emerald-950/40",
                 text: "text-emerald-700 dark:text-emerald-400",
                 border: "border-emerald-200 dark:border-emerald-800/60",
                 dot: "bg-emerald-500",
-                label: "Low",
+                label: "Low Risk",
             };
     }
 }

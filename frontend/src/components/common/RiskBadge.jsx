@@ -15,6 +15,8 @@ export const RiskBadge = ({
   // Calibrate effective level from score when a valid numeric score is present
   const effectiveLevel = isDuplicate
     ? "duplicate"
+    : (rawNorm === "normal" || rawNorm === "valid" || rawNorm === "corrupted" || rawNorm === "suspicious")
+    ? rawNorm
     : typeof score === "number" && !isNaN(score)
     ? getRiskLevelFromScore(score)
     : rawNorm || "low";
@@ -26,11 +28,15 @@ export const RiskBadge = ({
       case "duplicate":
         return <CopyCheck className="w-3.5 h-3.5" />;
       case "critical":
+      case "corrupted":
         return <AlertOctagon className="w-3.5 h-3.5" />;
       case "high":
+      case "suspicious":
         return <ShieldAlert className="w-3.5 h-3.5" />;
       case "medium":
         return <AlertTriangle className="w-3.5 h-3.5" />;
+      case "normal":
+      case "valid":
       case "low":
       default:
         return <ShieldCheck className="w-3.5 h-3.5" />;

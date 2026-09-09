@@ -33,7 +33,7 @@ export const MilestoneLifecycle = ({ milestones, className = "", }) => {
                         border: "border-rose-200 dark:border-rose-900/60 bg-rose-50/40 dark:bg-rose-950/20",
                         icon: <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400"/>,
                         pill: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300",
-                        label: "Delayed ⚠",
+                        label: "Delayed",
                     }
                     : isInProgress
                         ? {

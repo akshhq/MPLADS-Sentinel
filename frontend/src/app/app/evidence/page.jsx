@@ -279,10 +279,10 @@ export default function EvidenceRepositoryPage() {
               className="px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 focus:outline-none"
             >
               <option value="all">All Evidence Types</option>
-              <option value="image">📸 Photographs</option>
-              <option value="document">📄 Invoices & Orders</option>
-              <option value="payment">💰 Treasury Vouchers</option>
-              <option value="certificate">📜 Certificates (UC)</option>
+              <option value="image">Photographs</option>
+              <option value="document">Invoices & Orders</option>
+              <option value="payment">Treasury Vouchers</option>
+              <option value="certificate">Certificates (UC)</option>
             </select>
 
             {/* Status Filters */}
@@ -292,9 +292,9 @@ export default function EvidenceRepositoryPage() {
               className="px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 focus:outline-none"
             >
               <option value="all">All Statuses</option>
-              <option value="conflict">⚠ Flagged Conflict</option>
-              <option value="verified">✓ Verified Authentic</option>
-              <option value="review">⏳ Under Review</option>
+              <option value="conflict">Flagged Conflict</option>
+              <option value="verified">Verified Authentic</option>
+              <option value="review">Under Review</option>
             </select>
 
             {(selectedType !== "all" || selectedStatus !== "all" || selectedCategory !== "all" || search) && (

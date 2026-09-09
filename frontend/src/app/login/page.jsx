@@ -171,7 +171,7 @@ export default function LoginPage() {
                           {p.designation}
                         </p>
                         <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                          📍 {p.jurisdiction || p.department}
+                          {p.jurisdiction || p.department}
                         </p>
                       </div>
                     </div>

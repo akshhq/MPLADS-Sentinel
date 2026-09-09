@@ -17,7 +17,7 @@ export const LayoutComparator = ({ uploadedDocName, analysis, onCreateCase, }) =
           </div>
           <h2 className="text-xl font-bold text-slate-100">
             {analysis.overallSimilarity >= 80
-            ? "⚠ High-Confidence Layout & Template Reuse Detected"
+            ? "High-Confidence Layout & Template Reuse Detected"
             : "Standard Document Template Comparison"}
           </h2>
           <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">

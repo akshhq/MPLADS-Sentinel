@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, MapPin, Sparkles } from "lucide-react";
+import { ArrowRight, MapPin } from "lucide-react";
 import { RiskBadge } from "../common/RiskBadge";
 import { formatIndianCurrency, formatRelativeTime } from "@/lib/formatters";
 export const PriorityQueueTable = ({ projects, totalWorks = "45,806" }) => {
@@ -94,12 +94,9 @@ export const PriorityQueueTable = ({ projects, totalWorks = "45,806" }) => {
 
                   {/* Primary Signal */}
                   <td className="px-4 py-3.5 max-w-xs">
-                    <div className="flex items-start gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5"/>
-                      <span className="text-slate-700 dark:text-slate-300 font-medium line-clamp-1">
-                        {primarySignal}
-                      </span>
-                    </div>
+                    <span className="text-slate-700 dark:text-slate-300 font-medium line-clamp-1">
+                      {primarySignal}
+                    </span>
                   </td>
 
                   {/* Relative Timestamp */}

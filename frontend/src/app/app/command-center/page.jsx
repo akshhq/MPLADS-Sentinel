@@ -441,8 +441,8 @@ export default function CommandCenterPage() {
                       disabled={ingestingAll || refreshing}
                       className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 shadow-md shadow-blue-500/25 transition hover:scale-102"
                     >
-                      <Sparkles className={`w-4 h-4 ${ingestingAll ? "animate-spin" : ""}`} />
-                      <span>{ingestingAll ? "Processing All 12 Files..." : "⚡ Add All 12 Files at Once"}</span>
+                      <Layers className={`w-4 h-4 ${ingestingAll ? "animate-spin" : ""}`} />
+                      <span>{ingestingAll ? "Processing All 12 Files..." : "Add All 12 Files at Once"}</span>
                     </button>
                   )}
                   <Link
@@ -533,7 +533,10 @@ export default function CommandCenterPage() {
                         <span className="text-[10px] text-blue-600 dark:text-blue-400 font-mono">{u.role}</span>
                       </td>
                       <td className="py-3 px-4 text-slate-600 dark:text-slate-300">
-                        📍 {u.jurisdiction || u.department}
+                        <div className="flex items-center gap-1.5">
+                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span>{u.jurisdiction || u.department}</span>
+                        </div>
                       </td>
                       <td className="py-3 px-4">
                         <span

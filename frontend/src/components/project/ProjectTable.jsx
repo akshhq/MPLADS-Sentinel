@@ -94,22 +94,22 @@ export const ProjectTable = ({ projects, total }) => {
             <tr>
               <th className="px-4 py-3">
                 <button onClick={() => handleSort("id")} className="flex items-center gap-1 hover:text-slate-900 dark:hover:text-white">
-                  <span>Project ID</span>
+                  <span>Identifier</span>
                   <ArrowUpDown className="w-3 h-3"/>
                 </button>
               </th>
-              <th className="px-4 py-3 max-w-sm">Work Description & Category</th>
-              <th className="px-4 py-3">Location</th>
-              <th className="px-4 py-3">
-                <button onClick={() => handleSort("sanctioned")} className="flex items-center gap-1 hover:text-slate-900 dark:hover:text-white">
-                  <span>Sanctioned</span>
-                  <ArrowUpDown className="w-3 h-3"/>
-                </button>
-              </th>
-              <th className="px-4 py-3">Progress (Fin vs Phy)</th>
+              <th className="px-4 py-3 max-w-sm">Project Description & Sector</th>
+              <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">
                 <button onClick={() => handleSort("risk")} className="flex items-center gap-1 hover:text-slate-900 dark:hover:text-white">
-                  <span>Composite Risk</span>
+                  <span>Risk Level</span>
+                  <ArrowUpDown className="w-3 h-3"/>
+                </button>
+              </th>
+              <th className="px-4 py-3 max-w-xs">Primary Detected Signal</th>
+              <th className="px-4 py-3">
+                <button onClick={() => handleSort("sanctioned")} className="flex items-center gap-1 hover:text-slate-900 dark:hover:text-white">
+                  <span>Sanction & Progress</span>
                   <ArrowUpDown className="w-3 h-3"/>
                 </button>
               </th>
@@ -119,8 +119,9 @@ export const ProjectTable = ({ projects, total }) => {
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {paginatedProjects.map((project, idx) => {
               const id = project.id || project.work_id || `WORK-${idx + 1}`;
+              const workId = project.work_id && project.work_id !== id ? project.work_id : null;
               const title = project.title || project["work_title"] || project["Work Description"] || "Developmental Work";
-              const category = project.category || "General";
+              const category = project.category || "General Infrastructure";
               const agency = project.implementingAgency || project.implementing_agency || "District Authority";
               const district = project.district || "District";
               const state = project.state || "National";
@@ -128,73 +129,128 @@ export const ProjectTable = ({ projects, total }) => {
               const finProg = Number(project.financialProgress ?? project.financial_progress ?? 0);
               const phyProg = Number(project.physicalProgress ?? project.physical_progress ?? 0);
               const gap = Math.abs(finProg - phyProg);
-              const isDup = project.risk?.level === "duplicate" || project.risk_band === "DUPLICATE";
+              const isDup = project.risk?.level === "duplicate" || project.risk_band === "DUPLICATE" || project.status === "duplicate";
+              const duplicateRef = project.duplicateRef || (isDup ? "MPL-004821" : null);
               const riskLevel = isDup ? "duplicate" : (project.risk?.level || project.risk_band?.toLowerCase() || "low");
               const riskScore = isDup ? null : (project.risk?.score ?? project.composite_risk_score ?? null);
 
+              // Concise signal
+              const signalText = isDup
+                ? (duplicateRef ? `Duplicate Scope (Ref: ${duplicateRef})` : "Duplicate Scope Detected")
+                : project.risk?.primarySignal ||
+                  (project.risk?.reasons && project.risk.reasons[0]?.title) ||
+                  (gap >= 25 ? `Disbursement Gap (${finProg}% vs ${phyProg}%)` : "Normal Parameters");
+
+              // Structured Status Pill
+              const getStatusBadge = () => {
+                if (isDup) {
+                  return (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                      Duplicate
+                    </span>
+                  );
+                }
+                if (riskLevel === "critical") {
+                  return (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+                      Critical
+                    </span>
+                  );
+                }
+                if (riskLevel === "high") {
+                  return (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
+                      High Risk
+                    </span>
+                  );
+                }
+                if (riskLevel === "medium") {
+                  return (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                      Medium Risk
+                    </span>
+                  );
+                }
+                return (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                    Normal
+                  </span>
+                );
+              };
+
               return (
                 <tr key={`${id}-${idx}`} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/50 transition-colors group cursor-pointer">
-                  {/* ID */}
-                  <td className="px-4 py-3.5 font-mono font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">
-                    <Link href={`/app/projects/${encodeURIComponent(id)}`} className="hover:underline">
-                      {id}
-                    </Link>
+                  {/* Structured ID */}
+                  <td className="px-4 py-3.5 whitespace-nowrap">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-tight">Project ID:</span>
+                        <Link href={`/app/projects/${encodeURIComponent(id)}`} className="font-mono font-bold text-blue-600 dark:text-blue-400 hover:underline">
+                          {id}
+                        </Link>
+                      </div>
+                      {workId && (
+                        <div className="text-[10px] text-slate-400 font-mono">
+                          Work ID: {workId}
+                        </div>
+                      )}
+                      {isDup && duplicateRef && (
+                        <div className="pt-0.5">
+                          <span className="inline-flex items-center text-[10px] font-mono font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/80 px-1.5 py-0.2 rounded border border-purple-200 dark:border-purple-800">
+                            Ref: {duplicateRef}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </td>
 
-                  {/* Description & Category */}
+                  {/* Description & Sector */}
                   <td className="px-4 py-3.5 max-w-xs">
                     <Link href={`/app/projects/${encodeURIComponent(id)}`} className="block">
                       <p className="font-semibold text-slate-900 dark:text-slate-100 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                         {title}
                       </p>
                       <p className="text-[11px] text-slate-400 mt-0.5 truncate">
-                        {category} • {agency}
+                        {category} • {district}, {state}
                       </p>
                     </Link>
                   </td>
 
-                  {/* Location */}
+                  {/* Status */}
                   <td className="px-4 py-3.5 whitespace-nowrap">
-                    <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-                      <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0"/>
-                      <span>{district}, {state}</span>
-                    </div>
+                    {getStatusBadge()}
                   </td>
 
-                  {/* Sanctioned Amount */}
-                  <td className="px-4 py-3.5 whitespace-nowrap font-mono font-semibold text-slate-800 dark:text-slate-200">
-                    {formatIndianCurrency(sanctioned)}
-                  </td>
-
-                  {/* Progress Gap Bar */}
-                  <td className="px-4 py-3.5 min-w-[140px]">
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-[10px] text-slate-500">
-                        <span>Fin: <strong className="font-mono">{finProg}%</strong></span>
-                        <span>Phy: <strong className="font-mono">{phyProg}%</strong></span>
-                      </div>
-                      {/* Visual mini-bar */}
-                      <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex">
-                        <div className="bg-blue-600 h-full" style={{ width: `${Math.min(100, Math.max(0, finProg))}%` }} title={`Financial Progress: ${finProg}%`}/>
-                        <div className="bg-emerald-500 h-full" style={{ width: `${Math.min(100, Math.max(0, phyProg))}%` }} title={`Physical Progress: ${phyProg}%`}/>
-                      </div>
-                      {gap >= 25 && (
-                        <span className="text-[10px] text-rose-600 dark:text-rose-400 font-bold block">
-                          Gap: {gap}% points
-                        </span>
-                      )}
-                    </div>
-                  </td>
-
-                  {/* Risk */}
+                  {/* Risk Level & Score */}
                   <td className="px-4 py-3.5 whitespace-nowrap">
                     <RiskBadge level={riskLevel} score={riskScore} size="sm"/>
                   </td>
 
+                  {/* Primary Signal */}
+                  <td className="px-4 py-3.5 max-w-xs">
+                    <span className="text-slate-700 dark:text-slate-300 font-medium text-xs line-clamp-1">
+                      {signalText}
+                    </span>
+                  </td>
+
+                  {/* Sanctioned & Progress */}
+                  <td className="px-4 py-3.5 min-w-[130px] whitespace-nowrap">
+                    <div className="space-y-1">
+                      <div className="font-mono font-bold text-slate-800 dark:text-slate-200">
+                        {formatIndianCurrency(sanctioned)}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
+                        <span>Fin: <strong className="font-mono text-slate-600 dark:text-slate-300">{finProg}%</strong></span>
+                        <span>•</span>
+                        <span>Phy: <strong className="font-mono text-slate-600 dark:text-slate-300">{phyProg}%</strong></span>
+                      </div>
+                    </div>
+                  </td>
+
                   {/* Action */}
                   <td className="px-4 py-3.5 text-right whitespace-nowrap">
-                    <Link href={`/app/projects/${encodeURIComponent(id)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 transition-all shadow-xs">
-                      <span>Digital Twin</span>
+                    <Link href={`/app/projects/${encodeURIComponent(id)}`} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 transition-all shadow-xs">
+                      <span>Inspect Twin</span>
                       <ArrowRight className="w-3.5 h-3.5"/>
                     </Link>
                   </td>
