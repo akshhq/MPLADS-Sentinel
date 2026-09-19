@@ -237,12 +237,32 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Preload all 12 official datasets into memory and initialize surveillance engine
+async function preloadDatasetsAndSurveillance() {
+  try {
+    const { preloadAllDatasets } = require("./utils/csvLoader");
+    const DynamicIngestionService = require("./services/dynamicIngestionService");
+    
+    console.log("-------------------------------------------------");
+    console.log("📦 Pre-loading 12 official MPLADS datasets into memory...");
+    await preloadAllDatasets(1000);
+
+    console.log("🔍 Activating 12-dataset multi-stream surveillance audit...");
+    const batch = await DynamicIngestionService.processAll12OfficialFiles({ userRole: "system_admin" });
+    console.log(`✅ Surveillance batch active: ${batch.batchId} (${batch.summary?.totalWorksCount || 0} works monitored, ${batch.summary?.flaggedCasesCount || 0} flagged)`);
+    console.log("-------------------------------------------------");
+  } catch (err) {
+    console.warn("[Pre-load Warning] Could not complete automatic dataset pre-load:", err.message);
+  }
+}
+
 app.listen(PORT, () => {
   console.log("=================================================");
   console.log(`🚀 MPLADS Sentinel Express API running on port ${PORT}`);
   console.log(`🗄️ Database: Supabase (${isConfigured ? "Connected" : "Local Mode"})`);
   console.log(`👉 Health Check: http://localhost:${PORT}/api/health`);
   console.log("=================================================");
+  preloadDatasetsAndSurveillance();
 });
 
 module.exports = app;

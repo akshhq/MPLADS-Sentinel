@@ -138,8 +138,11 @@ const OFFICIAL_DATASETS_META = [
   },
 ];
 
+const fs = require("fs");
+const OFFICIAL_DATASETS_DIR = path.resolve(__dirname, "../data/official_datasets");
+
 /**
- * Loads and parses a CSV dataset strictly from Supabase Cloud Storage (No local storage lookups)
+ * Loads and parses a CSV dataset from local disk or Supabase Cloud Storage
  */
 async function loadCSVFile(filename, limit = 1000) {
   const cacheKey = `${filename}_${limit}`;
@@ -147,7 +150,22 @@ async function loadCSVFile(filename, limit = 1000) {
     return datasetCache.get(cacheKey);
   }
 
-  // 1. Fetch directly from Supabase Public Storage URL
+  // 1. Check local official datasets directory first (instant, 0ms network latency, offline-first)
+  const localFilePath = path.join(OFFICIAL_DATASETS_DIR, filename);
+  if (fs.existsSync(localFilePath)) {
+    try {
+      const text = fs.readFileSync(localFilePath, "utf8");
+      if (text && text.trim().length > 0) {
+        const rows = await parseCSVString(text, limit);
+        datasetCache.set(cacheKey, rows);
+        return rows;
+      }
+    } catch (err) {
+      console.warn(`[CSVLoader] Local read error for '${filename}':`, err.message);
+    }
+  }
+
+  // 2. Fetch directly from Supabase Public Storage URL as fallback
   try {
     const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${encodeURIComponent(filename)}`;
     const response = await fetch(publicUrl);
@@ -163,7 +181,7 @@ async function loadCSVFile(filename, limit = 1000) {
     // Continue to SDK fallback
   }
 
-  // 2. Try Supabase Storage SDK download
+  // 3. Try Supabase Storage SDK download
   if (supabase) {
     try {
       const { data, error } = await supabase.storage.from(BUCKET_NAME).download(filename);
@@ -179,6 +197,27 @@ async function loadCSVFile(filename, limit = 1000) {
   }
 
   return [];
+}
+
+/**
+ * Pre-loads all 12 official datasets into memory cache at startup
+ */
+async function preloadAllDatasets(limit = 1000) {
+  console.log("⏳ Pre-loading all 12 official MPLADS datasets into memory cache...");
+  const startTime = Date.now();
+  let loadedCount = 0;
+  for (const meta of OFFICIAL_DATASETS_META) {
+    try {
+      const rows = await loadCSVFile(meta.filename, limit);
+      if (rows && rows.length > 0) {
+        loadedCount++;
+      }
+    } catch (err) {
+      console.warn(`[CSVLoader] Failed to pre-load ${meta.filename}:`, err.message);
+    }
+  }
+  console.log(`✅ Pre-loaded ${loadedCount}/${OFFICIAL_DATASETS_META.length} datasets into cache (${Date.now() - startTime}ms)`);
+  return loadedCount;
 }
 
 function parseStream(stream, limit) {
@@ -217,5 +256,6 @@ function getAvailableDatasetsMeta() {
 module.exports = {
   loadCSVFile,
   getAvailableDatasetsMeta,
+  preloadAllDatasets,
   OFFICIAL_DATASETS_META,
 };

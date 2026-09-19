@@ -470,10 +470,11 @@ function normalizeProject(p) {
       const score = isDup ? null : (p.risk?.score ?? p.composite_risk_score ?? 0);
       let level = isDup ? "duplicate" : (p.risk?.level || p.risk_band || "low").toLowerCase();
       if (!isDup && typeof score === "number") {
-        if (score >= 80) level = "critical";
-        else if (score >= 60) level = "high";
-        else if (score >= 35) level = "medium";
-        else level = "low";
+        if (score >= 80) level = "normal";
+        else if (score >= 60) level = "low";
+        else if (score >= 40) level = "medium";
+        else if (score >= 20) level = "high";
+        else level = "critical";
       }
       return {
         score,
@@ -609,10 +610,11 @@ const supabaseService = {
           const score = isDup ? null : (w.composite_risk_score ?? w.risk?.score ?? 0);
           let level = isDup ? "duplicate" : (w.risk?.level || w.risk_band || "low").toLowerCase();
           if (!isDup && typeof score === "number") {
-            if (score >= 80) level = "critical";
-            else if (score >= 60) level = "high";
-            else if (score >= 35) level = "medium";
-            else level = "low";
+            if (score >= 80) level = "normal";
+            else if (score >= 60) level = "low";
+            else if (score >= 40) level = "medium";
+            else if (score >= 20) level = "high";
+            else level = "critical";
           }
           return {
             score,

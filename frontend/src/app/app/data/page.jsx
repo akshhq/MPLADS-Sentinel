@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   LayoutDashboard,
@@ -195,6 +195,19 @@ export default function DynamicIngestionPage() {
     }
     loadDatasets();
   }, []);
+
+  const currentDataset = useMemo(() => {
+    return datasets.find((d) => d.id === selectedDatasetId) || datasets[0];
+  }, [datasets, selectedDatasetId]);
+
+  const filteredSampleRows = useMemo(() => {
+    if (!currentDataset?.sampleRows) return [];
+    if (!search.trim()) return currentDataset.sampleRows.slice(0, 25);
+    const q = search.toLowerCase();
+    return currentDataset.sampleRows.filter((row) =>
+      Object.values(row || {}).some((val) => String(val).toLowerCase().includes(q))
+    ).slice(0, 25);
+  }, [currentDataset, search]);
 
   // Handle Custom File Upload into a Specific Slot
   const handleSlotFileChange = (slotKey, e) => {
@@ -1033,7 +1046,7 @@ export default function DynamicIngestionPage() {
               >
                 {datasets.map((d) => (
                   <option key={d.id} value={d.id}>
-                    {d.name} ({d.house})
+                    {d.name} {d.house ? `(${d.house})` : ""}
                   </option>
                 ))}
               </select>
@@ -1044,7 +1057,7 @@ export default function DynamicIngestionPage() {
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
               <input
                 type="text"
-                placeholder="Search across columns..."
+                placeholder="Search across columns in this dataset..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none"
@@ -1052,12 +1065,12 @@ export default function DynamicIngestionPage() {
             </div>
 
             {/* Registry Preview Table */}
-            {datasets.length > 0 ? (
+            {datasets.length > 0 && currentDataset ? (
               <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500 font-bold uppercase text-[10px]">
                     <tr>
-                      {datasets[0]?.columns?.map((col) => (
+                      {currentDataset?.columns?.map((col) => (
                         <th key={col.key} className="p-3 whitespace-nowrap">
                           {col.label}
                         </th>
@@ -1065,15 +1078,23 @@ export default function DynamicIngestionPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                    {datasets[0]?.sampleRows?.slice(0, 10).map((row, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
-                        {Object.values(row).map((val, cIdx) => (
-                          <td key={cIdx} className="p-3 text-slate-700 dark:text-slate-300 max-w-xs truncate">
-                            {String(val)}
-                          </td>
-                        ))}
+                    {filteredSampleRows.length > 0 ? (
+                      filteredSampleRows.map((row, idx) => (
+                        <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                          {Object.values(row).map((val, cIdx) => (
+                            <td key={cIdx} className="p-3 text-slate-700 dark:text-slate-300 max-w-xs truncate">
+                              {String(val)}
+                            </td>
+                          ))}
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={currentDataset?.columns?.length || 1} className="p-8 text-center text-slate-400">
+                          No rows match your search query &quot;{search}&quot;.
+                        </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>

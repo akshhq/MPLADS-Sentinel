@@ -528,7 +528,11 @@ export const api = {
     // --- Datasets ---
     async getDatasets() {
         const backendDatasets = await fetchFromBackend("/datasets");
-        let list = backendDatasets || [];
+        let list = (Array.isArray(backendDatasets) && backendDatasets.length > 0)
+            ? backendDatasets
+            : (backendDatasets?.data && Array.isArray(backendDatasets.data))
+            ? backendDatasets.data
+            : MOCK_DATASETS;
         const currentRole = getActiveUserRole();
         if (currentRole === "mp") {
             list = list.filter((d) => d.id?.includes("REC") || d.id?.includes("SANC") || d.id?.includes("COMP") || d.name?.includes("Lok Sabha"));

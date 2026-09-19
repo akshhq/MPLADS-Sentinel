@@ -19,7 +19,7 @@ exports.getDatasets = async (req, res) => {
 
     const formatted = await Promise.all(
       filteredMetaList.map(async (meta) => {
-        const sampleRows = await loadCSVFile(meta.filename, 5);
+        const sampleRows = await loadCSVFile(meta.filename, 15);
         const columns =
           sampleRows.length > 0 && sampleRows[0] && typeof sampleRows[0] === "object"
             ? Object.keys(sampleRows[0]).map((colKey) => ({
@@ -38,9 +38,10 @@ exports.getDatasets = async (req, res) => {
           id: meta.id,
           filename: meta.filename,
           name: meta.name,
+          house: meta.house,
           category: meta.category,
           sourceOfficialName: meta.sourceOfficialName,
-          description: `Official dataset containing live administrative and treasury records for ${meta.house}.`,
+          description: meta.description || `Official dataset containing live administrative and treasury records for ${meta.house}.`,
           totalRows: meta.fileSizeKb > 500 ? 5000 : 500,
           fileSizeKb: meta.fileSizeKb,
           lastSyncedAt: new Date().toISOString(),
@@ -113,6 +114,27 @@ exports.adminIngestAllFiles = async (req, res) => {
   } catch (error) {
     console.error("[Admin Ingest All Files Error]", error);
     res.status(500).json({ success: false, message: "Failed to ingest all 12 datasets: " + error.message });
+  }
+};
+
+// POST /api/datasets/preload - Pre-load all 12 CSV datasets into cache & ingest into surveillance scope
+exports.preloadDatasets = async (req, res) => {
+  try {
+    const { preloadAllDatasets } = require("../utils/csvLoader");
+    const DynamicIngestionService = require("../services/dynamicIngestionService");
+    const userRole = req.user?.role || req.profile?.role || req.headers["x-demo-role"] || req.headers["x-user-role"] || "system_admin";
+    const preloadedCount = await preloadAllDatasets(1000);
+    const result = await DynamicIngestionService.processAll12OfficialFiles({ userRole });
+    res.status(200).json({
+      success: true,
+      message: `Pre-loaded ${preloadedCount} datasets and audited ${result.summary?.totalWorksCount || 0} works into active surveillance scope.`,
+      preloadedCount,
+      data: result,
+      ...result,
+    });
+  } catch (error) {
+    console.error("[Preload Datasets Error]", error);
+    res.status(500).json({ success: false, message: "Failed to preload datasets: " + error.message });
   }
 };
 
