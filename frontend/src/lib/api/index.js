@@ -9,7 +9,7 @@ export function getApiBase() {
             return process.env.NEXT_PUBLIC_LOCAL_API_URL || "http://localhost:5000/api";
         }
     }
-    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+    return process.env.NEXT_PUBLIC_API_URL || "https://mplads-sentinel-dr3a.onrender.com/api";
 }
 
 export function getAiEngineBase() {
@@ -18,7 +18,7 @@ export function getAiEngineBase() {
             return process.env.NEXT_PUBLIC_LOCAL_AI_ENGINE_URL || "http://localhost:8000";
         }
     }
-    return process.env.NEXT_PUBLIC_AI_ENGINE_URL || "https://mplads-sentinel-2.onrender.com";
+    return process.env.NEXT_PUBLIC_AI_ENGINE_URL || "https://mplads-sentinel-1-8dxr.onrender.com";
 }
 
 import { supabase } from "../supabaseClient";

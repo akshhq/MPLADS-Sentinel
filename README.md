@@ -327,9 +327,9 @@ MPLADS-Sentinel/
 | Component | Technology Stack | Live Cloud URL | Deployment Status |
 |---|---|---|---|
 | **Frontend Web App** | Next.js 16 • React 19 • Tailwind CSS v4 | [https://mplads-sentinel-omega.vercel.app](https://mplads-sentinel-omega.vercel.app) | 🟢 Live (Vercel) |
-| **Backend REST API** | Node.js • Express.js • Supabase PostgreSQL | [https://mplads-sentinel-1.onrender.com](https://mplads-sentinel-1.onrender.com) | 🟢 Live (Render) |
-| **Python AI Engine** | FastAPI • 21 AI Modules • Gemini 2.0 Flash | [https://mplads-sentinel-2.onrender.com](https://mplads-sentinel-2.onrender.com) | 🟢 Live (Render) |
-| **Interactive API Docs**| OpenAPI / Swagger UI | [https://mplads-sentinel-2.onrender.com/docs](https://mplads-sentinel-2.onrender.com/docs) | 🟢 Interactive |
+| **Backend REST API** | Node.js • Express.js • Supabase PostgreSQL | [https://mplads-sentinel-dr3a.onrender.com](https://mplads-sentinel-dr3a.onrender.com) | 🟢 Live (Render) |
+| **Python AI Engine** | FastAPI • 21 AI Modules • Gemini 2.0 Flash | [https://mplads-sentinel-1-8dxr.onrender.com](https://mplads-sentinel-1-8dxr.onrender.com) | 🟢 Live (Render) |
+| **Interactive API Docs**| OpenAPI / Swagger UI | [https://mplads-sentinel-1-8dxr.onrender.com/docs](https://mplads-sentinel-1-8dxr.onrender.com/docs) | 🟢 Interactive |
 | **Cloud Storage CDN** | Supabase Storage (`datasets` public bucket) | [https://vehldtcasdnmghnoktay.supabase.co](https://vehldtcasdnmghnoktay.supabase.co) | 🟢 12 Datasets Online |
 
 ---

@@ -3,7 +3,7 @@
  * Bridges Node.js Express backend with the Python AI Engine (Local or Cloud-deployed).
  */
 
-const AI_ENGINE_BASE_URL = process.env.AI_ENGINE_URL || "http://localhost:8000";
+const AI_ENGINE_BASE_URL = process.env.AI_ENGINE_URL || "https://mplads-sentinel-1-8dxr.onrender.com";
 
 class AIEngineService {
   static async checkHealth() {

@@ -5,8 +5,8 @@
 > **Problem Statement:** SIH26102 (Smart India Hackathon)  
 > **Production Deployment:**
 > - **Frontend Web App (Vercel):** [https://mplads-sentinel-omega.vercel.app/](https://mplads-sentinel-omega.vercel.app/)
-> - **Backend REST API (Render):** [https://mplads-sentinel-1.onrender.com/api](https://mplads-sentinel-1.onrender.com/api)
-> - **Python AI Engine (Render):** [https://mplads-sentinel-2.onrender.com/docs](https://mplads-sentinel-2.onrender.com/docs)
+> - **Backend REST API (Render):** [https://mplads-sentinel-dr3a.onrender.com/api](https://mplads-sentinel-dr3a.onrender.com/api)
+> - **Python AI Engine (Render):** [https://mplads-sentinel-1-8dxr.onrender.com/docs](https://mplads-sentinel-1-8dxr.onrender.com/docs)
 > - **Database & Auth:** Supabase PostgreSQL with Row Level Security (RLS) + Persistent JSON Database (`reports_db.json`)
 
 ---

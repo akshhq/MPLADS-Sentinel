@@ -120,7 +120,7 @@ If you have deployed the backend or AI engine on Render, make sure the Environme
    - `SUPABASE_ANON_KEY` = *(same as in `backend/.env`)*
    - `SUPABASE_SERVICE_ROLE_KEY` = *(paste the true `service_role` key from Step 1)*
    - `GEMINI_API_KEY` = *(your Google Gemini API key)*
-   - `AI_ENGINE_URL` = `https://mplads-sentinel-2.onrender.com`
+   - `AI_ENGINE_URL` = `https://mplads-sentinel-1-8dxr.onrender.com`
    - `PORT` = `5000`
 4. Click **Save Changes** (Render will trigger a redeploy).
 
@@ -128,7 +128,7 @@ If you have deployed the backend or AI engine on Render, make sure the Environme
 1. Go to [Vercel Dashboard](https://vercel.com/dashboard).
 2. Select the `mplads-sentinel` project.
 3. Go to **Settings -> Environment Variables**:
-   - `NEXT_PUBLIC_API_URL` = `https://mplads-sentinel-1.onrender.com` (or your backend URL)
+   - `NEXT_PUBLIC_API_URL` = `https://mplads-sentinel-dr3a.onrender.com/api` (or your backend URL)
    - `NEXT_PUBLIC_SUPABASE_URL` = `https://vehldtcasdnmghnoktay.supabase.co`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = *(your anon key)*
 4. If changed, trigger a redeployment under **Deployments -> Redeploy**.
